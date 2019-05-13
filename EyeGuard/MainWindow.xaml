@@ -1,0 +1,34 @@
+﻿<Window x:Class="EyeGuard.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="52.923" Width="99.077" WindowStyle="None" ResizeMode ="NoResize" AllowsTransparency="True" Topmost="True"  Background="Transparent" ShowInTaskbar = "False" Loaded="Window_Loaded" MouseMove="Window_MouseMove">
+    <Grid>
+        <Grid.ContextMenu>
+            <ContextMenu StaysOpen="true" Name="menu">
+                <MenuItem Header="设置面板" Click="SetupPanel_Click"/>
+                <MenuItem Header="重置工作时间" Name="ResetTime" Click="ResetTime_Click"/>
+                <MenuItem Header="桌面插件显示">
+                    <MenuItem Header="显示" Click="WhetherToDisplay_Click" Tag="display" />
+                    <MenuItem Header="隐藏" Click="WhetherToDisplay_Click" Tag="hide"/>
+                </MenuItem>
+                <MenuItem Header="锁屏" Click="LockScreen_Click"/>
+                <MenuItem Header="是否开机自启">
+                    <MenuItem Header="开机自启" Tag="SelfStarting" Click="StartupItem_Click"/>
+                    <MenuItem Header="取消开机自启" Tag="SelfCancellation"  Click="StartupItem_Click"/>
+                </MenuItem>
+                <MenuItem Header="退出" Click="exit_Click" />
+            </ContextMenu>
+        </Grid.ContextMenu>
+        <Border CornerRadius="15,15,15,15"  Margin="2,2,2,2" BorderThickness="1" BorderBrush="White" Opacity="0.5" >
+            <Border Background="Black" Opacity="0.5" Margin="0"   BorderThickness="1" BorderBrush="Gray" CornerRadius="15,15,15,15" />
+
+        </Border>
+        <Grid>
+            <ContentPresenter/>
+        </Grid>
+        <Label Content="00:00" Name="Time" Foreground="White"  FontSize="30" HorizontalAlignment="Left" VerticalAlignment="Top" Height="49" Width="95" Margin="5,3,-1,0"/>
+    </Grid>
+</Window>
