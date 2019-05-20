@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-E:\开源项目\眼睛卫士\EyeGuard\obj\Debug\
+E:\开源项目\EyeGuard\EyeGuard\obj\Debug\
 EyeGuard
 none
 false
 DEBUG;TRACE
-E:\开源项目\眼睛卫士\EyeGuard\App.xaml
+E:\开源项目\EyeGuard\EyeGuard\App.xaml
 4232061321
 
-131049685974
-23-481090
+17-2082791644
+23-1798066510
 MainWindow.xaml;UI\LockScreen.xaml;UI\SetUp.xaml;UI\Tips.xaml;
 
-False
+True
 
