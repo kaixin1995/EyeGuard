@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace EyeGuard
 {
@@ -226,6 +227,8 @@ namespace EyeGuard
             }
             return false;
         }
+
+        
 
         /// <summary>
         /// 是否开机启动

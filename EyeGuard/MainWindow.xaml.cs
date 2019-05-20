@@ -71,6 +71,9 @@ namespace EyeGuard
             Whether.MenuItems.Add(SelfStarting);
             Whether.MenuItems.Add(SelfCancellation);
 
+            //右键菜单--关于
+            MenuItem about = new MenuItem("关于");
+            about.Click += new EventHandler(about_Click);
 
             //右键菜单--退出菜单项
             MenuItem exit = new MenuItem("退出");
@@ -78,9 +81,21 @@ namespace EyeGuard
 
 
             //关联托盘控件
-            MenuItem[] childen = new MenuItem[] {SetupPanel, reset_time,DesktopControls, LockScreen , Whether, exit };
+            MenuItem[] childen = new MenuItem[] {SetupPanel, reset_time,DesktopControls, LockScreen , Whether, about,exit };
 
             notifyIcon.ContextMenu = new ContextMenu(childen);
+        }
+
+        /// <summary>
+        /// 点击关于
+        /// </summary>
+        private void about_Click(object sender, EventArgs e)
+        {
+            if (!About.Function)
+            {
+                About about = new About();
+                about.Show();
+            }
         }
 
 
@@ -348,53 +363,35 @@ namespace EyeGuard
                 //游戏模式
                 case 3:
                     {
-                        //判断是否全屏
-                        if (!bll.FullScreen()) //非全屏
+
+                        //如果不处于空闲时间
+                        if (Bll.GetLastInputTime() < 1000)
                         {
-                            //判断系统是否处于空闲时间
-                            if (Bll.GetLastInputTime() < 1000)
+                            //非全屏
+                            if (!bll.FullScreen())
                             {
-                                //如果不处于空闲时间
                                 Count++;
-                                //清空暂离状态
-                                FreeCount = 0;
                             }
                             else
                             {
-                                //判断是否处于暂离状态
-                                FreeCount++;
-                                //如果电脑5分无人进行操作，那么就重新开始计时
-                                if (FreeCount >= 300)
-                                {
-                                    //重新开始计时
-                                    Count = 0;
-                                }
-                            }
-                        }
-                        else //全屏中
-                        {
-                            //判断系统是否处于空闲时间
-                            if (Bll.GetLastInputTime() < 1000)
-                            {
                                 //判断工作时间是否已经到达，在游戏模式中，如果检测到全屏，会在即将锁屏的前一秒停止计时
-                                if (md.Work * 60 > (Count-1))
+                                if (md.Work * 60 > (Count + 1))
                                 {
                                     Count++;
                                 }
-
-                                //清空暂离状态
-                                FreeCount = 0;
                             }
-                            else
+                            //清空暂离状态
+                            FreeCount = 0;
+                        }
+                        else
+                        {
+                            //判断是否处于暂离状态
+                            FreeCount++;
+                            //如果电脑5分无人进行操作，那么就重新开始计时
+                            if (FreeCount >= 300)
                             {
-                                //判断是否处于暂离状态
-                                FreeCount++;
-                                //如果电脑5分无人进行操作，那么就重新开始计时
-                                if (FreeCount >= 300)
-                                {
-                                    //重新开始计时
-                                    Count = 0;
-                                }
+                                //重新开始计时
+                                Count = 0;
                             }
                         }
                         break;

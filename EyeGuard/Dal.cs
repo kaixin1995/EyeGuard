@@ -18,6 +18,12 @@ namespace EyeGuard
 
 
         /// <summary>
+        /// 版本号
+        /// </summary>
+        public static string Edition = "2.0";
+
+
+        /// <summary>
         /// 在构造函数中初始化
         /// </summary>
         public Dal()

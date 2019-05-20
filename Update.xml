@@ -1,8 +1,0 @@
-<Config>
-  <VersionUumber>3.0</VersionUumber>
-  <UpdateInstructions>1.优化游戏模式，目前游戏模式下已不会进行锁屏前提示；
-  2.修改游戏模式下依旧自动锁屏的BUG；
-  3.增加关于按钮;
-  4.增加更新提示，并增加版本号</UpdateInstructions>
-  <Download></Download>
-</Config>
