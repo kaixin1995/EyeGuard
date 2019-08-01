@@ -1,9 +1,11 @@
 ﻿using EyeGuard.UI;
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;//添加引用，必须用到的
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Threading;
 using static EyeGuard.Model;
 using Application = System.Windows.Application;
@@ -303,6 +305,11 @@ namespace EyeGuard
         /// </summary>
         private long FreeCount = 0;
 
+        [DllImport("user32 ")]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        [DllImport("user32 ")]
+        private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+
         /// <summary>
         /// 时钟事件
         /// </summary>
@@ -488,7 +495,6 @@ namespace EyeGuard
 
         }
 
-
         /// <summary>
         /// 实例化类
         /// </summary>
@@ -507,6 +513,12 @@ namespace EyeGuard
             {
                 this.Visibility = Visibility.Hidden;
             }
+
+            //绝对置顶
+            IntPtr hDeskTop = FindWindow("Progman ", "Program Manager ");
+            HwndSource hs = (HwndSource)PresentationSource.FromDependencyObject(this);
+            IntPtr ip = hs.Handle;
+            SetParent(ip, hDeskTop);
         }
 
         /// <summary>

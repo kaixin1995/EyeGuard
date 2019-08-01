@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -100,6 +101,7 @@ namespace EyeGuard.UI
             }
             PromptText.Content = "距离解锁时间还有"+ Count+"秒";
             this.Topmost = true;
+            
         }
 
         /// <summary>
@@ -202,6 +204,12 @@ namespace EyeGuard.UI
         private void TopTimer_Tick(object sender, EventArgs e)
         {
             this.Topmost = true;
+            WindowInteropHelper mianHanel = new WindowInteropHelper(this);
+            WindowInteropHelper vedioWin = new WindowInteropHelper(this);
+            WindowInteropHelper FrameWin = new WindowInteropHelper(this);
+            FrameWin.Owner = IntPtr.Zero;
+            mianHanel.Owner = vedioWin.Handle;
+            vedioWin.Owner = FrameWin.Handle;
         }
     }
 }
