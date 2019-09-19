@@ -1,4 +1,5 @@
 ﻿using EyeGuard.UI;
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -19,6 +20,23 @@ namespace EyeGuard
     {
         //实例化notifyIOC控件最小化托盘
         private NotifyIcon notifyIcon = null;
+
+        /// <summary>
+        /// 解屏后执行的委托
+        /// </summary>
+        public Action SessionUnlockAction { get; set; }
+
+        /// <summary>
+        /// 锁屏后执行的委托
+        /// </summary>
+        public Action SessionLockAction { get; set; }
+
+        /// <summary>
+        /// 开始时间
+        /// </summary>
+        private DateTime? dateBegin = null;
+
+
 
         // 最小化系统托盘
         private void initialTray()
@@ -253,6 +271,8 @@ namespace EyeGuard
             {
                 if ((int)md.TimerMode == 2)
                 {
+                    //获得焦点
+                    this.Focus();
                     Count = 0;
                     if (Tips.Function == false)
                     {
@@ -279,6 +299,7 @@ namespace EyeGuard
         public MainWindow()
         {
             InitializeComponent();
+            SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
             double ScreenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;//WPF
             this.Top = 90;
             this.Left = ScreenWidth-250;
@@ -294,11 +315,70 @@ namespace EyeGuard
             timer.Start();
 
         }
+        #region 当前登录的用户变化（登录、注销和解锁屏）
+
+        ~MainWindow()
+        {
+            SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
+        }
+
+        //当前登录的用户变化（登录、注销和解锁屏）
+        private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
+        {
+            switch (e.Reason)
+            {
+                //用户登录
+                case SessionSwitchReason.SessionLogon:
+                    BeginSessionUnlock();
+                    break;
+                //解锁屏
+                case SessionSwitchReason.SessionUnlock:
+                    BeginSessionUnlock();
+                    break;
+                //锁屏
+                case SessionSwitchReason.SessionLock:
+                    BeginSessionLock();
+                    break;
+                //注销
+                case SessionSwitchReason.SessionLogoff:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 解屏、登录后执行
+        /// </summary>
+        private void BeginSessionUnlock()
+        {
+            //获得焦点
+            this.Focus();
+
+            //解屏、登录后执行
+            if (dateBegin != null)
+            {
+                double fen = Bll.ExecDateDiff((DateTime)dateBegin, DateTime.Now);
+                //如果两个时间的分钟差大于指定值，就证明 是启用系统锁定等功能   默认算是休息过了。
+                if (fen >= 3)
+                {
+                    MainWindow.Count = 0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 锁屏后执行
+        /// </summary>
+        private void BeginSessionLock()
+        {
+            //锁屏后执行
+            dateBegin = DateTime.Now;
+        } 
+        #endregion
 
         /// <summary>
         /// 当前总秒数
         /// </summary>
-        private long Count = 0;
+        public static long Count = 0;
 
         /// <summary>
         /// 空闲时间统计
@@ -309,6 +389,8 @@ namespace EyeGuard
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
         [DllImport("user32 ")]
         private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+
+        
 
         /// <summary>
         /// 时钟事件
@@ -324,6 +406,7 @@ namespace EyeGuard
                 return;
             }
             
+
             //正常模式 = 0, 智能计时 = 1, 加班模式 = 2, 游戏模式 = 3
             switch ((int)md.TimerMode)
             {
@@ -494,6 +577,8 @@ namespace EyeGuard
             }
 
         }
+
+
 
         /// <summary>
         /// 实例化类

@@ -73,7 +73,22 @@ namespace EyeGuard
             return GetFormattingTime(branch) + ":" + GetFormattingTime(second);
         }
 
-       
+        /// <summary>
+        /// 两个时间的分钟差
+        /// </summary>
+        /// <param name="dateBegin">开始时间</param>
+        /// <param name="dateEnd">结束时间</param>
+        /// <returns>返回(分)单位</returns>
+        public static double ExecDateDiff(DateTime dateBegin, DateTime dateEnd)
+        {
+            TimeSpan ts1 = new TimeSpan(dateBegin.Ticks);
+            TimeSpan ts2 = new TimeSpan(dateEnd.Ticks);
+            TimeSpan ts3 = ts2- ts1;
+            //得到相差的分钟数
+            return ts3.TotalMinutes;
+        }
+
+
         /// <summary>
         /// 给单数值加0
         /// </summary>

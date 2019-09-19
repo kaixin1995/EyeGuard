@@ -93,3 +93,4 @@ E:\开源项目\EyeGuard\EyeGuard\obj\Debug\EyeGuard.exe
 E:\开源项目\EyeGuard\EyeGuard\obj\Debug\EyeGuard.pdb
 E:\开源项目\EyeGuard\EyeGuard\obj\Debug\UI\About.g.cs
 E:\开源项目\EyeGuard\EyeGuard\obj\Debug\UI\About.baml
+E:\开源项目\EyeGuard\EyeGuard\obj\Debug\EyeGuard.csprojAssemblyReference.cache

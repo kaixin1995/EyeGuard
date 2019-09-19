@@ -204,6 +204,8 @@ namespace EyeGuard.UI
         private void TopTimer_Tick(object sender, EventArgs e)
         {
             this.Topmost = true;
+            //获得焦点
+            this.Focus();
             WindowInteropHelper mianHanel = new WindowInteropHelper(this);
             WindowInteropHelper vedioWin = new WindowInteropHelper(this);
             WindowInteropHelper FrameWin = new WindowInteropHelper(this);
