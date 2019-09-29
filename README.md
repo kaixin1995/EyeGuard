@@ -41,4 +41,4 @@
 
 ## 本软件使用.net4.5进行开发，界面使用WPF，界面UI模块使用的是开源UI组件[mahapps](https://mahapps.com/)
 
-## 本软件始发于[吾爱破解](https://www.52pojie.cn/thread-951763-1-1.html)论坛,如果想要下载成品，可以点击[百度云](https://pan.baidu.com/s/1YRw7rBdLDN-Bl2-WzMnn2Q)进行下载，提取码为：1p49
+## 本软件始发于[吾爱破解](https://www.52pojie.cn/thread-951763-1-1.html)论坛,如果想要下载成品，可以点击[蓝奏云](https://www.lanzous.com/b1004493/)进行下载，提取码为：f6s6

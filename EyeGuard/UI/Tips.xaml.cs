@@ -52,11 +52,11 @@ namespace EyeGuard.UI
         public void Position()
         {
             //这里根据字符的长度来设置窗体的长度
-            this.Width = (Bll.GetStringLength(TipsLable.Content.ToString()) / 2) * 38;
+            this.Width = (Bll.GetStringLength(TipsLable.Content.ToString()) / 2) * 38+15;
 
             //屏幕宽高
-            double ScreenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
-            double ScreenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+            double ScreenWidth = SystemParameters.PrimaryScreenWidth;
+            double ScreenHeight = SystemParameters.PrimaryScreenHeight;
             this.Top = ScreenHeight - this.Height-100;
             this.Left = (ScreenWidth/2) - (this.Width / 2);
             this.Topmost = true;

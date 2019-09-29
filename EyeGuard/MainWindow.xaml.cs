@@ -182,6 +182,11 @@ namespace EyeGuard
         }
 
         /// <summary>
+        /// 设置面板实例
+        /// </summary>
+        SetUp sp;
+
+        /// <summary>
         /// 设置
         /// </summary>
         /// <param name="sender"></param>
@@ -190,8 +195,13 @@ namespace EyeGuard
         {
             if (SetUp.Function == false)
             {
-                SetUp sp = new SetUp(md);
+                sp = new SetUp(md);
                 sp.Show();
+            }
+            else
+            {
+                //获得焦点
+                sp.Focus();
             }
         }
 
@@ -269,10 +279,11 @@ namespace EyeGuard
             //鼠标左键
             if (e.Button == MouseButtons.Left)
             {
+                //获得焦点
+                this.Focus();
+
                 if ((int)md.TimerMode == 2)
                 {
-                    //获得焦点
-                    this.Focus();
                     Count = 0;
                     if (Tips.Function == false)
                     {
@@ -555,8 +566,8 @@ namespace EyeGuard
 
             }
 
-            //休息前的提醒
-            if ((md.Work - 1) * 60 == Count)
+            //休息前的提醒 游戏模式下不进行提醒
+            if ((md.Work - 1) * 60 == Count&& (int)md.TimerMode!=3)
             {
                 if (Tips.Function == false)
                 {
