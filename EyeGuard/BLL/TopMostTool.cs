@@ -36,11 +36,14 @@ namespace EyeGuard.BLL
 
 
 
-        // <summary>
-        // 在外面的方法中掉用这个方法就可以窗体始终置顶
-        // </summary>
-        // <param name="Name">需要置顶的窗体的名字</param>
-        //dd
+        /// <summary>
+        /// 在外面的方法中掉用这个方法就可以窗体始终置顶
+        /// </summary>
+        /// <param name="CustomBar">需要置顶的窗体的IntPtr</param>
+        public static void setTop(IntPtr CustomBar)
+        {
+            SetWindowPos(CustomBar, TopMostTool.HWND_TOPMOST, 0, 0, 0, 0, TopMostTool.SWP_NOMOVE | TopMostTool.SWP_NOSIZE);
+        }
 
 
         /// <summary>

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
+using System.Runtime.InteropServices;
 using static EyeGuard.Model;
 
 namespace EyeGuard.UI
@@ -30,12 +31,7 @@ namespace EyeGuard.UI
             PromptText.Text = "点击右下角小锁图片即可解锁";
             bufferGif.Visible = false;
             Position();
-
-            mainWindow.Focus();
-            this.Width = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
-            this.Height = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
-            this.Top = 0;
-            this.Left = 0;
+            Unlock.Visible = true;
         }
 
 
@@ -58,7 +54,7 @@ namespace EyeGuard.UI
             PromptText.Width = (Bll.GetStringLength(PromptText.Text.ToString()) / 2) * 44;
 
             //加班模式下无法隐藏强制解锁按钮
-            if (md.Unlock == 0 && (int)md.TimerMode != 2)
+            if (md.Unlock == 1 || (int)md.TimerMode == 2)
             {
                 Unlock.Visible = true;
             }
@@ -145,7 +141,9 @@ namespace EyeGuard.UI
 
 
             //置顶
-            BLL.TopMostTool.setTop(this.Text);
+            //BLL.TopMostTool.setTop(this.Text);
+
+           
 
             TransparentLabel();
 
@@ -155,6 +153,8 @@ namespace EyeGuard.UI
             {
                 pbx_image.Image = Image.FromFile(path + "Resources/wallpaper.jpg");
                 this.Opacity = 1;
+                //修改提示标签颜色
+                PromptText.ForeColor = Color.Black;
             }
 
             if ((int)md.LockMode == 1)
@@ -170,6 +170,9 @@ namespace EyeGuard.UI
             } 
             #endregion
         }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern IntPtr GetForegroundWindow();
 
 
         #region 标签和透明化
@@ -271,6 +274,12 @@ namespace EyeGuard.UI
         }
         #endregion
 
+        /// <summary>
+        /// 当前窗口句柄
+        /// </summary>
+        IntPtr myPtr = GetForegroundWindow();
+
+        
 
         /// <summary>
         /// 时刻置顶
@@ -280,8 +289,15 @@ namespace EyeGuard.UI
         private void timer2_Tick(object sender, EventArgs e)
         {
             KillTaskmgr();
-            //获得焦点
-            this.Focus();
+            if (!this.Focused)
+            {
+                //获得焦点
+                this.Focus();
+                //置顶
+                BLL.TopMostTool.setTop(myPtr);
+                TopMost = true;
+                BringToFront();
+            }
         }
     }
 }

@@ -60,17 +60,18 @@
             this.Unlock.Size = new System.Drawing.Size(32, 32);
             this.Unlock.TabIndex = 9;
             this.Unlock.TabStop = false;
+            this.Unlock.Visible = false;
             this.Unlock.Click += new System.EventHandler(this.Unlock_Click);
             // 
             // PromptText
             // 
             this.PromptText.AutoSize = true;
-            this.PromptText.Font = new System.Drawing.Font("宋体", 26.25F);
+            this.PromptText.Font = new System.Drawing.Font("宋体", 26.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.PromptText.ForeColor = System.Drawing.Color.Honeydew;
             this.PromptText.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.PromptText.Location = new System.Drawing.Point(25, 273);
             this.PromptText.Name = "PromptText";
-            this.PromptText.Size = new System.Drawing.Size(384, 35);
+            this.PromptText.Size = new System.Drawing.Size(396, 35);
             this.PromptText.TabIndex = 11;
             this.PromptText.Text = "距离解锁时间还有:00秒";
             // 

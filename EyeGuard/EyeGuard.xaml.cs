@@ -408,13 +408,7 @@ namespace EyeGuard
         /// 空闲时间统计
         /// </summary>
         private long FreeCount = 0;
-
-
-        /// <summary>
-        /// RestoreTop是否在运行中
-        /// </summary>
-        private bool IsRestoreTop=false;
-
+        
 
         /// <summary>
         /// 时钟事件
@@ -426,8 +420,10 @@ namespace EyeGuard
             if ((int)md.State == 1)
             {
                 Count = 0;
+                this.Visibility = Visibility.Collapsed;
                 return;
             }
+            
 
             if (md.Display != 0)
             {
