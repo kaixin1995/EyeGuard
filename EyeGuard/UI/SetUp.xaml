@@ -1,0 +1,52 @@
+﻿<Controls:MetroWindow
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" x:Class="EyeGuard.UI.SetUp"
+        mc:Ignorable="d"
+        Title="SetUp" Height="273" Width="245"  ResizeMode ="NoResize" WindowStartupLocation="CenterScreen" Loaded="MetroWindow_Loaded" ShowInTaskbar = "False">
+
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
+            <Button Content="吾爱首发" Name="OpenUrl" Click="OpenUrl_Click" />
+            <Button>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="定时关机" Name="SwitchBoard" Click="Switch_Click" />
+                </StackPanel>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
+    <Grid>
+
+        <Grid Name="RestPanel" >
+            <Label Content="工作时间:" HorizontalAlignment="Left" Margin="7,37,0,0" VerticalAlignment="Top"/>
+            <Label Content="休息时间:" HorizontalAlignment="Left" Margin="7,77,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
+            <Label Content="计时模式:" HorizontalAlignment="Left" Margin="7,116,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
+            <Label Content="锁屏风格:" HorizontalAlignment="Left" Margin="7,160,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
+
+            <!--工作时间-->
+            <Slider Name="work" LostFocus="TimerMode_LostFocus" ValueChanged="TimerMode_ValueChanged" IsSnapToTickEnabled="True" Minimum="1"  Maximum="60"  HorizontalAlignment="Left" Margin="76,32,0,0" VerticalAlignment="Top" Width="143" Height="36"/>
+            <!--休息时间-->
+            <Slider  Name="rest" LostFocus="TimerMode_LostFocus" ValueChanged="LockMode_ValueChanged" IsSnapToTickEnabled="True" Minimum="1"  Maximum="15"  HorizontalAlignment="Left" Margin="76,69,0,0" VerticalAlignment="Top" Width="143" Height="36"/>
+
+            <ComboBox  IsEditable="True"  IsReadOnly="True" Name="Time" HorizontalAlignment="Left" Margin="76,116,0,0" VerticalAlignment="Top" Width="143"  />
+            <ComboBox Name="Lock" HorizontalAlignment="Left" Margin="76,158,0,0" VerticalAlignment="Top" Width="143"/>
+            <Button Name="Preservation" Click="Preservation_Click" Style="{StaticResource AccentedSquareButtonStyle}" Content="保存" HorizontalAlignment="Left" Margin="159,203,0,0" VerticalAlignment="Top" Width="60"/>
+            <Label Name="DisplayTime" Content="您已经工作0分" FontSize="15" HorizontalAlignment="Left" Margin="67,5,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
+            <Controls:ToggleSwitch OnLabel="允许解锁" Name="Unlock" OffLabel="禁止解锁" Margin="10,199,95,13" />
+        </Grid>
+
+        <Grid Name="ShutdownPanel" Visibility="Collapsed">
+            <Label Content="关机时:" HorizontalAlignment="Left" Margin="6,39,0,0" VerticalAlignment="Top"/>
+            <Label Content="关机分:" HorizontalAlignment="Left" Margin="119,39,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
+
+            <ComboBox  IsEditable="True"  IsReadOnly="True" Name="ShutdownTime" HorizontalAlignment="Left" Margin="55,38,0,0" VerticalAlignment="Top" Width="60" RenderTransformOrigin="0.497,-0.769"  />
+            <ComboBox Name="ShutdownPoints" HorizontalAlignment="Left" Margin="168,39,0,0" VerticalAlignment="Top" Width="60"/>
+            <Button  Click="Preservation_Click" Style="{StaticResource AccentedSquareButtonStyle}" FontSize="50" Content="保存" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top" Width="218" Height="150"/>
+            <Label Content="提示：-1代表不启用自动关机" FontSize="15" HorizontalAlignment="Left" Margin="17,5,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96" Foreground = "Red" />
+        </Grid>
+    </Grid>
+
+</Controls:MetroWindow>
