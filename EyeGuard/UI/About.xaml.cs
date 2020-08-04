@@ -43,9 +43,9 @@ namespace EyeGuard.UI
 
 
         /// <summary>
-        /// 打开githup
+        /// 打开github
         /// </summary>
-        private void Githup_MouseDown(object sender, MouseButtonEventArgs e)
+        private void Github_MouseDown(object sender, MouseButtonEventArgs e)
         {
             System.Diagnostics.Process.Start("https://github.com/kaixin1995/EyeGuard");
         }
