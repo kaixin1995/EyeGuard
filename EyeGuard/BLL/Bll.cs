@@ -106,6 +106,8 @@ namespace EyeGuard
             return value.ToString();
         }
 
+
+
         #region 获取键盘和鼠标没有操作的时间
         // 创建结构体用于返回捕获时间  
         [StructLayout(LayoutKind.Sequential)]
@@ -199,7 +201,6 @@ namespace EyeGuard
 
         }
         #endregion
-
 
         #region 是否开机启动
         /// <summary>

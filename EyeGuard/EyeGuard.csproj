@@ -86,9 +86,11 @@
     </ApplicationDefinition>
     <Compile Include="BLL\Bll.cs" />
     <Compile Include="BLL\ConfigHelper.cs" />
+    <Compile Include="BLL\KeyboardHook.cs" />
+    <Compile Include="BLL\public_variable.cs" />
     <Compile Include="BLL\TopMostTool.cs" />
+    <Compile Include="BLL\WIN32API.cs" />
     <Compile Include="Dal.cs" />
-    <Compile Include="BLL\Hook.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="UI\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>

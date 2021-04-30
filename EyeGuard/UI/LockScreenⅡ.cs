@@ -20,12 +20,27 @@ namespace EyeGuard.UI
         /// 是否已经打开，保证一个实例
         /// </summary>
         public static bool Function = false;
+
+        /// <summary>
+        /// 第二屏幕对象
+        /// </summary>
+        LockScreenⅡ lockScreenⅡ = null;
+        public static bool FunctionⅡ = false;
+
+        /// <summary>
+        /// 第一屏幕对象
+        /// </summary>
+        //LockScreenⅡ lockScreen = null;
+
         public LockScreenⅡ(MainWindow mainWindow)
         {
             if (Function == true)
             {
                 this.Close();
             }
+            //屏蔽
+            _keyboardHook.InstallHook(BLL.HookType.shield);
+
             this.Closed += LockScreen_Closed;
             InitializeComponent();
             PromptText.Text = "点击右下角小锁图片即可解锁";
@@ -33,6 +48,22 @@ namespace EyeGuard.UI
             Position();
             Unlock.Visible = true;
         }
+
+
+        /// <summary>
+        /// 第二屏幕调用
+        /// </summary>
+        /// <param name="Count"></param>
+        public LockScreenⅡ()
+        {
+            InitializeComponent();
+            Position();
+            PromptText.Visible = true;
+            PromptText.Text = "请在主屏幕进行解锁~";
+            PromptText.Width = (Bll.GetStringLength(PromptText.Text.ToString()) / 2) * 44;
+        }
+
+
 
 
         /// <summary>
@@ -44,6 +75,9 @@ namespace EyeGuard.UI
             {
                 this.Close();
             }
+            //屏蔽
+            _keyboardHook.InstallHook(BLL.HookType.shield);
+
             this.Closed += LockScreen_Closed;
             md = Md;
             InitializeComponent();
@@ -59,7 +93,29 @@ namespace EyeGuard.UI
                 Unlock.Visible = true;
             }
 
-            timer1.Start();
+            timer_countdown.Start();
+        }
+
+
+        /// <summary>
+        /// 第二屏幕显示
+        /// </summary>
+        /// <param name="md"></param>
+        private void DoubleScreen(Model md)
+        {
+            if (Screen.AllScreens.Count() == 2)
+            {
+                Screen[] sc;
+
+                sc = Screen.AllScreens;
+                lockScreenⅡ = new LockScreenⅡ();
+                lockScreenⅡ.md = md;
+                lockScreenⅡ.Location = new Point(sc[1].Bounds.Left, sc[1].Bounds.Top);
+                FunctionⅡ = true;
+                lockScreenⅡ.timer_top.Stop();
+                lockScreenⅡ.timer_top.Enabled = false;
+                lockScreenⅡ.Show();
+            }
         }
 
         /// <summary>
@@ -76,16 +132,35 @@ namespace EyeGuard.UI
         /// <param name="e"></param>
         private void LockScreen_Closed(object sender, EventArgs e)
         {
+            //解除屏蔽
+            _keyboardHook.InstallHook(BLL.HookType.normal);
+            _keyboardHook.UnInstallHook();
+
             Function = false;
+            FunctionⅡ = false;
             if (md != null)
             {
                 md.State = (state)0;
             }
-            h.Hook_Clear();
+            
+
+            StackTrace trace = new StackTrace();
+            string method = trace.GetFrame(1).GetMethod().ToString();
+
+            if (lockScreenⅡ != null)
+            {
+                lockScreenⅡ.Close();
+               
+            }
+            
         }
 
-        Hook h = new Hook();
-        static IntPtr hand = IntPtr.Zero;
+        /// <summary>
+        /// 锁屏定义
+        /// </summary>
+        private readonly BLL.KeyboardHook _keyboardHook = new BLL.KeyboardHook();
+
+        //static IntPtr hand = IntPtr.Zero;
 
 
         /// <summary>
@@ -126,49 +201,63 @@ namespace EyeGuard.UI
         /// </summary>
         private void LockScreenⅡ_Load(object sender, EventArgs e)
         {
+            
             //最大化窗口
             this.WindowState = FormWindowState.Maximized;
 
             //图片赋值
             bufferGif.Image = Image.FromFile(path + "Resources/bufferGif.gif");
             Unlock.Image = Image.FromFile(path + "Resources/lock.png");
+           
 
-
-            h.Hook_Start();//按键屏蔽
-            
             //控件相对于屏幕位置
             Position();
+
+            TopMost = true;
 
 
             //置顶
             //BLL.TopMostTool.setTop(this.Text);
 
-           
 
             TransparentLabel();
 
             #region 图片背景
-            //选择透明度
-            if ((int)md.LockMode == 2)
-            {
-                pbx_image.Image = Image.FromFile(path + "Resources/wallpaper.jpg");
-                this.Opacity = 1;
-                //修改提示标签颜色
-                PromptText.ForeColor = Color.Black;
-            }
-
-            if ((int)md.LockMode == 1)
+            if (md == null)
             {
                 this.Opacity = 0.7;
                 pbx_image.Image = null;
             }
-
-            if ((int)md.LockMode == 0)
+            else
             {
-                this.Opacity = 0.1;
-                pbx_image.Image = null;
-            } 
+                //选择透明度
+                if ((int)md.LockMode == 2)
+                {
+                    pbx_image.Image = Image.FromFile(path + "Resources/wallpaper.jpg");
+                    this.Opacity = 1;
+                    //修改提示标签颜色
+                    PromptText.ForeColor = Color.Black;
+                }
+
+                if ((int)md.LockMode == 1)
+                {
+                    this.Opacity = 0.7;
+                    pbx_image.Image = null;
+                }
+
+                if ((int)md.LockMode == 0)
+                {
+                    this.Opacity = 0.1;
+                    pbx_image.Image = null;
+                }
+            }
+
             #endregion
+
+            if (lockScreenⅡ==null&& FunctionⅡ ==false)
+            {
+                DoubleScreen(md);
+            }
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
@@ -202,32 +291,7 @@ namespace EyeGuard.UI
         #endregion
 
 
-        /// <summary>
-        /// 时钟事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            Count--;
-            if (Count <= 0)
-            {
-                //只有检测到键盘或者鼠标有动静时才会彻底解锁
-                if (Bll.GetLastInputTime() < 1000)
-                {
-                    this.Close();
-                }
-                else
-                {
-                    PromptText.Text = "移动鼠标将会自动解锁";
-                    Unlock.Visible = true;
-                }
-            }
-            else
-            {
-                PromptText.Text = "距离解锁时间还有" + Count + "秒";
-            }
-        }
+        
 
 
         #region 禁用键盘按键
@@ -279,14 +343,12 @@ namespace EyeGuard.UI
         /// </summary>
         IntPtr myPtr = GetForegroundWindow();
 
-        
-
         /// <summary>
-        /// 时刻置顶
+        /// 置顶
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void timer2_Tick(object sender, EventArgs e)
+        private void timer_top_Tick(object sender, EventArgs e)
         {
             KillTaskmgr();
             if (!this.Focused)
@@ -297,6 +359,34 @@ namespace EyeGuard.UI
                 BLL.TopMostTool.setTop(myPtr);
                 TopMost = true;
                 BringToFront();
+            }
+        }
+
+
+        /// <summary>
+        /// 倒计时
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void timer_countdown_Tick(object sender, EventArgs e)
+        {
+            Count--;
+            if (Count <= 0)
+            {
+                //只有检测到键盘或者鼠标有动静时才会彻底解锁
+                if (Bll.GetLastInputTime() < 1000)
+                {
+                    this.Close();
+                }
+                else
+                {
+                    PromptText.Text = "移动鼠标将会自动解锁";
+                    Unlock.Visible = true;
+                }
+            }
+            else
+            {
+                PromptText.Text = "距离解锁时间还有" + Count + "秒";
             }
         }
     }

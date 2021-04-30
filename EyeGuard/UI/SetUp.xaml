@@ -10,7 +10,7 @@
 
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Button Content="吾爱首发" Name="OpenUrl" Click="OpenUrl_Click" />
+            <Button Content="Github" Name="OpenUrl" Click="OpenUrl_Click" />
             <Button>
                 <StackPanel Orientation="Horizontal">
                     <Button Content="定时关机" Name="SwitchBoard" Click="Switch_Click" />

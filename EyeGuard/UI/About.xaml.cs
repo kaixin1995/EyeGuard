@@ -55,13 +55,6 @@ namespace EyeGuard.UI
         /// </summary>
         public static bool Function = false;
 
-
-        /// <summary>
-        /// 打开吾爱破解
-        /// </summary>
-        private void Pj52_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            System.Diagnostics.Process.Start("https://www.52pojie.cn/thread-951763-1-1.html");
-        }
+        
     }
 }

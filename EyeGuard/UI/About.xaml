@@ -8,8 +8,7 @@
         mc:Ignorable="d"
         Title="About" Height="206" Width="181"  ResizeMode ="NoResize" WindowStartupLocation="CenterScreen"  ShowInTaskbar = "False">
     <Grid>
-        <Label Content="吾爱破解" MouseDown="Pj52_MouseDown"  Name="pj52" HorizontalAlignment="Left" Margin="34,143,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.075,0.32"/>
-        <TextBox HorizontalAlignment="Left" Height="87" Margin="10,40,0,0" TextWrapping="Wrap" Text="本软件初发于吾爱破解论坛，目前已经开源。" VerticalAlignment="Top" Width="154"/>
+        <TextBox HorizontalAlignment="Left" Height="87" Margin="10,40,0,0" TextWrapping="Wrap" Text="一个可以定时休息、定时关机的小软件，可以起到预防痔疮、近视、颈椎病的作用。" VerticalAlignment="Top" Width="154"/>
         <Label MouseDown="Github_MouseDown"  Content="GitHub" Name="github" HorizontalAlignment="Left" Margin="104,143,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.075,0.32"/>
         <Label Content="当前版本：3.0" Name="Edition" HorizontalAlignment="Left" Margin="37,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.075,0.32"/>
     </Grid>

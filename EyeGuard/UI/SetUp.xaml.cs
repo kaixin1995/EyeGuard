@@ -84,7 +84,7 @@ namespace EyeGuard.UI
         /// </summary>
         private void OpenUrl_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://www.52pojie.cn/home.php?mod=space&uid=485267");
+            System.Diagnostics.Process.Start("https://github.com/kaixin1995/EyeGuard");
         }
 
 

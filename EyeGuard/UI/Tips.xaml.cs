@@ -54,7 +54,10 @@ namespace EyeGuard.UI
         public void Position()
         {
             //这里根据字符的长度来设置窗体的长度
-            this.Width = (Bll.GetStringLength(TipsLable.Content.ToString()) / 2) * 38+15;
+            this.Width = (Bll.GetStringLength(TipsLable.Content.ToString()) / 2) * 38;
+            //TipsLable.Margin=new Thickness(15,13,8,13);
+
+           
 
             //屏幕宽高
             double ScreenWidth = SystemParameters.PrimaryScreenWidth;

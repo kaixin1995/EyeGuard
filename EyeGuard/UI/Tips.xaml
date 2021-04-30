@@ -13,6 +13,6 @@
         <Grid>
             <ContentPresenter/>
         </Grid>
-        <Label Name="TipsLable" Content="眼睛卫士，您的健康助手！" FontSize="35" Foreground="White" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top"/>
+        <Label Name="TipsLable" Content="眼睛卫士，您的健康助手！" FontSize="35" Foreground="White" HorizontalAlignment="Center" Margin="5,15,5,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

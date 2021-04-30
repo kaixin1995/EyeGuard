@@ -124,7 +124,15 @@ namespace EyeGuard
         /// </summary>
         private void ResetTime_Click(object sender, EventArgs e)
         {
-            Count = 0;
+            if (Tips.Function == false)
+            {
+                Tips tp = new Tips("头铁如你，但是头铁不代表身体也铁，所以必须休息~");
+                tp.Show();
+                return;
+            }
+            //不准跳过
+            //Count = 0;
+
         }
 
 
@@ -188,6 +196,13 @@ namespace EyeGuard
                 md.State = (state)1;
                 LockScreenⅡ ls = new LockScreenⅡ(this);
                 ls.md = md;
+
+                try
+                {
+                    Screen[] sc = Screen.AllScreens;
+                    ls.Location = new System.Drawing.Point(sc[0].Bounds.Left, sc[0].Bounds.Top);
+                }
+                catch { }
                 ls.Show();
             }
         }
@@ -447,35 +462,6 @@ namespace EyeGuard
                         Count++;
                         break;
                     }
-            /*
-            //智能计时
-            case 1:
-                {
-                    //判断是否全屏
-                    if(!bll.FullScreen()) //非全屏
-                    {
-                        //判断系统是否处于空闲时间
-                        if (Bll.GetLastInputTime() < 1000)
-                        {
-                            //如果不处于空闲时间
-                            Count++;
-                            //清空暂离状态
-                            FreeCount = 0;
-                        }
-                        else
-                        {
-                            //判断是否处于暂离状态
-                            FreeCount++;
-                            //如果电脑5分无人进行操作，那么就重新开始计时
-                            if (FreeCount >= 300)
-                            {
-                                //重新开始计时
-                                Count = 0;
-                            }
-                        }
-                    }
-                        break;
-                }*/
 
                 //重写智能计时
                 case 1:
@@ -641,6 +627,16 @@ namespace EyeGuard
                 if (LockScreenⅡ.Function == false)
                 {
                     LockScreenⅡ ls = new LockScreenⅡ(md);
+                    try
+                    {
+                        //限制到第一个屏幕显示
+                        Screen[] sc = Screen.AllScreens;
+                        ls.Location = new System.Drawing.Point(sc[0].Bounds.Left, sc[0].Bounds.Top);
+                    }
+                    catch
+                    {
+
+                    }
                     ls.Show();
                 }
             }

@@ -80,7 +80,7 @@ namespace EyeGuard.UI
             {
                 md.State = (state)0;
             }
-            h.Hook_Clear();
+            //h.Hook_Clear();
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace EyeGuard.UI
         /// <summary>
         /// 锁屏定义
         /// </summary>
-        Hook h = new Hook();
+        //Hook h = new Hook();
 
         /// <summary>
         /// 禁用任务管理器
@@ -213,7 +213,7 @@ namespace EyeGuard.UI
             TopTimer.Interval = new TimeSpan(0, 0, 1);
             TopTimer.Tick += TopTimer_Tick;
             TopTimer.Start();
-            h.Hook_Start();//按键屏蔽
+            //h.Hook_Start();//按键屏蔽
         }
 
 

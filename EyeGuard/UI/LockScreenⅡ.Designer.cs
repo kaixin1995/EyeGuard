@@ -33,8 +33,8 @@
             this.Unlock = new System.Windows.Forms.PictureBox();
             this.PromptText = new System.Windows.Forms.Label();
             this.pbx_image = new System.Windows.Forms.PictureBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.timer_countdown = new System.Windows.Forms.Timer(this.components);
+            this.timer_top = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.bufferGif)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Unlock)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_image)).BeginInit();
@@ -88,16 +88,16 @@
             this.pbx_image.TabStop = false;
             this.pbx_image.WaitOnLoad = true;
             // 
-            // timer1
+            // timer_countdown
             // 
-            this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.timer_countdown.Interval = 1000;
+            this.timer_countdown.Tick += new System.EventHandler(this.timer_countdown_Tick);
             // 
-            // timer2
+            // timer_top
             // 
-            this.timer2.Enabled = true;
-            this.timer2.Interval = 1000;
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            this.timer_top.Enabled = true;
+            this.timer_top.Interval = 1000;
+            this.timer_top.Tick += new System.EventHandler(this.timer_top_Tick);
             // 
             // LockScreenⅡ
             // 
@@ -133,7 +133,7 @@
         private System.Windows.Forms.PictureBox Unlock;
         private System.Windows.Forms.Label PromptText;
         private System.Windows.Forms.PictureBox pbx_image;
-        private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.Timer timer_countdown;
+        private System.Windows.Forms.Timer timer_top;
     }
 }
