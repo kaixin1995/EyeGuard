@@ -34,7 +34,6 @@
             this.PromptText = new System.Windows.Forms.Label();
             this.pbx_image = new System.Windows.Forms.PictureBox();
             this.timer_countdown = new System.Windows.Forms.Timer(this.components);
-            this.timer_top = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.bufferGif)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Unlock)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_image)).BeginInit();
@@ -71,7 +70,7 @@
             this.PromptText.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.PromptText.Location = new System.Drawing.Point(25, 273);
             this.PromptText.Name = "PromptText";
-            this.PromptText.Size = new System.Drawing.Size(396, 35);
+            this.PromptText.Size = new System.Drawing.Size(690, 62);
             this.PromptText.TabIndex = 11;
             this.PromptText.Text = "距离解锁时间还有:00秒";
             // 
@@ -92,12 +91,6 @@
             // 
             this.timer_countdown.Interval = 1000;
             this.timer_countdown.Tick += new System.EventHandler(this.timer_countdown_Tick);
-            // 
-            // timer_top
-            // 
-            this.timer_top.Enabled = true;
-            this.timer_top.Interval = 1000;
-            this.timer_top.Tick += new System.EventHandler(this.timer_top_Tick);
             // 
             // LockScreenⅡ
             // 
@@ -134,6 +127,5 @@
         private System.Windows.Forms.Label PromptText;
         private System.Windows.Forms.PictureBox pbx_image;
         private System.Windows.Forms.Timer timer_countdown;
-        private System.Windows.Forms.Timer timer_top;
     }
 }

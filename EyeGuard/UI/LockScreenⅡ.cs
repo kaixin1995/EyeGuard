@@ -112,8 +112,6 @@ namespace EyeGuard.UI
                 lockScreenⅡ.md = md;
                 lockScreenⅡ.Location = new Point(sc[1].Bounds.Left, sc[1].Bounds.Top);
                 FunctionⅡ = true;
-                lockScreenⅡ.timer_top.Stop();
-                lockScreenⅡ.timer_top.Enabled = false;
                 lockScreenⅡ.Show();
             }
         }
@@ -213,7 +211,11 @@ namespace EyeGuard.UI
             //控件相对于屏幕位置
             Position();
 
+
+            //获得焦点
+            this.Focus();
             TopMost = true;
+            BringToFront();
 
 
             //置顶
@@ -290,77 +292,6 @@ namespace EyeGuard.UI
         } 
         #endregion
 
-
-        
-
-
-        #region 禁用键盘按键
-        /// <summary>
-        /// 禁用任务管理器
-        /// </summary>
-        protected override bool ProcessKeyEventArgs(ref Message m)
-        {
-            KillTaskmgr();
-            return base.ProcessKeyEventArgs(ref m);
-        }
-
-
-        /// <summary>
-        /// 禁用鼠标右键
-        /// </summary>
-        protected override void WndProc(ref Message m)
-        {
-            if (m.Msg == 0x205)
-            {
-
-            }
-            base.WndProc(ref m);
-        }
-
-        /// <summary>
-        /// 禁用任务管理器
-        /// </summary>
-        private void KillTaskmgr()
-        {
-            Process[] sum = Process.GetProcesses();
-            foreach (Process p in sum)
-            {
-                if (p.ProcessName == "taskmgr" || p.ProcessName == "cmd")
-                    try
-                    {
-                        p.Kill();
-                    }
-                    catch
-                    {
-
-                    }
-            }
-        }
-        #endregion
-
-        /// <summary>
-        /// 当前窗口句柄
-        /// </summary>
-        IntPtr myPtr = GetForegroundWindow();
-
-        /// <summary>
-        /// 置顶
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void timer_top_Tick(object sender, EventArgs e)
-        {
-            KillTaskmgr();
-            if (!this.Focused)
-            {
-                //获得焦点
-                this.Focus();
-                //置顶
-                BLL.TopMostTool.setTop(myPtr);
-                TopMost = true;
-                BringToFront();
-            }
-        }
 
 
         /// <summary>
