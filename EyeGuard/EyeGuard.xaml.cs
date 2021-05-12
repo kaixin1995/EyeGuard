@@ -124,15 +124,7 @@ namespace EyeGuard
         /// </summary>
         private void ResetTime_Click(object sender, EventArgs e)
         {
-            if (Tips.Function == false)
-            {
-                Tips tp = new Tips("头铁如你，但是头铁不代表身体也铁，所以必须休息~");
-                tp.Show();
-                return;
-            }
-            //不准跳过
-            //Count = 0;
-
+            Count = 0;
         }
 
 
