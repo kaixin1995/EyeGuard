@@ -247,7 +247,6 @@ E:\开源项目\EyeGuard\EyeGuard\EyeGuard\bin\Debug\ControlzEx.xml
 E:\开源项目\EyeGuard\EyeGuard\EyeGuard\bin\Debug\MahApps.Metro.pdb
 E:\开源项目\EyeGuard\EyeGuard\EyeGuard\bin\Debug\MahApps.Metro.xml
 E:\开源项目\EyeGuard\EyeGuard\EyeGuard\bin\Debug\Microsoft.Xaml.Behaviors.xml
-E:\开源项目\EyeGuard\EyeGuard\EyeGuard\obj\Debug\EyeGuard.csprojAssemblyReference.cache
 E:\开源项目\EyeGuard\EyeGuard\EyeGuard\obj\Debug\Interop.IWshRuntimeLibrary.dll
 E:\开源项目\EyeGuard\EyeGuard\EyeGuard\obj\Debug\EyeGuard.csproj.ResolveComReference.cache
 E:\开源项目\EyeGuard\EyeGuard\EyeGuard\obj\Debug\EyeGuard.baml

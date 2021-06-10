@@ -92,6 +92,11 @@ namespace EyeGuard
             Whether.MenuItems.Add(SelfStarting);
             Whether.MenuItems.Add(SelfCancellation);
 
+
+            //右键菜单--恢复位置
+            MenuItem Location = new MenuItem("恢复位置");
+            Location.Click += new EventHandler(RestoreLocation_Click);
+
             //右键菜单--关于
             MenuItem about = new MenuItem("关于");
             about.Click += new EventHandler(about_Click);
@@ -102,8 +107,18 @@ namespace EyeGuard
 
 
             //关联托盘控件
-            MenuItem[] childen = new MenuItem[] {SetupPanel, reset_time,DesktopControls, LockScreen , Whether, about,exit };
+            MenuItem[] childen = new MenuItem[] {SetupPanel, reset_time,DesktopControls, LockScreen , Whether, Location, about,exit };
             notifyIcon.ContextMenu = new ContextMenu(childen);
+        }
+
+        /// <summary>
+        /// 恢复桌面控件位置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RestoreLocation_Click(object sender, EventArgs e)
+        {
+            RestoreLocation();
         }
 
         /// <summary>
@@ -322,6 +337,16 @@ namespace EyeGuard
         }
 
         /// <summary>
+        /// 恢复位置
+        /// </summary>
+        private void RestoreLocation()
+        {
+            double ScreenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;//WPF
+            this.Top = 90;
+            this.Left = ScreenWidth - 250;
+        }
+
+        /// <summary>
         /// 时钟
         /// </summary>
         private DispatcherTimer timer = new DispatcherTimer();
@@ -329,9 +354,7 @@ namespace EyeGuard
         {
             InitializeComponent();
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
-            double ScreenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;//WPF
-            this.Top = 90;
-            this.Left = ScreenWidth-250;
+            RestoreLocation();
             //隐藏控件
             initialTray();
             md = bll.Initialization();
@@ -382,7 +405,7 @@ namespace EyeGuard
             //获得焦点
             this.Focus();
             md.State = (state)0;
-            
+            RestoreLocation();
             //解屏、登录后执行
             if (dateBegin != null)
             {
