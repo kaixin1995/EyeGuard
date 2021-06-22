@@ -222,8 +222,12 @@ namespace EyeGuard.UI
                 ShutdownPoints.ItemsSource = branch;
 
                 List<string> _shutdownTime = new List<string>();
-                _shutdownTime.Add("正常关机");
-                _shutdownTime.Add("休眠模式");
+                //遍历枚举
+                foreach (int MyKey in Enum.GetValues(typeof(TurnOffTime.shutdown_mode)))
+                {
+                    string MyVaule = Enum.GetName(typeof(TurnOffTime.shutdown_mode), MyKey);
+                    _shutdownTime.Add(MyVaule);
+                }
 
                 ShutdownMode.ItemsSource = _shutdownTime;
 

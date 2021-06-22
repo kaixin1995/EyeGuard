@@ -472,9 +472,33 @@ namespace EyeGuard
             }
         }
 
+        #region 休眠睡眠、注销、锁定的API
+        /// <summary>
+        /// 睡眠和休眠
+        /// </summary>
+        /// <param name="hiberate"></param>
+        /// <param name="forceCritical"></param>
+        /// <param name="disableWakeEvent"></param>
+        /// <returns></returns>
         [DllImport("PowrProf.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern bool SetSuspendState(bool hiberate, bool forceCritical, bool disableWakeEvent);
 
+
+        /// <summary>
+        /// 注销
+        /// </summary>
+        /// <param name="uFlags"></param>
+        /// <param name="dwReason"></param>
+        /// <returns></returns>
+        [DllImport("user32")]
+        public static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
+
+        /// <summary>
+        /// 锁定
+        /// </summary>
+        [DllImport("user32")]
+        public static extern void LockWorkStation();
+        #endregion
 
         /// <summary>
         /// 时钟事件
@@ -622,20 +646,32 @@ namespace EyeGuard
                         }
                     }
                 }
-
+               
                 //到达关机时间
-                if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == md.Shutdown.Branch && Convert.ToInt32(time[2]) == 3)
+                if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == md.Shutdown.Branch && Convert.ToInt32(time[2]) == 1)
                 {
                     timer.Stop();
-                    if ((int)md.Shutdown.ShutdownMode == 0)
+                    switch ((int)md.Shutdown.ShutdownMode)
                     {
-                        Process.Start("shutdown", " -s -t 0");
+                        case 0://关机
+                            Process.Start("shutdown", " -s -t 0");
+                            break;
+                        case 1://休眠
+                            SetSuspendState(true, true, true);
+                            break;
+                        case 2://注销
+                            ExitWindowsEx(0, 0);
+                            break;
+                        case 3://睡眠
+                            SetSuspendState(false, true, true);
+                            break;
+                        case 4://锁定
+                            LockWorkStation();
+                            break;
+                        case 5://重启
+                            Process.Start("shutdown", "/r /t 0");
+                            break;
                     }
-                    else
-                    {
-                        SetSuspendState(true, true, true);
-                    }
-                    
                 }
             }
 

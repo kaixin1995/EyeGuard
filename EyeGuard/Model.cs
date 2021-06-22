@@ -100,7 +100,7 @@
         /// <summary>
         /// 设置关机模式枚举
         /// </summary>
-        public enum shutdown_mode { 正常关机 = 0, 休眠模式 = 1 }
+        public enum shutdown_mode { 关机 = 0, 休眠 = 1,注销=2,睡眠=3,锁定=4,重启=5 }
 
         /// <summary>
         /// 设置关机模式-到达关机时间后的操作
