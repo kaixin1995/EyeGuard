@@ -271,3 +271,4 @@ E:\开源项目\EyeGuard\EyeGuard\EyeGuard\obj\Debug\EyeGuard.csproj.CoreCompile
 E:\开源项目\EyeGuard\EyeGuard\EyeGuard\obj\Debug\EyeGuard.csproj.CopyComplete
 E:\开源项目\EyeGuard\EyeGuard\EyeGuard\obj\Debug\EyeGuard.exe
 E:\开源项目\EyeGuard\EyeGuard\EyeGuard\obj\Debug\EyeGuard.pdb
+E:\开源项目\EyeGuard\EyeGuard\EyeGuard\obj\Debug\EyeGuard.csproj.AssemblyReference.cache

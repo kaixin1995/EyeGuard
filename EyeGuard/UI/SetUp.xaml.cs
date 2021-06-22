@@ -61,11 +61,14 @@ namespace EyeGuard.UI
             work.Value = md.Work;
             this.Time.SelectedIndex = (int)md.TimerMode;
             this.Lock.SelectedIndex = (int)md.LockMode;
+            
 
             bool SF = (md.Unlock == 0) ? false : true;
 
-            Unlock.IsChecked = SF;
+            bool _isIntelligent = (md.IsIntelligent == 0) ? false:true;
 
+            Unlock.IsChecked = SF;
+            IsIntelligent.IsChecked = _isIntelligent;
 
         }
 
@@ -144,12 +147,15 @@ namespace EyeGuard.UI
                 md.TimerMode = (Model.timer_mode)Time.SelectedIndex;
                 md.LockMode = (Model.lock_mode)Lock.SelectedIndex;
                 md.Unlock = (bool)Unlock.IsChecked ? 1 : 0;
+                md.IsIntelligent = (bool)IsIntelligent.IsChecked ? 1 : 0;
             }
             else
             {
                 //这里是定时关机的数据保存
                 md.Shutdown.Time = Convert.ToInt32(ShutdownTime.Text);
                 md.Shutdown.Branch= Convert.ToInt32(ShutdownPoints.Text);
+                int i= ShutdownMode.SelectedIndex; 
+                md.Shutdown.ShutdownMode = (TurnOffTime.shutdown_mode)ShutdownMode.SelectedIndex;
             }
 
 
@@ -211,11 +217,19 @@ namespace EyeGuard.UI
                 {
                     branch.Add(i);
                 }
+
                 //绑定数据
                 ShutdownPoints.ItemsSource = branch;
+
+                List<string> _shutdownTime = new List<string>();
+                _shutdownTime.Add("正常关机");
+                _shutdownTime.Add("休眠模式");
+
+                ShutdownMode.ItemsSource = _shutdownTime;
+
                 this.ShutdownTime.SelectedIndex = md.Shutdown.Time+1;
                 this.ShutdownPoints.SelectedIndex = md.Shutdown.Branch+1;
-                
+                this.ShutdownMode.SelectedIndex = (int)md.Shutdown.ShutdownMode;
             }
             else
             {

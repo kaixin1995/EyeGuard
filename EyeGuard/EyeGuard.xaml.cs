@@ -344,6 +344,7 @@ namespace EyeGuard
             double ScreenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;//WPF
             this.Top = 90;
             this.Left = ScreenWidth - 250;
+            this.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -438,7 +439,42 @@ namespace EyeGuard
         /// 空闲时间统计
         /// </summary>
         private long FreeCount = 0;
-        
+
+
+        /// <summary>
+        /// 智能计时动作
+        /// </summary>
+        /// <param name="action">动作</param>
+        private void SmartTiming(Action action=null)
+        {
+            if (Bll.GetLastInputTime() < 1000)
+            {
+                if (action != null)
+                {
+                    action();
+                }
+                else
+                {
+                    Count++;
+                }
+                
+            }
+            else
+            {
+                //判断是否处于暂离状态
+                FreeCount++;
+                //如果电脑5分无人进行操作，那么就重新开始计时
+                if (FreeCount >= 300)
+                {
+                    //重新开始计时
+                    Count = 0;
+                }
+            }
+        }
+
+        [DllImport("PowrProf.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern bool SetSuspendState(bool hiberate, bool forceCritical, bool disableWakeEvent);
+
 
         /// <summary>
         /// 时钟事件
@@ -468,64 +504,47 @@ namespace EyeGuard
                 }
             }
 
-            //正常模式 = 0, 智能计时 = 1, 加班模式 = 2, 游戏模式 = 3
+            //正常模式 = 0, 游戏模式 = 3
             switch ((int)md.TimerMode)
             {
                 //正常模式
                 case 0:
                     {
-                        Count++;
-                        break;
-                    }
-
-                //重写智能计时
-                case 1:
-                    {
-                        //判断是否全屏
-                        if (!bll.FullScreen()) //非全屏
+                        if (md.IsIntelligent == 1)
                         {
-                            Count++;
-
-                            //判断系统是否处于空闲时间
-                            if (Bll.GetLastInputTime() < 1000)
-                            {
-                                //检测到键盘鼠标活动就清空暂离累计时间
-                                FreeCount = 0;
-                            }
-                            //如果电脑5分无人进行操作，那么就重新开始计时
-                            else if (FreeCount >= 300)
-                            {
-                                //重新开始计时
-                                Count = 0;
-                            }
-                            else
-                            {
-                                //判断是否处于暂离状态
-                                FreeCount++;
-                            }
-
+                            SmartTiming();
                         }
                         else
                         {
-                            //全屏下 默认认为处于工作，清空空闲累计时间，并且累计工作时间。
                             Count++;
-                            FreeCount = 0;
                         }
-                        
-                        break;
-                    }
-                //加班模式
-                case 2:
-                    {
-                        Count++;
                         break;
                     }
                 //游戏模式
                 case 3:
                     {
-
-                        //如果不处于空闲时间
-                        if (Bll.GetLastInputTime() < 1000)
+                        if (md.IsIntelligent == 1)
+                        {
+                            SmartTiming(() =>
+                            {
+                                //非全屏
+                                if (!bll.FullScreen())
+                                {
+                                    Count++;
+                                }
+                                else
+                                {
+                                    //判断工作时间是否已经到达，在游戏模式中，如果检测到全屏，会在即将锁屏的前一秒停止计时
+                                    if (md.Work * 60 > (Count + 1))
+                                    {
+                                        Count++;
+                                    }
+                                }
+                                //清空暂离状态
+                                FreeCount = 0;
+                            });
+                        }
+                        else
                         {
                             //非全屏
                             if (!bll.FullScreen())
@@ -543,17 +562,7 @@ namespace EyeGuard
                             //清空暂离状态
                             FreeCount = 0;
                         }
-                        else
-                        {
-                            //判断是否处于暂离状态
-                            FreeCount++;
-                            //如果电脑5分无人进行操作，那么就重新开始计时
-                            if (FreeCount >= 300)
-                            {
-                                //重新开始计时
-                                Count = 0;
-                            }
-                        }
+                            
                         break;
                     }
 
@@ -618,11 +627,16 @@ namespace EyeGuard
                 if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == md.Shutdown.Branch && Convert.ToInt32(time[2]) == 3)
                 {
                     timer.Stop();
-                    Process.Start("shutdown", " -s -t 0");
-
+                    if ((int)md.Shutdown.ShutdownMode == 0)
+                    {
+                        Process.Start("shutdown", " -s -t 0");
+                    }
+                    else
+                    {
+                        SetSuspendState(true, true, true);
+                    }
+                    
                 }
-
-
             }
 
             //休息前的提醒 游戏模式下不进行提醒

@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" x:Class="EyeGuard.UI.SetUp"
         mc:Ignorable="d"
-        Title="SetUp" Height="273" Width="245"  ResizeMode ="NoResize" WindowStartupLocation="CenterScreen" Loaded="MetroWindow_Loaded" ShowInTaskbar = "False">
+        Title="SetUp" Height="308.429" Width="245"  ResizeMode ="NoResize" WindowStartupLocation="CenterScreen" Loaded="MetroWindow_Loaded" ShowInTaskbar = "False">
 
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
@@ -33,19 +33,22 @@
 
             <ComboBox  IsEditable="True"  IsReadOnly="True" Name="Time" HorizontalAlignment="Left" Margin="76,116,0,0" VerticalAlignment="Top" Width="143"  />
             <ComboBox Name="Lock" HorizontalAlignment="Left" Margin="76,158,0,0" VerticalAlignment="Top" Width="143"/>
-            <Button Name="Preservation" Click="Preservation_Click" Style="{StaticResource AccentedSquareButtonStyle}" Content="保存" HorizontalAlignment="Left" Margin="159,203,0,0" VerticalAlignment="Top" Width="60"/>
+            <Button Name="Preservation" Click="Preservation_Click" Style="{StaticResource AccentedSquareButtonStyle}" Content="保存" HorizontalAlignment="Left" Margin="159,203,0,0" VerticalAlignment="Top" Width="60" Height="66"/>
             <Label Name="DisplayTime" Content="您已经工作0分" FontSize="15" HorizontalAlignment="Left" Margin="67,5,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
-            <Controls:ToggleSwitch OnLabel="允许解锁" Name="Unlock" OffLabel="禁止解锁" Margin="10,199,95,13" />
+            <Controls:ToggleSwitch OnLabel="允许解锁" Name="Unlock" OffLabel="禁止解锁" Margin="10,199,95.429,49" />
+            <Controls:ToggleSwitch OnLabel="智能计时" x:Name="IsIntelligent" OffLabel="普通计时" Margin="10,237,95.429,11" />
         </Grid>
 
         <Grid Name="ShutdownPanel" Visibility="Collapsed">
-            <Label Content="关机时:" HorizontalAlignment="Left" Margin="6,39,0,0" VerticalAlignment="Top"/>
-            <Label Content="关机分:" HorizontalAlignment="Left" Margin="119,39,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
+            <Label Content="小时:" HorizontalAlignment="Left" Margin="6,39,0,0" VerticalAlignment="Top"/>
+            <Label Content="分钟:" HorizontalAlignment="Left" Margin="6,73,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
 
-            <ComboBox  IsEditable="True"  IsReadOnly="True" Name="ShutdownTime" HorizontalAlignment="Left" Margin="55,38,0,0" VerticalAlignment="Top" Width="60" RenderTransformOrigin="0.497,-0.769"  />
-            <ComboBox Name="ShutdownPoints" HorizontalAlignment="Left" Margin="168,39,0,0" VerticalAlignment="Top" Width="60"/>
-            <Button  Click="Preservation_Click" Style="{StaticResource AccentedSquareButtonStyle}" FontSize="50" Content="保存" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top" Width="218" Height="150"/>
+            <ComboBox  IsEditable="True"  IsReadOnly="True" Name="ShutdownTime" HorizontalAlignment="Left" Margin="55,38,0,0" VerticalAlignment="Top" Width="174" RenderTransformOrigin="0.497,-0.769"  />
+            <ComboBox Name="ShutdownPoints" HorizontalAlignment="Left" Margin="55,73,0,0" VerticalAlignment="Top" Width="174"/>
+            <Button  Click="Preservation_Click" Style="{StaticResource AccentedSquareButtonStyle}" FontSize="50" Content="保存" HorizontalAlignment="Left" Margin="11,151,0,0" VerticalAlignment="Top" Width="218" Height="110"/>
             <Label Content="提示：-1代表不启用自动关机" FontSize="15" HorizontalAlignment="Left" Margin="17,5,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96" Foreground = "Red" />
+            <Label Content="模式:" HorizontalAlignment="Left" Margin="7,109,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
+            <ComboBox  IsEditable="True"  IsReadOnly="True" x:Name="ShutdownMode" HorizontalAlignment="Left" Margin="55,108,0,0" VerticalAlignment="Top" Width="174"  />
         </Grid>
     </Grid>
 

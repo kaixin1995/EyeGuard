@@ -14,6 +14,12 @@
         public int AlreadyWorked { get; set; }
 
         /// <summary>
+        /// 是否开启智能计时模式 0是不允许  1是允许
+        /// </summary>
+        public int IsIntelligent { get; set; }
+
+
+        /// <summary>
         /// 关机时间
         /// </summary>
         public TurnOffTime Shutdown { set; get; }
@@ -50,7 +56,8 @@
         /// <summary>
         /// 设置计时模式枚举
         /// </summary>
-        public enum timer_mode { 正常模式 = 0, 智能计时 = 1, 加班模式 = 2, 游戏模式 = 3 }
+        public enum timer_mode { 正常模式 = 0, 游戏模式 = 3 }
+
 
         /// <summary>
         /// 计时模式
@@ -88,6 +95,18 @@
         /// 分
         /// </summary>
         public int Branch { set; get; }
+
+
+        /// <summary>
+        /// 设置关机模式枚举
+        /// </summary>
+        public enum shutdown_mode { 正常关机 = 0, 休眠模式 = 1 }
+
+        /// <summary>
+        /// 设置关机模式-到达关机时间后的操作
+        /// 0是关机 1是睡眠
+        /// </summary>
+        public shutdown_mode ShutdownMode { get; set; }
 
     }
 
