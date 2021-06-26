@@ -314,7 +314,7 @@ namespace EyeGuard
             {
                 //获得焦点
                 this.Focus();
-
+                /*
                 if ((int)md.TimerMode == 2)
                 {
                     Count = 0;
@@ -324,7 +324,7 @@ namespace EyeGuard
                         tp.Show();
                     }
                     return;
-                }
+                }*/
                 
 
 
@@ -528,7 +528,7 @@ namespace EyeGuard
                 }
             }
 
-            //正常模式 = 0, 游戏模式 = 3
+            //正常模式 = 0, 游戏模式 = 1
             switch ((int)md.TimerMode)
             {
                 //正常模式
@@ -545,7 +545,7 @@ namespace EyeGuard
                         break;
                     }
                 //游戏模式
-                case 3:
+                case 1:
                     {
                         if (md.IsIntelligent == 1)
                         {
@@ -676,7 +676,7 @@ namespace EyeGuard
             }
 
             //休息前的提醒 游戏模式下不进行提醒
-            if ((md.Work - 1) * 60 == Count&& (int)md.TimerMode!=3)
+            if ((md.Work - 1) * 60 == Count&& (int)md.TimerMode!=1)
             {
                 if (Tips.Function == false)
                 {

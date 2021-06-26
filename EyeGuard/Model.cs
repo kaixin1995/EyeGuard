@@ -56,7 +56,7 @@
         /// <summary>
         /// 设置计时模式枚举
         /// </summary>
-        public enum timer_mode { 正常模式 = 0, 游戏模式 = 3 }
+        public enum timer_mode { 正常模式 = 0, 游戏模式 = 1 }
 
 
         /// <summary>
