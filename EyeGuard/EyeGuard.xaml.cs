@@ -449,6 +449,7 @@ namespace EyeGuard
         {
             if (Bll.GetLastInputTime() < 1000)
             {
+                FreeCount = 0;
                 if (action != null)
                 {
                     action();
@@ -457,7 +458,6 @@ namespace EyeGuard
                 {
                     Count++;
                 }
-                
             }
             else
             {
