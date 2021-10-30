@@ -27,7 +27,7 @@ namespace EyeGuard.UI
                 this.Close();
             }
             Function = true;
-            Edition.Content = "当前版本："+Dal.Edition;
+            Edition.Content = "当前版本：" + Dal.Edition;
             this.Closed += About_Closed;
 
         }
@@ -47,7 +47,7 @@ namespace EyeGuard.UI
         /// </summary>
         private void Github_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/kaixin1995/EyeGuard");
+            System.Diagnostics.Process.Start("explorer.exe", "https://github.com/kaixin1995/EyeGuard");
         }
 
         /// <summary>
@@ -55,6 +55,6 @@ namespace EyeGuard.UI
         /// </summary>
         public static bool Function = false;
 
-        
+
     }
 }

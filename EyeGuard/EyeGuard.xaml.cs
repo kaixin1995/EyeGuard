@@ -1,11 +1,13 @@
-﻿using EyeGuard.UI;
+﻿using EyeGuard.BLL;
+using EyeGuard.UI;
+using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
-using System.Windows.Forms;//添加引用，必须用到的
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
@@ -14,13 +16,12 @@ using Application = System.Windows.Application;
 
 namespace EyeGuard
 {
+    
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
     public partial class MainWindow : Window
     {
-        //实例化notifyIOC控件最小化托盘
-        private NotifyIcon notifyIcon = null;
 
         /// <summary>
         /// 解屏后执行的委托
@@ -38,78 +39,92 @@ namespace EyeGuard
         private DateTime? dateBegin = null;
 
 
-
-        // 最小化系统托盘
+        
+        /// <summary>
+        /// 最小化系统托盘
+        /// </summary>
         private void initialTray()
         {
             //设置托盘的各个属性
-            notifyIcon = new NotifyIcon();
-            notifyIcon.BalloonTipText = "眼睛卫士已经启动";//托盘气泡显示内容
-            notifyIcon.Text = "珍爱生命，保护眼睛";
-            notifyIcon.Visible = true;//托盘按钮是否可见
+            TaskbarIcon notifyIcon = new TaskbarIcon();
             //重要提示：此处的图标图片在resouces文件夹。不可删除，否则会死机
             string path = AppDomain.CurrentDomain.BaseDirectory + "Resources/favicon.ico";
             notifyIcon.Icon = new System.Drawing.Icon(path);//托盘中显示的图标
-            notifyIcon.ShowBalloonTip(1000);//托盘气泡显示时间
-
-            //鼠标点击事件
-            notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(notifyIcon_MouseClick);
+            ContextMenu context = new ContextMenu();
 
             //右键菜单--设置面板
-            MenuItem SetupPanel = new MenuItem("设置面板");
-            SetupPanel.Click += new EventHandler(SetupPanel_Click);
+            MenuItem SetupPanel = new MenuItem();
+            SetupPanel.Header = "设置面板";
+            SetupPanel.Click += SetupPanel_Click;
+
 
             //右键菜单--清零工作时间
-            MenuItem reset_time = new MenuItem("重置工作时间");
-            reset_time.Click += new EventHandler(ResetTime_Click);
+            MenuItem reset_time = new MenuItem();
+            reset_time.Header = "重置工作时间";
+            reset_time.Click += ResetTime_Click;
 
             //右键菜单--显示&隐藏|桌面插件
-            MenuItem DesktopControls = new MenuItem("桌面插件");
+            MenuItem DesktopControls = new MenuItem();
+            DesktopControls.Header = "桌面插件";
             //二级菜单
-            MenuItem Display = new MenuItem("显示");
+            MenuItem Display = new MenuItem();
+            Display.Header = "显示";
             Display.Tag = "display";
-            Display.Click += new EventHandler(WhetherToDisplay_Click);
-            MenuItem Hide = new MenuItem("隐藏");
+            Display.Click += WhetherToDisplay_Click;
+            MenuItem Hide = new MenuItem();
+            Hide.Header = "隐藏";
             Hide.Tag = "hide";
-            Hide.Click += new EventHandler(WhetherToDisplay_Click);
-            DesktopControls.MenuItems.Add(Display);
-            DesktopControls.MenuItems.Add(Hide);
+            Hide.Click += WhetherToDisplay_Click;
+            DesktopControls.Items.Add(Display);
+            DesktopControls.Items.Add(Hide);
 
             //右键菜单--手动锁定
-            MenuItem LockScreen = new MenuItem("锁屏");
-            LockScreen.Click += new EventHandler(LockScreen_Click);
+            MenuItem LockScreen = new MenuItem();
+            LockScreen.Header = "锁屏";
+            LockScreen.Click += LockScreen_Click;
 
 
             //开机启动项
-            MenuItem Whether = new MenuItem("是否开机自启");
+            MenuItem Whether = new MenuItem();
+            Whether.Header = "是否开机自启";
             //二级菜单
-            MenuItem SelfStarting = new MenuItem("开机自启");
+            MenuItem SelfStarting = new MenuItem();
+            SelfStarting.Header = "开机自启";
             SelfStarting.Tag = "SelfStarting";
-            SelfStarting.Click += new EventHandler(StartupItem_Click);
-            MenuItem SelfCancellation = new MenuItem("取消开机自启");
+            SelfStarting.Click += StartupItem_Click;
+            MenuItem SelfCancellation = new MenuItem();
+            SelfCancellation.Header = "取消开机自启";
             SelfCancellation.Tag = "SelfCancellation";
-            SelfCancellation.Click += new EventHandler(StartupItem_Click);
-            Whether.MenuItems.Add(SelfStarting);
-            Whether.MenuItems.Add(SelfCancellation);
+            SelfCancellation.Click += StartupItem_Click;
+            Whether.Items.Add(SelfStarting);
+            Whether.Items.Add(SelfCancellation);
 
 
             //右键菜单--恢复位置
-            MenuItem Location = new MenuItem("恢复位置");
-            Location.Click += new EventHandler(RestoreLocation_Click);
+            MenuItem Location = new MenuItem();
+            Location.Header = "恢复位置";
+            Location.Click += RestoreLocation_Click;
 
             //右键菜单--关于
-            MenuItem about = new MenuItem("关于");
-            about.Click += new EventHandler(about_Click);
+            MenuItem about = new MenuItem();
+            about.Header = "关于";
+            about.Click += about_Click;
 
             //右键菜单--退出菜单项
-            MenuItem exit = new MenuItem("退出");
-            exit.Click += new EventHandler(exit_Click);
+            MenuItem exit = new MenuItem();
+            exit.Header = "退出";
+            exit.Click += exit_Click;
 
-
+            
             //关联托盘控件
-            MenuItem[] childen = new MenuItem[] {SetupPanel, reset_time,DesktopControls, LockScreen , Whether, Location, about,exit };
-            notifyIcon.ContextMenu = new ContextMenu(childen);
+            MenuItem[] childen = new MenuItem[] { SetupPanel, reset_time, DesktopControls, LockScreen, Whether, Location, about, exit };
+            foreach (var item in childen)
+            {
+                context.Items.Add(item);
+            }
+            notifyIcon.ContextMenu = context;
         }
+
 
         /// <summary>
         /// 恢复桌面控件位置
@@ -157,8 +172,8 @@ namespace EyeGuard
             }
             catch
             {
-                System.Windows.Forms.MenuItem mi = (System.Windows.Forms.MenuItem)sender;
-                state = mi.Tag.ToString();
+                //System.Windows.Forms.MenuItem mi = (System.Windows.Forms.MenuItem)sender;
+                //state = mi.Tag.ToString();
             }
 
             //开机启动
@@ -188,28 +203,13 @@ namespace EyeGuard
         private void LockScreen_Click(object sender, EventArgs e)
         {
 
-            #region WPF方法的锁屏界面会出现锁屏界面无法置顶的偶尔性BUG
-            //if (LockScreen.Function == false)
-            //{
-            //    md.State = (state)1;
-            //    LockScreen ls = new LockScreen(this);
-            //    ls.md = md;
-            //    ls.Show();
-            //} 
-            #endregion
-
-            if (LockScreenⅡ.Function == false)
+            if (LockScreen.Function == false)
             {
                 md.State = (state)1;
-                LockScreenⅡ ls = new LockScreenⅡ(this);
+                LockScreen ls = new LockScreen(this);
                 ls.md = md;
-
-                try
-                {
-                    Screen[] sc = Screen.AllScreens;
-                    ls.Location = new System.Drawing.Point(sc[0].Bounds.Left, sc[0].Bounds.Top);
-                }
-                catch { }
+                ls.Left = 1920;
+                ls.Top = 0;
                 ls.Show();
             }
         }
@@ -251,19 +251,19 @@ namespace EyeGuard
                 System.Windows.Controls.MenuItem mi = (System.Windows.Controls.MenuItem)sender;
                 state = mi.Tag.ToString();
             }
-            catch 
+            catch
             {
                 try
                 {
                     MenuItem mi = (MenuItem)sender;
                     state = mi.Tag.ToString();
                 }
-                catch 
+                catch
                 {
 
                 }
             }
-           
+
             if (state == "hide")
             {
                 this.Visibility = Visibility.Hidden;
@@ -305,8 +305,12 @@ namespace EyeGuard
             System.Environment.Exit(0);
         }
 
-
-        // 托盘图标鼠标单击事件
+        /*
+        /// <summary>
+        /// 托盘图标鼠标单击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void notifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             //鼠标左键
@@ -314,27 +318,13 @@ namespace EyeGuard
             {
                 //获得焦点
                 this.Focus();
-
-                if ((int)md.TimerMode == 2)
-                {
-                    Count = 0;
-                    if (Tips.Function == false)
-                    {
-                        Tips tp = new Tips("加班模式下点击托盘会进行重新计时，您当前的工作时间已被重置~");
-                        tp.Show();
-                    }
-                    return;
-                }
-                
-
-
                 if (Tips.Function == false)
                 {
-                    Tips tp = new Tips("您已经工作了"+(Count/60)+"分钟，"+ (md.Work-(Count / 60)) + "分后进入休息时间");
+                    Tips tp = new Tips("您已经工作了" + (Count / 60) + "分钟，" + (md.Work - (Count / 60)) + "分后进入休息时间");
                     tp.Show();
                 }
             }
-        }
+        }*/
 
         /// <summary>
         /// 恢复位置
@@ -344,6 +334,7 @@ namespace EyeGuard
             double ScreenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;//WPF
             this.Top = 90;
             this.Left = ScreenWidth - 250;
+            this.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -356,7 +347,7 @@ namespace EyeGuard
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
             RestoreLocation();
             //隐藏控件
-            initialTray();
+            //initialTray();
             md = bll.Initialization();
 
             DateTime d2 = Convert.ToDateTime(DateTime.Now.ToShortDateString().ToString());
@@ -426,7 +417,7 @@ namespace EyeGuard
             //锁屏后执行
             dateBegin = DateTime.Now;
             md.State = (state)1;
-        } 
+        }
         #endregion
 
         /// <summary>
@@ -438,7 +429,66 @@ namespace EyeGuard
         /// 空闲时间统计
         /// </summary>
         private long FreeCount = 0;
-        
+
+
+        /// <summary>
+        /// 智能计时动作
+        /// </summary>
+        /// <param name="action">动作</param>
+        private void SmartTiming(Action action = null)
+        {
+            if (Bll.GetLastInputTime() < 1000)
+            {
+                FreeCount = 0;
+                if (action != null)
+                {
+                    action();
+                }
+                else
+                {
+                    Count++;
+                }
+            }
+            else
+            {
+                //判断是否处于暂离状态
+                FreeCount++;
+                //如果电脑5分无人进行操作，那么就重新开始计时
+                if (FreeCount >= 300)
+                {
+                    //重新开始计时
+                    Count = 0;
+                }
+            }
+        }
+
+        #region 休眠睡眠、注销、锁定的API
+        /// <summary>
+        /// 睡眠和休眠
+        /// </summary>
+        /// <param name="hiberate"></param>
+        /// <param name="forceCritical"></param>
+        /// <param name="disableWakeEvent"></param>
+        /// <returns></returns>
+        [DllImport("PowrProf.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern bool SetSuspendState(bool hiberate, bool forceCritical, bool disableWakeEvent);
+
+
+        /// <summary>
+        /// 注销
+        /// </summary>
+        /// <param name="uFlags"></param>
+        /// <param name="dwReason"></param>
+        /// <returns></returns>
+        [DllImport("user32")]
+        public static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
+
+        /// <summary>
+        /// 锁定
+        /// </summary>
+        [DllImport("user32")]
+        public static extern void LockWorkStation();
+        #endregion
 
         /// <summary>
         /// 时钟事件
@@ -453,7 +503,7 @@ namespace EyeGuard
                 this.Visibility = Visibility.Collapsed;
                 return;
             }
-            
+
 
             if (md.Display != 0)
             {
@@ -468,64 +518,47 @@ namespace EyeGuard
                 }
             }
 
-            //正常模式 = 0, 智能计时 = 1, 加班模式 = 2, 游戏模式 = 3
+            //正常模式 = 0, 游戏模式 = 1
             switch ((int)md.TimerMode)
             {
                 //正常模式
                 case 0:
                     {
-                        Count++;
-                        break;
-                    }
-
-                //重写智能计时
-                case 1:
-                    {
-                        //判断是否全屏
-                        if (!bll.FullScreen()) //非全屏
+                        if (md.IsIntelligent == 1)
                         {
-                            Count++;
-
-                            //判断系统是否处于空闲时间
-                            if (Bll.GetLastInputTime() < 1000)
-                            {
-                                //检测到键盘鼠标活动就清空暂离累计时间
-                                FreeCount = 0;
-                            }
-                            //如果电脑5分无人进行操作，那么就重新开始计时
-                            else if (FreeCount >= 300)
-                            {
-                                //重新开始计时
-                                Count = 0;
-                            }
-                            else
-                            {
-                                //判断是否处于暂离状态
-                                FreeCount++;
-                            }
-
+                            SmartTiming();
                         }
                         else
                         {
-                            //全屏下 默认认为处于工作，清空空闲累计时间，并且累计工作时间。
                             Count++;
-                            FreeCount = 0;
                         }
-                        
-                        break;
-                    }
-                //加班模式
-                case 2:
-                    {
-                        Count++;
                         break;
                     }
                 //游戏模式
-                case 3:
+                case 1:
                     {
-
-                        //如果不处于空闲时间
-                        if (Bll.GetLastInputTime() < 1000)
+                        if (md.IsIntelligent == 1)
+                        {
+                            SmartTiming(() =>
+                            {
+                                //非全屏
+                                if (!bll.FullScreen())
+                                {
+                                    Count++;
+                                }
+                                else
+                                {
+                                    //判断工作时间是否已经到达，在游戏模式中，如果检测到全屏，会在即将锁屏的前一秒停止计时
+                                    if (md.Work * 60 > (Count + 1))
+                                    {
+                                        Count++;
+                                    }
+                                }
+                                //清空暂离状态
+                                FreeCount = 0;
+                            });
+                        }
+                        else
                         {
                             //非全屏
                             if (!bll.FullScreen())
@@ -543,17 +576,7 @@ namespace EyeGuard
                             //清空暂离状态
                             FreeCount = 0;
                         }
-                        else
-                        {
-                            //判断是否处于暂离状态
-                            FreeCount++;
-                            //如果电脑5分无人进行操作，那么就重新开始计时
-                            if (FreeCount >= 300)
-                            {
-                                //重新开始计时
-                                Count = 0;
-                            }
-                        }
+
                         break;
                     }
 
@@ -604,7 +627,7 @@ namespace EyeGuard
                 else
                 {
                     //到达关机时间
-                    if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == (md.Shutdown.Branch-1) && Convert.ToInt32(time[2]) == 3)
+                    if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == (md.Shutdown.Branch - 1) && Convert.ToInt32(time[2]) == 3)
                     {
                         if (Tips.Function == false)
                         {
@@ -615,19 +638,40 @@ namespace EyeGuard
                 }
 
                 //到达关机时间
-                if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == md.Shutdown.Branch && Convert.ToInt32(time[2]) == 3)
+                if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == md.Shutdown.Branch && Convert.ToInt32(time[2]) == 1)
                 {
                     timer.Stop();
-                    Process.Start("shutdown", " -s -t 0");
-
+                    switch ((int)md.Shutdown.ShutdownMode)
+                    {
+                        case 0://关机
+                            Process.Start("shutdown", " -s -t 0");
+                            break;
+                        case 1://休眠
+                            SetSuspendState(true, true, true);
+                            break;
+                        case 2://注销
+                            ExitWindowsEx(0, 0);
+                            break;
+                        case 3://睡眠
+                            SetSuspendState(false, true, true);
+                            break;
+                        case 4://锁定
+                            LockWorkStation();
+                            break;
+                        case 5://重启
+                            Process.Start("shutdown", "/r /t 0");
+                            break;
+                    }
                 }
-
-
             }
 
             //休息前的提醒 游戏模式下不进行提醒
-            if ((md.Work - 1) * 60 == Count&& (int)md.TimerMode!=3)
+            if ((md.Work - 1) * 60 == Count)
             {
+                if ((int)md.TimerMode == 1 && bll.FullScreen())
+                {
+                    return;
+                }
                 if (Tips.Function == false)
                 {
                     Tips tp = new Tips("您已经工作了" + (Count / 60) + "分钟，1分钟后进入休息时间！");
@@ -639,19 +683,19 @@ namespace EyeGuard
             if (md.Work * 60 == Count)
             {
                 md.State = (state)1;
-                if (LockScreenⅡ.Function == false)
+                if (LockScreen.Function == false)
                 {
-                    LockScreenⅡ ls = new LockScreenⅡ(md);
-                    try
-                    {
-                        //限制到第一个屏幕显示
-                        Screen[] sc = Screen.AllScreens;
-                        ls.Location = new System.Drawing.Point(sc[0].Bounds.Left, sc[0].Bounds.Top);
-                    }
-                    catch
-                    {
+                    LockScreen ls = new LockScreen(md);
+                    //try
+                    //{
+                    //    //限制到第一个屏幕显示
+                    //    Screen[] sc = Screen.AllScreens;
+                    //    ls.Location = new System.Drawing.Point(sc[0].Bounds.Left, sc[0].Bounds.Top);
+                    //}
+                    //catch
+                    //{
 
-                    }
+                    //}
                     ls.Show();
                 }
             }
@@ -678,6 +722,7 @@ namespace EyeGuard
             {
                 this.Visibility = Visibility.Hidden;
             }
+            initialTray();
         }
         /// <summary>
         /// 无边框移动

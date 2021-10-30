@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EyeGuard"
         mc:Ignorable="d"
-        Title="EyeGuard" Height="52.923" Width="99.077" WindowStyle="None" ResizeMode ="NoResize" AllowsTransparency="True" Topmost="True"  Background="Transparent" ShowInTaskbar = "False" Loaded="Window_Loaded" MouseMove="Window_MouseMove">
+        Title="EyeGuard" Height="52.923" Width="99.077" WindowStyle="None" ResizeMode ="NoResize" AllowsTransparency="True" Topmost="True"  Background="Transparent" ShowInTaskbar = "False" Loaded="Window_Loaded" MouseMove="Window_MouseMove" >
     <Grid>
         <Grid.ContextMenu>
             <ContextMenu StaysOpen="true" Name="menu">

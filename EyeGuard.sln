@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EyeGuard", "EyeGuard\EyeGuard.csproj", "{055B2BAF-7E6A-47BF-8A73-B1992EAF77B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EyeGuard", "EyeGuard\EyeGuard.csproj", "{9BA2871B-1F35-48CE-9316-9CEF99382BA2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{055B2BAF-7E6A-47BF-8A73-B1992EAF77B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{055B2BAF-7E6A-47BF-8A73-B1992EAF77B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{055B2BAF-7E6A-47BF-8A73-B1992EAF77B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{055B2BAF-7E6A-47BF-8A73-B1992EAF77B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BA2871B-1F35-48CE-9316-9CEF99382BA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BA2871B-1F35-48CE-9316-9CEF99382BA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BA2871B-1F35-48CE-9316-9CEF99382BA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BA2871B-1F35-48CE-9316-9CEF99382BA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {155F0607-1BD7-4240-A65F-87AFEF5262AB}
+		SolutionGuid = {A8A7FFE3-F4A5-4B72-B975-460C8C19B2EB}
 	EndGlobalSection
 EndGlobal

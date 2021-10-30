@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 
 namespace EyeGuard.UI
@@ -55,17 +56,20 @@ namespace EyeGuard.UI
             Lock.ItemsSource = LockModes;
             Lock.SelectedValuePath = "Key";
             Lock.DisplayMemberPath = "Value";
-            
+
             //加载数据
             rest.Value = md.BreakPoints;
             work.Value = md.Work;
             this.Time.SelectedIndex = (int)md.TimerMode;
             this.Lock.SelectedIndex = (int)md.LockMode;
 
+
             bool SF = (md.Unlock == 0) ? false : true;
 
-            Unlock.IsChecked = SF;
+            bool _isIntelligent = (md.IsIntelligent == 0) ? false : true;
 
+            Unlock.IsOn = SF;
+            IsIntelligent.IsOn = _isIntelligent;
 
         }
 
@@ -84,7 +88,7 @@ namespace EyeGuard.UI
         /// </summary>
         private void OpenUrl_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/kaixin1995/EyeGuard");
+            Process.Start("explorer.exe", "https://github.com/kaixin1995/EyeGuard");
         }
 
 
@@ -95,9 +99,9 @@ namespace EyeGuard.UI
         {
             if (DisplayTime != null)
             {
-                DisplayTime.Content = "工作时间为"+ work.Value+ "分";
+                DisplayTime.Content = "工作时间为" + work.Value + "分";
             }
-            
+
         }
 
         /// <summary>
@@ -115,7 +119,7 @@ namespace EyeGuard.UI
                 DisplayTime.Content = "休息时间为" + rest.Value + "分";
             }
 
-            
+
         }
 
         /// <summary>
@@ -125,7 +129,7 @@ namespace EyeGuard.UI
         {
             if (DisplayTime != null)
             {
-                DisplayTime.Content = "您已经工作了"+md.AlreadyWorked + "分";
+                DisplayTime.Content = "您已经工作了" + md.AlreadyWorked + "分";
             }
         }
 
@@ -143,17 +147,20 @@ namespace EyeGuard.UI
                 md.BreakPoints = Convert.ToInt32(rest.Value);
                 md.TimerMode = (Model.timer_mode)Time.SelectedIndex;
                 md.LockMode = (Model.lock_mode)Lock.SelectedIndex;
-                md.Unlock = (bool)Unlock.IsChecked ? 1 : 0;
+                md.Unlock = (bool)Unlock.IsOn ? 1 : 0;
+                md.IsIntelligent = (bool)IsIntelligent.IsOn ? 1 : 0;
             }
             else
             {
                 //这里是定时关机的数据保存
                 md.Shutdown.Time = Convert.ToInt32(ShutdownTime.Text);
-                md.Shutdown.Branch= Convert.ToInt32(ShutdownPoints.Text);
+                md.Shutdown.Branch = Convert.ToInt32(ShutdownPoints.Text);
+                int i = ShutdownMode.SelectedIndex;
+                md.Shutdown.ShutdownMode = (TurnOffTime.shutdown_mode)ShutdownMode.SelectedIndex;
             }
 
 
-           
+
 
             //提醒
             Bll bll = new Bll();
@@ -163,7 +170,7 @@ namespace EyeGuard.UI
                 Tips tp = new Tips("已经成功保存~");
                 tp.Show();
             }
-           
+
             this.Close();
         }
 
@@ -198,7 +205,7 @@ namespace EyeGuard.UI
 
                 List<int> time = new List<int>();
 
-                for (int i = -1; i < 24;i++)
+                for (int i = -1; i < 24; i++)
                 {
                     time.Add(i);
                 }
@@ -211,11 +218,23 @@ namespace EyeGuard.UI
                 {
                     branch.Add(i);
                 }
+
                 //绑定数据
                 ShutdownPoints.ItemsSource = branch;
-                this.ShutdownTime.SelectedIndex = md.Shutdown.Time+1;
-                this.ShutdownPoints.SelectedIndex = md.Shutdown.Branch+1;
-                
+
+                List<string> _shutdownTime = new List<string>();
+                //遍历枚举
+                foreach (int MyKey in Enum.GetValues(typeof(TurnOffTime.shutdown_mode)))
+                {
+                    string MyVaule = Enum.GetName(typeof(TurnOffTime.shutdown_mode), MyKey);
+                    _shutdownTime.Add(MyVaule);
+                }
+
+                ShutdownMode.ItemsSource = _shutdownTime;
+
+                this.ShutdownTime.SelectedIndex = md.Shutdown.Time + 1;
+                this.ShutdownPoints.SelectedIndex = md.Shutdown.Branch + 1;
+                this.ShutdownMode.SelectedIndex = (int)md.Shutdown.ShutdownMode;
             }
             else
             {

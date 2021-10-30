@@ -2,7 +2,7 @@
 {
     public class Model
     {
-        
+
         /// <summary>
         /// 工作时间
         /// </summary>
@@ -12,6 +12,12 @@
         /// 已经工作时间
         /// </summary>
         public int AlreadyWorked { get; set; }
+
+        /// <summary>
+        /// 是否开启智能计时模式 0是不允许  1是允许
+        /// </summary>
+        public int IsIntelligent { get; set; }
+
 
         /// <summary>
         /// 关机时间
@@ -39,7 +45,7 @@
         /// <summary>
         /// 状态枚举
         /// </summary>
-        public enum state { 工作 = 0, 休息 = 1}
+        public enum state { 工作 = 0, 休息 = 1 }
 
         /// <summary>
         /// 当前工作状态
@@ -50,7 +56,8 @@
         /// <summary>
         /// 设置计时模式枚举
         /// </summary>
-        public enum timer_mode { 正常模式 = 0, 智能计时 = 1, 加班模式 = 2, 游戏模式 = 3 }
+        public enum timer_mode { 正常模式 = 0, 游戏模式 = 1 }
+
 
         /// <summary>
         /// 计时模式
@@ -60,13 +67,13 @@
         /// <summary>
         /// 设置锁屏风格枚举
         /// </summary>
-        public enum lock_mode {透明模式=0,半透明模式=1,屏保模式=2}
+        public enum lock_mode { 透明模式 = 0, 半透明模式 = 1, 屏保模式 = 2 }
 
         /// <summary>
         /// 锁屏界面
         /// </summary>
         public lock_mode LockMode { set; get; }
-        
+
         /// <summary>
         /// 窗体初始位置
         /// </summary>
@@ -88,6 +95,18 @@
         /// 分
         /// </summary>
         public int Branch { set; get; }
+
+
+        /// <summary>
+        /// 设置关机模式枚举
+        /// </summary>
+        public enum shutdown_mode { 关机 = 0, 休眠 = 1, 注销 = 2, 睡眠 = 3, 锁定 = 4, 重启 = 5 }
+
+        /// <summary>
+        /// 设置关机模式-到达关机时间后的操作
+        /// 0是关机 1是睡眠
+        /// </summary>
+        public shutdown_mode ShutdownMode { get; set; }
 
     }
 

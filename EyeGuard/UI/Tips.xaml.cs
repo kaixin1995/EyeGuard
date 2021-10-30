@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Threading;
 using System.Windows;
-using System.Windows.Interop;
 using System.Windows.Threading;
 
 namespace EyeGuard.UI
@@ -57,20 +55,20 @@ namespace EyeGuard.UI
             this.Width = (Bll.GetStringLength(TipsLable.Content.ToString()) / 2) * 38;
             //TipsLable.Margin=new Thickness(15,13,8,13);
 
-           
+
 
             //屏幕宽高
             double ScreenWidth = SystemParameters.PrimaryScreenWidth;
             double ScreenHeight = SystemParameters.PrimaryScreenHeight;
-            this.Top = ScreenHeight - this.Height-100;
-            this.Left = (ScreenWidth/2) - (this.Width / 2);
+            this.Top = ScreenHeight - this.Height - 100;
+            this.Left = (ScreenWidth / 2) - (this.Width / 2);
             this.Topmost = true;
 
 
             //时钟
             timer = new DispatcherTimer();
             //8秒后自动退出
-            timer.Interval = new TimeSpan(0,0,8);
+            timer.Interval = new TimeSpan(0, 0, 8);
             timer.Tick += timer1_Tick;
             timer.Start();
         }

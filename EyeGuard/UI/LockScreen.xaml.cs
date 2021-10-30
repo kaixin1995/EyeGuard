@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -30,7 +29,7 @@ namespace EyeGuard.UI
             InitializeComponent();
             PromptText.Visibility = Visibility.Hidden;
             Position();
-            
+
             mainWindow.Focus();
         }
 
@@ -51,11 +50,11 @@ namespace EyeGuard.UI
             md = Md;
             InitializeComponent();
             Position();
-            Count = md.BreakPoints*60;
+            Count = md.BreakPoints * 60;
 
             PromptText.Content = "距离解锁时间还有" + Count + "秒";
             PromptText.Width = (Bll.GetStringLength(PromptText.Content.ToString()) / 2) * 44;
-
+            
             //加班模式下无法隐藏强制解锁按钮
             if (md.Unlock == 0&& (int)md.TimerMode != 2)
             {
@@ -80,7 +79,7 @@ namespace EyeGuard.UI
             {
                 md.State = (state)0;
             }
-            //h.Hook_Clear();
+            h.Hook_Clear();
         }
 
         /// <summary>
@@ -88,7 +87,7 @@ namespace EyeGuard.UI
         /// </summary>
         public static bool Function = false;
 
-       
+
 
         /// <summary>
         /// 总秒数
@@ -138,7 +137,7 @@ namespace EyeGuard.UI
         public void Position()
         {
             Function = true;
-            
+
             this.Width = System.Windows.SystemParameters.PrimaryScreenWidth;
             this.Height = System.Windows.SystemParameters.PrimaryScreenHeight;
             this.Top = 0;
@@ -149,9 +148,9 @@ namespace EyeGuard.UI
             Unlock.Source = new BitmapImage(new Uri(path + "Resources/lock.png"));
 
 
-            Unlock.Margin = new Thickness((this.Width-Unlock.Width-8), (this.Height - Unlock.Height - 10), 0,0);
-            PromptText.Margin= new Thickness(this.Width/2 - PromptText.Width/2, (this.Height - PromptText.Height), 0, 0);
-            
+            Unlock.Margin = new Thickness((this.Width - Unlock.Width - 8), (this.Height - Unlock.Height - 10), 0, 0);
+            PromptText.Margin = new Thickness(this.Width / 2 - PromptText.Width / 2, (this.Height - PromptText.Height), 0, 0);
+
         }
 
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -163,27 +162,7 @@ namespace EyeGuard.UI
         /// <summary>
         /// 锁屏定义
         /// </summary>
-        //Hook h = new Hook();
-
-        /// <summary>
-        /// 禁用任务管理器
-        /// </summary>
-        private void KillTaskmgr()
-        {
-            Process[] sum = Process.GetProcesses();
-            foreach (Process p in sum)
-            {
-                if (p.ProcessName == "taskmgr" || p.ProcessName == "cmd")
-                    try
-                    {
-                        p.Kill();
-                    }
-                    catch
-                    {
-
-                    }
-            }
-        }
+        Hook h = new Hook();
 
         /// <summary>
         /// 程序运行时
@@ -213,7 +192,7 @@ namespace EyeGuard.UI
             TopTimer.Interval = new TimeSpan(0, 0, 1);
             TopTimer.Tick += TopTimer_Tick;
             TopTimer.Start();
-            //h.Hook_Start();//按键屏蔽
+            h.Hook_Start();//按键屏蔽
         }
 
 

@@ -6,7 +6,6 @@
         xmlns:local="clr-namespace:EyeGuard.UI"
         mc:Ignorable="d"
         Title="LockScreen" Height="450" Width="800" AllowsTransparency="True" WindowStyle="None"  Background="Transparent" ShowInTaskbar = "False" Loaded="Window_Loaded" WindowState="Maximized">
-    
     <Grid>
         <Border CornerRadius="0" Margin="2,2,2,2" BorderThickness="1" BorderBrush="White" Opacity="0.5" Name="hyaline">
             <Border Background="Black" Opacity="0.5" Margin="0" CornerRadius="0" Name="hyaline2"/>

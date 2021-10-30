@@ -1,6 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <EnableSecurityDebugging>false</EnableSecurityDebugging>
+    <_LastSelectedProfileId>G:\项目\EyeGuard\EyeGuard\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
+  <ItemGroup>
+    <ApplicationDefinition Update="App.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="UI\About.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UI\LockScreen.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UI\SetUp.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UI\Tips.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="EyeGuard.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UI\About.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UI\LockScreen.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UI\SetUp.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UI\Tips.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
 </Project>
