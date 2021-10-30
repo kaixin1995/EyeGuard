@@ -676,8 +676,12 @@ namespace EyeGuard
             }
 
             //休息前的提醒 游戏模式下不进行提醒
-            if ((md.Work - 1) * 60 == Count&& (int)md.TimerMode!=1)
+            if ((md.Work - 1) * 60 == Count)
             {
+                if ((int)md.TimerMode == 1&& bll.FullScreen())
+                {
+                    return;
+                }
                 if (Tips.Function == false)
                 {
                     Tips tp = new Tips("您已经工作了" + (Count / 60) + "分钟，1分钟后进入休息时间！");
