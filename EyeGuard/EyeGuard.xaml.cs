@@ -617,6 +617,7 @@ namespace EyeGuard
                         {
                             if (Tips.Function == false)
                             {
+                                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
                                 Tips tp = new Tips("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                                 tp.Show();
                             }
@@ -628,6 +629,7 @@ namespace EyeGuard
                         {
                             if (Tips.Function == false)
                             {
+                                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
                                 Tips tp = new Tips("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                                 tp.Show();
                             }
@@ -641,6 +643,7 @@ namespace EyeGuard
                     {
                         if (Tips.Function == false)
                         {
+                            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
                             Tips tp = new Tips("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                             tp.Show();
                         }
@@ -678,6 +681,7 @@ namespace EyeGuard
             //休息前的提醒 游戏模式下不进行提醒
             if ((md.Work - 1) * 60 == Count)
             {
+                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeRest.mp3").Play();
                 if ((int)md.TimerMode == 1&& bll.FullScreen())
                 {
                     return;
@@ -692,6 +696,14 @@ namespace EyeGuard
             //到达休息时间
             if (md.Work * 60 == Count)
             {
+                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3").Play();
+                //此处智能化一些，暂停播放的音乐
+                keybd_event((byte)Keys.MediaPlayPause, 0, 0, 0);
+                keybd_event((byte)Keys.MediaPlayPause, 0, 2, 0);
+
+                keybd_event((byte)Keys.Play, 0, 0, 0);
+                keybd_event((byte)Keys.Play, 0, 2, 0);
+
                 md.State = (state)1;
                 if (LockScreenⅡ.Function == false)
                 {
@@ -713,6 +725,14 @@ namespace EyeGuard
         }
 
 
+        [DllImport("user32.dll", EntryPoint = "keybd_event", SetLastError = true)]
+        public static extern void keybd_event(
+            byte bVk,    //虚拟键值
+            byte bScan,// 一般为0
+            int dwFlags,  //这里是整数类型  0 为按下，2为释放
+            int dwExtraInfo  //这里是整数类型 一般情况下设成为 0
+        );
+
 
         /// <summary>
         /// 实例化类
@@ -727,6 +747,7 @@ namespace EyeGuard
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Firing.mp3").Play();
             md = bll.Initialization();
             if (md.Display == 0)
             {
