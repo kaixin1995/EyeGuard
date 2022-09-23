@@ -314,7 +314,7 @@ namespace EyeGuard
             {
                 //获得焦点
                 this.Focus();
-
+                /*
                 if ((int)md.TimerMode == 2)
                 {
                     Count = 0;
@@ -324,7 +324,7 @@ namespace EyeGuard
                         tp.Show();
                     }
                     return;
-                }
+                }*/
                 
 
 
@@ -344,6 +344,7 @@ namespace EyeGuard
             double ScreenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;//WPF
             this.Top = 90;
             this.Left = ScreenWidth - 250;
+            this.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -438,7 +439,66 @@ namespace EyeGuard
         /// 空闲时间统计
         /// </summary>
         private long FreeCount = 0;
-        
+
+
+        /// <summary>
+        /// 智能计时动作
+        /// </summary>
+        /// <param name="action">动作</param>
+        private void SmartTiming(Action action=null)
+        {
+            if (Bll.GetLastInputTime() < 1000|| Bll.IsAudioPlaying())
+            {
+                FreeCount = 0;
+                if (action != null)
+                {
+                    action();
+                }
+                else
+                {
+                    Count++;
+                }
+            }
+            else
+            {
+                //判断是否处于暂离状态
+                FreeCount++;
+                //如果电脑5分无人进行操作，那么就重新开始计时
+                if (FreeCount >= 300)
+                {
+                    //重新开始计时
+                    Count = 0;
+                }
+            }
+        }
+
+        #region 休眠睡眠、注销、锁定的API
+        /// <summary>
+        /// 睡眠和休眠
+        /// </summary>
+        /// <param name="hiberate"></param>
+        /// <param name="forceCritical"></param>
+        /// <param name="disableWakeEvent"></param>
+        /// <returns></returns>
+        [DllImport("PowrProf.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern bool SetSuspendState(bool hiberate, bool forceCritical, bool disableWakeEvent);
+
+
+        /// <summary>
+        /// 注销
+        /// </summary>
+        /// <param name="uFlags"></param>
+        /// <param name="dwReason"></param>
+        /// <returns></returns>
+        [DllImport("user32")]
+        public static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
+
+        /// <summary>
+        /// 锁定
+        /// </summary>
+        [DllImport("user32")]
+        public static extern void LockWorkStation();
+        #endregion
 
         /// <summary>
         /// 时钟事件
@@ -468,64 +528,47 @@ namespace EyeGuard
                 }
             }
 
-            //正常模式 = 0, 智能计时 = 1, 加班模式 = 2, 游戏模式 = 3
+            //正常模式 = 0, 游戏模式 = 1
             switch ((int)md.TimerMode)
             {
                 //正常模式
                 case 0:
                     {
-                        Count++;
-                        break;
-                    }
-
-                //重写智能计时
-                case 1:
-                    {
-                        //判断是否全屏
-                        if (!bll.FullScreen()) //非全屏
+                        if (md.IsIntelligent == 1)
                         {
-                            Count++;
-
-                            //判断系统是否处于空闲时间
-                            if (Bll.GetLastInputTime() < 1000)
-                            {
-                                //检测到键盘鼠标活动就清空暂离累计时间
-                                FreeCount = 0;
-                            }
-                            //如果电脑5分无人进行操作，那么就重新开始计时
-                            else if (FreeCount >= 300)
-                            {
-                                //重新开始计时
-                                Count = 0;
-                            }
-                            else
-                            {
-                                //判断是否处于暂离状态
-                                FreeCount++;
-                            }
-
+                            SmartTiming();
                         }
                         else
                         {
-                            //全屏下 默认认为处于工作，清空空闲累计时间，并且累计工作时间。
                             Count++;
-                            FreeCount = 0;
                         }
-                        
-                        break;
-                    }
-                //加班模式
-                case 2:
-                    {
-                        Count++;
                         break;
                     }
                 //游戏模式
-                case 3:
+                case 1:
                     {
-
-                        //如果不处于空闲时间
-                        if (Bll.GetLastInputTime() < 1000)
+                        if (md.IsIntelligent == 1)
+                        {
+                            SmartTiming(() =>
+                            {
+                                //非全屏
+                                if (!bll.FullScreen())
+                                {
+                                    Count++;
+                                }
+                                else
+                                {
+                                    //判断工作时间是否已经到达，在游戏模式中，如果检测到全屏，会在即将锁屏的前一秒停止计时
+                                    if (md.Work * 60 > (Count + 1))
+                                    {
+                                        Count++;
+                                    }
+                                }
+                                //清空暂离状态
+                                FreeCount = 0;
+                            });
+                        }
+                        else
                         {
                             //非全屏
                             if (!bll.FullScreen())
@@ -543,17 +586,7 @@ namespace EyeGuard
                             //清空暂离状态
                             FreeCount = 0;
                         }
-                        else
-                        {
-                            //判断是否处于暂离状态
-                            FreeCount++;
-                            //如果电脑5分无人进行操作，那么就重新开始计时
-                            if (FreeCount >= 300)
-                            {
-                                //重新开始计时
-                                Count = 0;
-                            }
-                        }
+                            
                         break;
                     }
 
@@ -561,7 +594,7 @@ namespace EyeGuard
 
             if (md.Work * 60 >= Count)
             {
-                Time.Content = Bll.GetFormattingTime(Count.ToString());
+                Time.Text = Bll.GetFormattingTime(Count.ToString());
                 md.AlreadyWorked = md.Work / 60;
             }
 
@@ -584,6 +617,7 @@ namespace EyeGuard
                         {
                             if (Tips.Function == false)
                             {
+                                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
                                 Tips tp = new Tips("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                                 tp.Show();
                             }
@@ -595,6 +629,7 @@ namespace EyeGuard
                         {
                             if (Tips.Function == false)
                             {
+                                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
                                 Tips tp = new Tips("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                                 tp.Show();
                             }
@@ -608,26 +643,49 @@ namespace EyeGuard
                     {
                         if (Tips.Function == false)
                         {
+                            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
                             Tips tp = new Tips("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                             tp.Show();
                         }
                     }
                 }
-
+               
                 //到达关机时间
-                if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == md.Shutdown.Branch && Convert.ToInt32(time[2]) == 3)
+                if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == md.Shutdown.Branch && Convert.ToInt32(time[2]) == 1)
                 {
                     timer.Stop();
-                    Process.Start("shutdown", " -s -t 0");
-
+                    switch ((int)md.Shutdown.ShutdownMode)
+                    {
+                        case 0://关机
+                            Process.Start("shutdown", " -s -t 0");
+                            break;
+                        case 1://休眠
+                            SetSuspendState(true, true, true);
+                            break;
+                        case 2://注销
+                            ExitWindowsEx(0, 0);
+                            break;
+                        case 3://睡眠
+                            SetSuspendState(false, true, true);
+                            break;
+                        case 4://锁定
+                            LockWorkStation();
+                            break;
+                        case 5://重启
+                            Process.Start("shutdown", "/r /t 0");
+                            break;
+                    }
                 }
-
-
             }
 
             //休息前的提醒 游戏模式下不进行提醒
-            if ((md.Work - 1) * 60 == Count&& (int)md.TimerMode!=3)
+            if ((md.Work - 1) * 60 == Count)
             {
+                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeRest.mp3").Play();
+                if ((int)md.TimerMode == 1&& bll.FullScreen())
+                {
+                    return;
+                }
                 if (Tips.Function == false)
                 {
                     Tips tp = new Tips("您已经工作了" + (Count / 60) + "分钟，1分钟后进入休息时间！");
@@ -638,6 +696,19 @@ namespace EyeGuard
             //到达休息时间
             if (md.Work * 60 == Count)
             {
+                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3").Play();
+
+                if (Bll.IsAudioPlaying())
+                {
+                    //此处智能化一些，暂停播放的音乐
+                    keybd_event((byte)Keys.MediaPlayPause, 0, 0, 0);
+                    keybd_event((byte)Keys.MediaPlayPause, 0, 2, 0);
+
+                    keybd_event((byte)Keys.Play, 0, 0, 0);
+                    keybd_event((byte)Keys.Play, 0, 2, 0);
+                }
+               
+
                 md.State = (state)1;
                 if (LockScreenⅡ.Function == false)
                 {
@@ -659,6 +730,14 @@ namespace EyeGuard
         }
 
 
+        [DllImport("user32.dll", EntryPoint = "keybd_event", SetLastError = true)]
+        public static extern void keybd_event(
+            byte bVk,    //虚拟键值
+            byte bScan,// 一般为0
+            int dwFlags,  //这里是整数类型  0 为按下，2为释放
+            int dwExtraInfo  //这里是整数类型 一般情况下设成为 0
+        );
+
 
         /// <summary>
         /// 实例化类
@@ -673,6 +752,7 @@ namespace EyeGuard
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Firing.mp3").Play();
             md = bll.Initialization();
             if (md.Display == 0)
             {

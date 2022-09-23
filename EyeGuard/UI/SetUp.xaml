@@ -1,14 +1,22 @@
-﻿<Controls:MetroWindow
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" x:Class="EyeGuard.UI.SetUp"
-        mc:Ignorable="d"
-        Title="SetUp" Height="273" Width="245"  ResizeMode ="NoResize" WindowStartupLocation="CenterScreen" Loaded="MetroWindow_Loaded" ShowInTaskbar = "False">
+﻿<hc:Window
+    x:Class="EyeGuard.UI.SetUp"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    Title="SetUp"
+    Width="245"
+    Height="349.63"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    Loaded="MetroWindow_Loaded"
+    ShowInTaskbar="False"
+    mc:Ignorable="d"
+    >
 
-    <Controls:MetroWindow.RightWindowCommands>
+    <!--<Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button Content="Github" Name="OpenUrl" Click="OpenUrl_Click" />
             <Button>
@@ -17,36 +25,199 @@
                 </StackPanel>
             </Button>
         </Controls:WindowCommands>
-    </Controls:MetroWindow.RightWindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>-->
     <Grid>
 
-        <Grid Name="RestPanel" >
-            <Label Content="工作时间:" HorizontalAlignment="Left" Margin="7,37,0,0" VerticalAlignment="Top"/>
-            <Label Content="休息时间:" HorizontalAlignment="Left" Margin="7,77,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
-            <Label Content="计时模式:" HorizontalAlignment="Left" Margin="7,116,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
-            <Label Content="锁屏风格:" HorizontalAlignment="Left" Margin="7,160,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
+        <TabControl Style="{StaticResource TabControlInLine}">
+            <TabItem Header="休息设置">
+                <Grid Name="RestPanel">
+                    <Label
+                        Content="工作时间:"
+                        Margin="7,37,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        />
+                    <Label
+                        Content="休息时间:"
+                        Margin="7,77,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        RenderTransformOrigin="0.586,2.96"
+                        />
+                    <Label
+                        Content="计时模式:"
+                        Margin="7,116,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        RenderTransformOrigin="0.586,2.96"
+                        />
+                    <Label
+                        Content="锁屏风格:"
+                        Margin="7,160,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        RenderTransformOrigin="0.586,2.96"
+                        />
 
-            <!--工作时间-->
-            <Slider Name="work" LostFocus="TimerMode_LostFocus" ValueChanged="TimerMode_ValueChanged" IsSnapToTickEnabled="True" Minimum="1"  Maximum="60"  HorizontalAlignment="Left" Margin="76,32,0,0" VerticalAlignment="Top" Width="143" Height="36"/>
-            <!--休息时间-->
-            <Slider  Name="rest" LostFocus="TimerMode_LostFocus" ValueChanged="LockMode_ValueChanged" IsSnapToTickEnabled="True" Minimum="1"  Maximum="15"  HorizontalAlignment="Left" Margin="76,69,0,0" VerticalAlignment="Top" Width="143" Height="36"/>
+                    <!--  工作时间  -->
+                    <Slider
+                        Name="work"
+                        Width="143"
+                        Height="22"
+                        Margin="85,42,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        LostFocus="TimerMode_LostFocus"
+                        ValueChanged="TimerMode_ValueChanged"
+                        IsSnapToTickEnabled="True"
+                        Minimum="1"
+                        Maximum="60"
+                        />
+                    <!--  休息时间  -->
+                    <Slider
+                        Name="rest"
+                        Width="134"
+                        Height="25"
+                        Margin="85,79,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        LostFocus="TimerMode_LostFocus"
+                        ValueChanged="LockMode_ValueChanged"
+                        IsSnapToTickEnabled="True"
+                        Minimum="1"
+                        Maximum="15"
+                        />
 
-            <ComboBox  IsEditable="True"  IsReadOnly="True" Name="Time" HorizontalAlignment="Left" Margin="76,116,0,0" VerticalAlignment="Top" Width="143"  />
-            <ComboBox Name="Lock" HorizontalAlignment="Left" Margin="76,158,0,0" VerticalAlignment="Top" Width="143"/>
-            <Button Name="Preservation" Click="Preservation_Click" Style="{StaticResource AccentedSquareButtonStyle}" Content="保存" HorizontalAlignment="Left" Margin="159,203,0,0" VerticalAlignment="Top" Width="60"/>
-            <Label Name="DisplayTime" Content="您已经工作0分" FontSize="15" HorizontalAlignment="Left" Margin="67,5,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
-            <Controls:ToggleSwitch OnLabel="允许解锁" Name="Unlock" OffLabel="禁止解锁" Margin="10,199,95,13" />
-        </Grid>
+                    <ComboBox
+                        Name="Time"
+                        Width="134"
+                        Margin="85,116,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        IsEditable="True"
+                        IsReadOnly="True"
+                        />
+                    <ComboBox
+                        Name="Lock"
+                        Width="134"
+                        Margin="85,158,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        />
+                    <Button
+                        Name="Preservation"
+                        Content="保存"
+                        Width="60"
+                        Height="66"
+                        Margin="159,203,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Click="Preservation_Click"
+                        Style="{StaticResource ButtonPrimary}"
+                        />
+                    <TextBlock
+                        Name="DisplayTime"
+                        Text="您已经工作0分"
+                        Margin="69,10,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        FontSize="15"
+                        RenderTransformOrigin="0.586,2.96"
+                        />
 
-        <Grid Name="ShutdownPanel" Visibility="Collapsed">
-            <Label Content="关机时:" HorizontalAlignment="Left" Margin="6,39,0,0" VerticalAlignment="Top"/>
-            <Label Content="关机分:" HorizontalAlignment="Left" Margin="119,39,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96"/>
 
-            <ComboBox  IsEditable="True"  IsReadOnly="True" Name="ShutdownTime" HorizontalAlignment="Left" Margin="55,38,0,0" VerticalAlignment="Top" Width="60" RenderTransformOrigin="0.497,-0.769"  />
-            <ComboBox Name="ShutdownPoints" HorizontalAlignment="Left" Margin="168,39,0,0" VerticalAlignment="Top" Width="60"/>
-            <Button  Click="Preservation_Click" Style="{StaticResource AccentedSquareButtonStyle}" FontSize="50" Content="保存" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top" Width="218" Height="150"/>
-            <Label Content="提示：-1代表不启用自动关机" FontSize="15" HorizontalAlignment="Left" Margin="17,5,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.586,2.96" Foreground = "Red" />
-        </Grid>
+
+                    <Label Content="是否允许解锁" Margin="7,205,138,56" />
+
+                    <ToggleButton
+                        Name="Unlock"
+                        Margin="109,205,94,58"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource ToggleButtonSwitch}"
+                        RenderTransformOrigin="0.492,-0.67" Height="Auto"
+                        />
+                    <Label Content="是否智能计时" Margin="7,242,138,19" />
+                    <ToggleButton
+                        Name="IsIntelligent"
+                        Margin="109,243,94,21"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource ToggleButtonSwitch}" Height="Auto"
+                        />
+                    <!--<Controls:ToggleSwitch OnLabel="允许解锁" Name="Unlock" OffLabel="禁止解锁" Margin="10,199,95.429,49" />
+            <Controls:ToggleSwitch OnLabel="智能计时" x:Name="IsIntelligent" OffLabel="普通计时" Margin="10,237,95.429,11" />-->
+                </Grid>
+            </TabItem>
+            <TabItem Header="关机设置">
+                <Grid Name="ShutdownPanel">
+                    <Label
+                        Content="小时:"
+                        Margin="6,41,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        />
+                    <Label
+                        Content="分钟:"
+                        Margin="6,78,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        RenderTransformOrigin="0.586,2.96"
+                        />
+
+                    <ComboBox
+                        Name="ShutdownTime"
+                        Width="168"
+                        Margin="61,40,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        IsEditable="True"
+                        IsReadOnly="True"
+                        RenderTransformOrigin="0.497,-0.769"
+                        />
+                    <ComboBox
+                        Name="ShutdownPoints"
+                        Width="168"
+                        Margin="61,78,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        />
+                    <Button
+                        Content="保存"
+                        Name="btn_ShutDownToSave"
+                        Width="218"
+                        Height="110"
+                        Margin="11,160,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Click="Preservation_Click"
+                        FontSize="50"
+                        />
+                    <TextBlock
+                        Text="提示：-1代表不启用自动关机"
+                        Margin="22,12,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        FontSize="15"
+                        RenderTransformOrigin="0.586,2.96"
+                        Foreground="Red"
+                        />
+                    <Label
+                        Content="模式:"
+                        Margin="7,117,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        RenderTransformOrigin="0.586,2.96"
+                        />
+                    <ComboBox x:Name="ShutdownMode"
+                        Width="168"
+                        Margin="61,116,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        IsEditable="True"
+                        IsReadOnly="True"
+                        />
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 
-</Controls:MetroWindow>
+</hc:Window>

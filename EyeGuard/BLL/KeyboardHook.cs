@@ -107,43 +107,22 @@ namespace EyeGuard.BLL
 		/// <returns></returns>
 		private int MouseHookProc( int nCode, Int32 wParam, IntPtr lParam )
 		{
-			/*if ( ( nCode >= 0 ) && ( this.OnMouseUpdate != null )
-				&& ( wParam == ( int )WM_MOUSE.WM_MOUSEMOVE || wParam == ( int )WM_MOUSE.WM_MOUSEWHEEL ) )
-			{
-				MouseHookStruct MouseInfo = ( MouseHookStruct )Marshal.PtrToStructure( lParam, typeof( MouseHookStruct ) );
-				this.OnMouseUpdate( MouseInfo.Point.X, MouseInfo.Point.Y );
-			}*/
-            //*
             if ((nCode >= 0) && (OnMouseActivity != null))
             {
-                //Marshall the data from callback.
                 MouseHookStruct mouseHookStruct = (MouseHookStruct)Marshal.PtrToStructure(lParam, typeof(MouseHookStruct));
 
-                //detect button clicked
                 MouseButtons button = MouseButtons.None;
                 short mouseDelta = 0;
                 switch (wParam)
                 {
                     case (int)WM_MOUSE.WM_LBUTTONDOWN:
-                        //case WM_LBUTTONUP: 
-                        //case WM_LBUTTONDBLCLK: 
                         button = MouseButtons.Left;
                         break;
                     case (int)WM_MOUSE.WM_RBUTTONDOWN:
-                        //case WM_RBUTTONUP: 
-                        //case WM_RBUTTONDBLCLK: 
                         button = MouseButtons.Right;
                         break;
                     case (int)WM_MOUSE.WM_MOUSEWHEEL:
-                        //If the message is WM_MOUSEWHEEL, the high-order word of mouseData member is the wheel delta. 
-                        //One wheel click is defined as WHEEL_DELTA, which is 120. 
-                        //(value >> 16) & 0xffff; retrieves the high-order word from the given 32-bit value
                         mouseDelta = (short)((mouseHookStruct.MouseData>> 16) & 0xffff);
-                        //TODO: X BUTTONS (I havent them so was unable to test)
-                        //If the message is WM_XBUTTONDOWN, WM_XBUTTONUP, WM_XBUTTONDBLCLK, WM_NCXBUTTONDOWN, WM_NCXBUTTONUP, 
-                        //or WM_NCXBUTTONDBLCLK, the high-order word specifies which X button was pressed or released, 
-                        //and the low-order word is reserved. This value can be one or more of the following values. 
-                        //Otherwise, mouseData is not used. 
                         break;
                 }
 
