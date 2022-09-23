@@ -447,7 +447,7 @@ namespace EyeGuard
         /// <param name="action">动作</param>
         private void SmartTiming(Action action=null)
         {
-            if (Bll.GetLastInputTime() < 1000)
+            if (Bll.GetLastInputTime() < 1000|| Bll.IsAudioPlaying())
             {
                 FreeCount = 0;
                 if (action != null)
@@ -594,7 +594,7 @@ namespace EyeGuard
 
             if (md.Work * 60 >= Count)
             {
-                Time.Content = Bll.GetFormattingTime(Count.ToString());
+                Time.Text = Bll.GetFormattingTime(Count.ToString());
                 md.AlreadyWorked = md.Work / 60;
             }
 
@@ -697,12 +697,17 @@ namespace EyeGuard
             if (md.Work * 60 == Count)
             {
                 new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3").Play();
-                //此处智能化一些，暂停播放的音乐
-                keybd_event((byte)Keys.MediaPlayPause, 0, 0, 0);
-                keybd_event((byte)Keys.MediaPlayPause, 0, 2, 0);
 
-                keybd_event((byte)Keys.Play, 0, 0, 0);
-                keybd_event((byte)Keys.Play, 0, 2, 0);
+                if (Bll.IsAudioPlaying())
+                {
+                    //此处智能化一些，暂停播放的音乐
+                    keybd_event((byte)Keys.MediaPlayPause, 0, 0, 0);
+                    keybd_event((byte)Keys.MediaPlayPause, 0, 2, 0);
+
+                    keybd_event((byte)Keys.Play, 0, 0, 0);
+                    keybd_event((byte)Keys.Play, 0, 2, 0);
+                }
+               
 
                 md.State = (state)1;
                 if (LockScreenⅡ.Function == false)

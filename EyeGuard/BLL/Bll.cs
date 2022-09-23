@@ -233,8 +233,37 @@ namespace EyeGuard
             {
                 MessageBox.Show("您需要管理员权限修改", "提示");
             }
-        } 
+        }
         #endregion
+
+
+        ///// <summary>
+        ///// 获取默认声音设备
+        ///// </summary>
+        ///// <returns></returns>
+        //public static MMDevice GetDefaultRenderDevice()
+        //{
+        //    using (var enumerator = new MMDeviceEnumerator())
+        //    {
+        //        return enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
+        //    }
+        //}
+
+        /// <summary>
+        /// 是否正在播放
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsAudioPlaying()
+        {
+            using (var enumerator = new CSCore.CoreAudioAPI.MMDeviceEnumerator())
+            {
+                using (var meter = CSCore.CoreAudioAPI.AudioMeterInformation.FromDevice(enumerator.GetDefaultAudioEndpoint(CSCore.CoreAudioAPI.DataFlow.Render, CSCore.CoreAudioAPI.Role.Console)))
+                {
+                    return meter.PeakValue > 0;
+                }
+
+            }
+        }
     }
 
 

@@ -23,7 +23,7 @@ namespace EyeGuard.UI
             Function = true;
 
             //赋值提示的文字
-            TipsLable.Content = Value;
+            TipsLable.Text = Value;
             Position();
         }
 
@@ -54,7 +54,7 @@ namespace EyeGuard.UI
         public void Position()
         {
             //这里根据字符的长度来设置窗体的长度
-            this.Width = (Bll.GetStringLength(TipsLable.Content.ToString()) / 2) * 38;
+            this.Width = (Bll.GetStringLength(TipsLable.Text.ToString()) / 2) * 42;
             //TipsLable.Margin=new Thickness(15,13,8,13);
 
            
