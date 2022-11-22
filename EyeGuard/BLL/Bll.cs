@@ -232,6 +232,23 @@ namespace EyeGuard
             }
         }
         #endregion
+
+
+        /// <summary>
+        /// 是否正在播放
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsAudioPlaying()
+        {
+            using (var enumerator = new CSCore.CoreAudioAPI.MMDeviceEnumerator())
+            {
+                using (var meter = CSCore.CoreAudioAPI.AudioMeterInformation.FromDevice(enumerator.GetDefaultAudioEndpoint(CSCore.CoreAudioAPI.DataFlow.Render, CSCore.CoreAudioAPI.Role.Console)))
+                {
+                    return meter.PeakValue > 0;
+                }
+
+            }
+        }
     }
 
 

@@ -7,12 +7,31 @@
         mc:Ignorable="d"
         Title="Tips" Height="84" Width="236"  AllowsTransparency="True" WindowStyle="None"  Background="Transparent" ShowInTaskbar = "False" Loaded="Window_Loaded" Topmost="True">
     <Grid>
-        <Border CornerRadius="0" Margin="2,2,2,2" BorderThickness="1" BorderBrush="White" Opacity="0.5">
-            <Border Background="Black" Opacity="0.5" Margin="0" CornerRadius="0"/>
+        <Border
+            Margin="2,2,2,2"
+            CornerRadius="0"
+            BorderThickness="1"
+            BorderBrush="White"
+            Opacity="0.5"
+            >
+            <Border
+                Margin="0"
+                Background="Black"
+                Opacity="0.5"
+                CornerRadius="0"
+                />
         </Border>
         <Grid>
-            <ContentPresenter/>
+            <ContentPresenter />
         </Grid>
-        <Label Name="TipsLable" Content="眼睛卫士，您的健康助手！" FontSize="35" Foreground="White" HorizontalAlignment="Center" Margin="5,15,5,0" VerticalAlignment="Top"/>
+        <TextBlock
+            Name="TipsLable"
+            Text="眼睛卫士，您的健康助手！"
+            Margin="-92,19,-92,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            FontSize="35"
+            Foreground="White"
+            />
     </Grid>
 </Window>

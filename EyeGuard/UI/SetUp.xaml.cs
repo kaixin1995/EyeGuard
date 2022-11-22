@@ -1,15 +1,14 @@
-﻿using MahApps.Metro.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace EyeGuard.UI
 {
     /// <summary>
     /// SetUp.xaml 的交互逻辑
     /// </summary>
-    public partial class SetUp : MetroWindow
+    public partial class SetUp
     {
 
         Model md;
@@ -68,8 +67,8 @@ namespace EyeGuard.UI
 
             bool _isIntelligent = (md.IsIntelligent == 0) ? false : true;
 
-            Unlock.IsOn = SF;
-            IsIntelligent.IsOn = _isIntelligent;
+            Unlock.IsChecked = SF;
+            IsIntelligent.IsChecked = _isIntelligent;
 
         }
 
@@ -88,7 +87,7 @@ namespace EyeGuard.UI
         /// </summary>
         private void OpenUrl_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer.exe", "https://github.com/kaixin1995/EyeGuard");
+            System.Diagnostics.Process.Start("https://github.com/kaixin1995/EyeGuard");
         }
 
 
@@ -99,7 +98,7 @@ namespace EyeGuard.UI
         {
             if (DisplayTime != null)
             {
-                DisplayTime.Content = "工作时间为" + work.Value + "分";
+                DisplayTime.Text = "工作时间为" + work.Value + "分";
             }
 
         }
@@ -116,7 +115,7 @@ namespace EyeGuard.UI
         {
             if (DisplayTime != null)
             {
-                DisplayTime.Content = "休息时间为" + rest.Value + "分";
+                DisplayTime.Text = "休息时间为" + rest.Value + "分";
             }
 
 
@@ -129,7 +128,7 @@ namespace EyeGuard.UI
         {
             if (DisplayTime != null)
             {
-                DisplayTime.Content = "您已经工作了" + md.AlreadyWorked + "分";
+                DisplayTime.Text = "您已经工作了" + md.AlreadyWorked + "分";
             }
         }
 
@@ -140,15 +139,16 @@ namespace EyeGuard.UI
         /// </summary>
         private void Preservation_Click(object sender, RoutedEventArgs e)
         {
+            Button button = sender as Button;
             //这里是定时休息的数据保存
-            if (SwitchBoard.Content.ToString() == "定时关机")
+            if (button.Name != "btn_ShutDownToSave")
             {
                 md.Work = Convert.ToInt32(work.Value);
                 md.BreakPoints = Convert.ToInt32(rest.Value);
                 md.TimerMode = (Model.timer_mode)Time.SelectedIndex;
                 md.LockMode = (Model.lock_mode)Lock.SelectedIndex;
-                md.Unlock = (bool)Unlock.IsOn ? 1 : 0;
-                md.IsIntelligent = (bool)IsIntelligent.IsOn ? 1 : 0;
+                md.Unlock = (bool)Unlock.IsChecked ? 1 : 0;
+                md.IsIntelligent = (bool)IsIntelligent.IsChecked ? 1 : 0;
             }
             else
             {
@@ -188,60 +188,41 @@ namespace EyeGuard.UI
             this.Time.SelectedIndex = (int)md.TimerMode;
             this.Lock.SelectedIndex = (int)md.LockMode; 
             */
-        }
 
 
-        /// <summary>
-        /// 切换到定时关机面板
-        /// </summary>
-        private void Switch_Click(object sender, RoutedEventArgs e)
-        {
-            //切换到定时关机面板
-            if (SwitchBoard.Content.ToString() == "定时关机")
+
+            List<int> time = new List<int>();
+
+            for (int i = -1; i < 24; i++)
             {
-                SwitchBoard.Content = "定时休息";
-                RestPanel.Visibility = Visibility.Collapsed;
-                ShutdownPanel.Visibility = Visibility.Visible;
-
-                List<int> time = new List<int>();
-
-                for (int i = -1; i < 24; i++)
-                {
-                    time.Add(i);
-                }
-                //绑定数据
-                ShutdownTime.ItemsSource = time;
-
-                List<int> branch = new List<int>();
-
-                for (int i = -1; i < 60; i++)
-                {
-                    branch.Add(i);
-                }
-
-                //绑定数据
-                ShutdownPoints.ItemsSource = branch;
-
-                List<string> _shutdownTime = new List<string>();
-                //遍历枚举
-                foreach (int MyKey in Enum.GetValues(typeof(TurnOffTime.shutdown_mode)))
-                {
-                    string MyVaule = Enum.GetName(typeof(TurnOffTime.shutdown_mode), MyKey);
-                    _shutdownTime.Add(MyVaule);
-                }
-
-                ShutdownMode.ItemsSource = _shutdownTime;
-
-                this.ShutdownTime.SelectedIndex = md.Shutdown.Time + 1;
-                this.ShutdownPoints.SelectedIndex = md.Shutdown.Branch + 1;
-                this.ShutdownMode.SelectedIndex = (int)md.Shutdown.ShutdownMode;
+                time.Add(i);
             }
-            else
+            //绑定数据
+            ShutdownTime.ItemsSource = time;
+
+            List<int> branch = new List<int>();
+
+            for (int i = -1; i < 60; i++)
             {
-                SwitchBoard.Content = "定时关机";
-                RestPanel.Visibility = Visibility.Visible;
-                ShutdownPanel.Visibility = Visibility.Collapsed;
+                branch.Add(i);
             }
+
+            //绑定数据
+            ShutdownPoints.ItemsSource = branch;
+
+            List<string> _shutdownTime = new List<string>();
+            //遍历枚举
+            foreach (int MyKey in Enum.GetValues(typeof(TurnOffTime.shutdown_mode)))
+            {
+                string MyVaule = Enum.GetName(typeof(TurnOffTime.shutdown_mode), MyKey);
+                _shutdownTime.Add(MyVaule);
+            }
+
+            ShutdownMode.ItemsSource = _shutdownTime;
+
+            this.ShutdownTime.SelectedIndex = md.Shutdown.Time + 1;
+            this.ShutdownPoints.SelectedIndex = md.Shutdown.Branch + 1;
+            this.ShutdownMode.SelectedIndex = (int)md.Shutdown.ShutdownMode;
         }
     }
 }
