@@ -589,39 +589,52 @@ namespace EyeGuard
             {
                 new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3").Play();
 
-                //语音模式下不会进行锁屏的
-                if ((int)md.LockMode != 3)
+                switch (md.LockMode)
                 {
-                    if (Bll.IsAudioPlaying())
-                    {
-                        //此处智能化一些，暂停播放的音乐
-                        keybd_event((byte)Keys.MediaPlayPause, 0, 0, 0);
-                        keybd_event((byte)Keys.MediaPlayPause, 0, 2, 0);
-
-                        keybd_event((byte)Keys.Play, 0, 0, 0);
-                        keybd_event((byte)Keys.Play, 0, 2, 0);
-                    }
-
-
-
-                    if (LockScreen.Function == false)
-                    {
-                        md.State = (state)1;
-                        LockScreen ls = new LockScreen(this);
-                        ls.md = md;
-                        ls.Left = 0;
-                        ls.Top = 0;
-                        ls.Show();
-                    }
-                }
-                else
-                {
-                    //既然不锁屏，那就清空本次时间把~
-                    Count = 0;
+                    case lock_mode.透明模式:
+                    case lock_mode.半透明模式:
+                    case lock_mode.屏保模式:
+                        StopPlaying();
+                        if (LockScreen.Function == false)
+                        {
+                            md.State = (state)1;
+                            LockScreen ls = new LockScreen(this);
+                            ls.md = md;
+                            ls.Left = 0;
+                            ls.Top = 0;
+                            ls.Show();
+                        }
+                        break;
+                    case lock_mode.语音模式:
+                        //语音模式下不会进行锁屏的
+                        //既然不锁屏，那就清空本次时间把~
+                        Count = 0;
+                        break;
+                    case lock_mode.锁定Windows:
+                        Count = 0;
+                        StopPlaying();
+                        LockWorkStation();
+                        break;
+                    default:
+                        break;
                 }
             }
+        }
 
+        /// <summary>
+        /// 停止播放
+        /// </summary>
+        private void StopPlaying()
+        {
+            if (Bll.IsAudioPlaying())
+            {
+                //此处智能化一些，暂停播放的音乐
+                keybd_event((byte)Keys.MediaPlayPause, 0, 0, 0);
+                keybd_event((byte)Keys.MediaPlayPause, 0, 2, 0);
 
+                keybd_event((byte)Keys.Play, 0, 0, 0);
+                keybd_event((byte)Keys.Play, 0, 2, 0);
+            }
         }
 
 
