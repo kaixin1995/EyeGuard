@@ -129,24 +129,11 @@ namespace EyeGuard
                 md.State = (state)1;
                 LockScreen ls = new LockScreen(this);
                 ls.md = md;
+                ls.Left = 0;
+                ls.Top = 0;
                 ls.Show();
             }
             #endregion
-
-            //if (LockScreenⅡ.Function == false)
-            //{
-            //    md.State = (state)1;
-            //    LockScreenⅡ ls = new LockScreenⅡ(this);
-            //    ls.md = md;
-
-            //    try
-            //    {
-            //        Screen[] sc = Screen.AllScreens;
-            //        ls.Location = new System.Drawing.Point(sc[0].Bounds.Left, sc[0].Bounds.Top);
-            //    }
-            //    catch { }
-            //    ls.Show();
-            //}
         }
 
         /// <summary>
@@ -622,6 +609,8 @@ namespace EyeGuard
                         md.State = (state)1;
                         LockScreen ls = new LockScreen(this);
                         ls.md = md;
+                        ls.Left = 0;
+                        ls.Top = 0;
                         ls.Show();
                     }
                 }
@@ -669,6 +658,10 @@ namespace EyeGuard
             ImageSource imgSource = new BitmapImage(uri);
             
             MyNotifyIcon.Icon = imgSource;
+
+
+            //初始化，获取屏幕信息
+            Bll.GetInfoOnTheScreens();
         }
         /// <summary>
         /// 无边框移动

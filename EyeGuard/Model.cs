@@ -141,4 +141,30 @@
         /// </summary>
         public string Value { set; get; }
     }
+
+
+    /// <summary>
+    /// 屏幕帮助类
+    /// </summary>
+    public class InfoOnTheScreen
+    { 
+
+        /// <summary>
+        /// 宽度
+        /// </summary>
+        public int Width { get; set; }
+
+
+        /// <summary>
+        /// 高度
+        /// </summary>
+        public int Height { get; set; }
+
+
+        /// <summary>
+        /// 顺序，用来区分主屏幕与否  
+        /// 以及为后面的扩展留下接口
+        /// </summary>
+        public int Order { get; set; }
+    }
 }

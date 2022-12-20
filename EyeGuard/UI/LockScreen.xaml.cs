@@ -27,10 +27,56 @@ namespace EyeGuard.UI
             this.Closed += LockScreen_Closed;
 
             InitializeComponent();
-            PromptText.Visibility = Visibility.Hidden;
+            PromptText.Visibility = Visibility.Visible;
             Position();
-
+            PromptText.Text = "点击右下角小锁图片即可解锁";
             mainWindow.Focus();
+        }
+
+
+        /// <summary>
+        /// 第二屏幕对象
+        /// </summary>
+        LockScreen lockScreenⅡ = null;
+        public static bool FunctionⅡ = false;
+
+
+        /// <summary>
+        /// 第二屏幕调用
+        /// </summary>
+        /// <param name="Count"></param>
+        public LockScreen()
+        {
+            InitializeComponent();
+            Position();
+            PromptText.Visibility = Visibility.Visible;
+            PromptText.Text = "请在主屏幕进行解锁~";
+            PromptText.Width = (Bll.GetStringLength(PromptText.Text.ToString()) / 2) * 44;
+        }
+
+
+
+        /// <summary>
+        /// 第二屏幕显示
+        /// </summary>
+        /// <param name="md"></param>
+        private void DoubleScreen(Model md)
+        {
+            if (Bll.InfoOnTheScreens.Count == 2)
+            {
+                lockScreenⅡ = new LockScreen();
+                lockScreenⅡ.md = md;
+                lockScreenⅡ.Left = Bll.InfoOnTheScreens[0].Width;
+                lockScreenⅡ.Top = 0;
+                FunctionⅡ = true;
+                lockScreenⅡ.Width = Bll.InfoOnTheScreens[1].Width;
+                lockScreenⅡ.Height = Bll.InfoOnTheScreens[1].Height;
+                lockScreenⅡ.Unlock.Visibility = Visibility.Collapsed;
+                
+                lockScreenⅡ.Show();
+                //lockScreenⅡ.TopTimer.Stop();
+                lockScreenⅡ.WindowState = WindowState.Maximized;
+            }
         }
 
 
@@ -52,8 +98,8 @@ namespace EyeGuard.UI
             Position();
             Count = md.BreakPoints * 60;
 
-            PromptText.Content = "距离解锁时间还有" + Count + "秒";
-            PromptText.Width = (Bll.GetStringLength(PromptText.Content.ToString()) / 2) * 44;
+            PromptText.Text = "距离解锁时间还有" + Count + "秒";
+            PromptText.Width = (Bll.GetStringLength(PromptText.Text.ToString()) / 2) * 44;
             
             //加班模式下无法隐藏强制解锁按钮
             if (md.Unlock == 0&& (int)md.TimerMode != 2)
@@ -75,11 +121,17 @@ namespace EyeGuard.UI
         private void LockScreen_Closed(object sender, EventArgs e)
         {
             Function = false;
+            FunctionⅡ = false;
             if (md != null)
             {
                 md.State = (state)0;
             }
             h.Hook_Clear();
+
+            if (lockScreenⅡ != null)
+            {
+                lockScreenⅡ.Close();
+            }
         }
 
         /// <summary>
@@ -109,13 +161,13 @@ namespace EyeGuard.UI
                 }
                 else
                 {
-                    PromptText.Content = "移动鼠标将会自动解锁";
+                    PromptText.Text = "移动鼠标将会自动解锁";
                     Unlock.Visibility = Visibility.Visible;
                 }
             }
             else
             {
-                PromptText.Content = "距离解锁时间还有" + Count + "秒";
+                PromptText.Text = "距离解锁时间还有" + Count + "秒";
                 this.Topmost = true;
             }
         }
@@ -140,8 +192,8 @@ namespace EyeGuard.UI
 
             this.Width = System.Windows.SystemParameters.PrimaryScreenWidth;
             this.Height = System.Windows.SystemParameters.PrimaryScreenHeight;
-            this.Top = 0;
-            this.Left = 0;
+            //this.Top = 0;
+            //this.Left = 0;
             this.img.Stretch = Stretch.Fill;
             img.Width = this.Width;
             img.Height = this.Height;
@@ -172,27 +224,48 @@ namespace EyeGuard.UI
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.Focus();
-            if ((int)md.LockMode == 2)
+
+
+            switch (md.LockMode)
             {
-                img.Source = new BitmapImage(new Uri(path + "Resources/wallpaper.jpg"));
-                hyaline2.Opacity = 1;
-                hyaline.Opacity = 1;
+                case lock_mode.透明模式:
+                    hyaline2.Opacity = 0.1;
+                    hyaline.Opacity = 0.1;
+                    break;
+                case lock_mode.半透明模式:
+                    hyaline2.Opacity = 0.7;
+                    hyaline.Opacity = 0.7;
+                    break;
+                case lock_mode.屏保模式:
+                    img.Source = new BitmapImage(new Uri(path + "Resources/wallpaper.jpg"));
+                    hyaline2.Opacity = 1;
+                    hyaline.Opacity = 1;
+                    break;
+                default:
+                    hyaline2.Opacity = 0.5;
+                    hyaline.Opacity = 0.5;
+                    break;
             }
 
-            if ((int)md.LockMode == 0)
+            this.Width = Bll.InfoOnTheScreens[0].Width;
+            this.Height = Bll.InfoOnTheScreens[0].Height;
+            this.WindowState = WindowState.Maximized;
+            if (lockScreenⅡ == null && FunctionⅡ == false)
             {
-                hyaline2.Opacity = 0.1;
-                hyaline.Opacity = 0.1;
+                DoubleScreen(md);
+            }
+            else
+            {
+                BLL.TopMostTool.setTop(this.Title);
+
+                //置顶 时钟
+                TopTimer = new DispatcherTimer();
+                TopTimer.Interval = new TimeSpan(0, 0, 1);
+                TopTimer.Tick += TopTimer_Tick;
+                TopTimer.Start();
+                h.Hook_Start();//按键屏蔽
             }
 
-            BLL.TopMostTool.setTop(this.Title);
-
-            //置顶 时钟
-            TopTimer = new DispatcherTimer();
-            TopTimer.Interval = new TimeSpan(0, 0, 1);
-            TopTimer.Tick += TopTimer_Tick;
-            TopTimer.Start();
-            h.Hook_Start();//按键屏蔽
         }
 
 

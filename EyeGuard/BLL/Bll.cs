@@ -233,6 +233,41 @@ namespace EyeGuard
         }
         #endregion
 
+        [DllImport("PublicTools.dll", EntryPoint = "_GetStateOfTheSound@0")]
+        private static extern int GetStateOfTheSound();
+
+        //_GetInfoOnTheScreen@4
+        [DllImport("PublicTools.dll", EntryPoint = "GetInfoOnTheScreen")]
+        private static extern IntPtr GetInfoOnTheScreen();
+
+        /// <summary>
+        /// 全部屏幕信息
+        /// </summary>
+        public static List<InfoOnTheScreen> InfoOnTheScreens = new List<InfoOnTheScreen>();
+
+
+        /// <summary>
+        /// 获取全部屏幕信息
+        /// </summary>
+        public static void GetInfoOnTheScreens()
+        {
+            string value = Marshal.PtrToStringAnsi(GetInfoOnTheScreen());
+            string[] Displays = value.Split(',');
+
+            for (int i = 0; i < Displays.Length; i++)
+            {
+                string[] _value = Displays[i].Split("X");
+                if (_value.Length == 2)
+                {
+                    InfoOnTheScreen infoOnThe = new InfoOnTheScreen();
+                    infoOnThe.Width = Convert.ToInt32(_value[0]);
+                    infoOnThe.Height = Convert.ToInt32(_value[1]);
+                    infoOnThe.Order = i;
+                    InfoOnTheScreens.Add(infoOnThe);
+                }
+            }
+            
+        }
 
         /// <summary>
         /// 是否正在播放
@@ -240,14 +275,11 @@ namespace EyeGuard
         /// <returns></returns>
         public static bool IsAudioPlaying()
         {
-            using (var enumerator = new CSCore.CoreAudioAPI.MMDeviceEnumerator())
+            if (GetStateOfTheSound() == 1)
             {
-                using (var meter = CSCore.CoreAudioAPI.AudioMeterInformation.FromDevice(enumerator.GetDefaultAudioEndpoint(CSCore.CoreAudioAPI.DataFlow.Render, CSCore.CoreAudioAPI.Role.Console)))
-                {
-                    return meter.PeakValue > 0;
-                }
-
+                return true;
             }
+            return false;
         }
     }
 
