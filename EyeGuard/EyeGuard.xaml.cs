@@ -594,12 +594,12 @@ namespace EyeGuard
                     case lock_mode.透明模式:
                     case lock_mode.半透明模式:
                     case lock_mode.屏保模式:
+                    case lock_mode.时间锁屏:
                         StopPlaying();
                         if (LockScreen.Function == false)
                         {
                             md.State = (state)1;
-                            LockScreen ls = new LockScreen(this);
-                            ls.md = md;
+                            LockScreen ls = new LockScreen(md);
                             ls.Left = 0;
                             ls.Top = 0;
                             ls.Show();

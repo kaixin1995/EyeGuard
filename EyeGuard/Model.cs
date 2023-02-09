@@ -67,7 +67,7 @@
         /// <summary>
         /// 设置锁屏风格枚举
         /// </summary>
-        public enum lock_mode { 透明模式 = 0, 半透明模式 = 1, 屏保模式 = 2, 语音模式 = 3 ,锁定Windows =4 }
+        public enum lock_mode { 透明模式 = 0, 半透明模式 = 1, 屏保模式 = 2, 语音模式 = 3 ,锁定Windows =4,时间锁屏=5 }
 
         /// <summary>
         /// 锁屏界面

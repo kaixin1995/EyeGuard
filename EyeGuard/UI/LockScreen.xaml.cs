@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HandyControl.Controls;
+using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
@@ -6,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static EyeGuard.Model;
+using Window = System.Windows.Window;
 
 namespace EyeGuard.UI
 {
@@ -28,8 +30,8 @@ namespace EyeGuard.UI
 
             InitializeComponent();
             PromptText.Visibility = Visibility.Visible;
+            PromptText.Text = "点击右下角小锁即可解锁";
             Position();
-            PromptText.Text = "点击右下角小锁图片即可解锁";
             mainWindow.Focus();
         }
 
@@ -240,6 +242,12 @@ namespace EyeGuard.UI
                     img.Source = new BitmapImage(new Uri(path + "Resources/wallpaper.jpg"));
                     hyaline2.Opacity = 1;
                     hyaline.Opacity = 1;
+                    break;
+                case lock_mode.时间锁屏:
+                    filpclock.Visibility= Visibility.Visible;
+                    hyaline2.Opacity = 1;
+                    hyaline.Opacity = 1;
+                    PromptText.Foreground = Brushes.White;
                     break;
                 default:
                     hyaline2.Opacity = 0.5;
