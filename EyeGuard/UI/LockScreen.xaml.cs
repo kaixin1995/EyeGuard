@@ -53,7 +53,7 @@ namespace EyeGuard.UI
             Position();
             PromptText.Visibility = Visibility.Visible;
             PromptText.Text = "请在主屏幕进行解锁~";
-            PromptText.Width = (Bll.GetStringLength(PromptText.Text.ToString()) / 2) * 44;
+            //PromptText.Width = (Bll.GetStringLength(PromptText.Text.ToString()) / 2) * 44;
         }
 
 
@@ -101,7 +101,7 @@ namespace EyeGuard.UI
             Count = md.BreakPoints * 60;
 
             PromptText.Text = "距离解锁时间还有" + Count + "秒";
-            PromptText.Width = (Bll.GetStringLength(PromptText.Text.ToString()) / 2) * 44;
+            //PromptText.Width = (Bll.GetStringLength(PromptText.Text.ToString()) / 2) * 44;
             
             //加班模式下无法隐藏强制解锁按钮
             if (md.Unlock == 0&& (int)md.TimerMode != 2)
@@ -203,7 +203,7 @@ namespace EyeGuard.UI
 
 
             Unlock.Margin = new Thickness((this.Width - Unlock.Width - 8), (this.Height - Unlock.Height - 10), 0, 0);
-            PromptText.Margin = new Thickness(this.Width / 2 - PromptText.Width / 2, (this.Height - PromptText.Height), 0, 0);
+            //PromptText.Margin = new Thickness(this.Width / 2 - PromptText.Width / 2, (this.Height - PromptText.Height), 0, 0);
 
         }
 
@@ -250,8 +250,10 @@ namespace EyeGuard.UI
                     PromptText.Foreground = Brushes.White;
                     break;
                 default:
-                    hyaline2.Opacity = 0.5;
-                    hyaline.Opacity = 0.5;
+                    filpclock.Visibility = Visibility.Visible;
+                    hyaline2.Opacity = 1;
+                    hyaline.Opacity = 1;
+                    PromptText.Foreground = Brushes.White;
                     break;
             }
 

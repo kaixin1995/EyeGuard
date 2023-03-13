@@ -80,9 +80,6 @@
         <TextBlock
             Name="Time"
             Text="00:00"
-            Width="95"
-            Height="49"
-            Padding="9,7,10,5"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Foreground="White"

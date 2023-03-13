@@ -92,10 +92,10 @@
         </Border>
         <hc:FlipClock
             Name="filpclock"
-            Visibility="Collapsed"
             Margin="32"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
+            Visibility="Collapsed"
             Style="{DynamicResource FlipClockStyle1}"
             />
         <Image Name="img" />
@@ -111,11 +111,12 @@
         <TextBlock
             Name="PromptText"
             Text="距离解锁时间还有0秒"
-            Width="450"
+            Width="Auto"
             Height="61"
-            Margin="180,116,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
+            TextWrapping="NoWrap"
+            Margin="0,0,0,10"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
             FontSize="40"
             />
     </Grid>

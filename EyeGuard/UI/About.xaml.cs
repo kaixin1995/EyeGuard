@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Input;
 
 namespace EyeGuard.UI
@@ -36,7 +37,14 @@ namespace EyeGuard.UI
         /// </summary>
         private void Github_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/kaixin1995/EyeGuard");
+            try
+            {
+                System.Diagnostics.Process.Start("https://github.com/kaixin1995/EyeGuard");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"打开页面错误，您可以手动打开:https://github.com/kaixin1995/EyeGuard","错误提示");
+            }
         }
 
         /// <summary>
