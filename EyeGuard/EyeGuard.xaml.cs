@@ -1,16 +1,16 @@
-﻿using EyeGuard.UI;
+﻿using EyeGuard.BLL;
+using EyeGuard.UI;
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows;
-using System.Windows.Forms;//添加引用，必须用到的
+using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static EyeGuard.Model;
-using Application = System.Windows.Application;
 
 namespace EyeGuard
 {
@@ -19,8 +19,6 @@ namespace EyeGuard
     /// </summary>
     public partial class MainWindow : Window
     {
-        //实例化notifyIOC控件最小化托盘
-        private NotifyIcon notifyIcon = null;
 
         /// <summary>
         /// 解屏后执行的委托
@@ -39,76 +37,13 @@ namespace EyeGuard
 
 
 
-        // 最小化系统托盘
+
+        /// <summary>
+        /// 最小化系统托盘
+        /// </summary>
         private void initialTray()
         {
-            //设置托盘的各个属性
-            notifyIcon = new NotifyIcon();
-            notifyIcon.BalloonTipText = "眼睛卫士已经启动";//托盘气泡显示内容
-            notifyIcon.Text = "珍爱生命，保护眼睛";
-            notifyIcon.Visible = true;//托盘按钮是否可见
-            //重要提示：此处的图标图片在resouces文件夹。不可删除，否则会死机
-            string path = AppDomain.CurrentDomain.BaseDirectory + "Resources/favicon.ico";
-            notifyIcon.Icon = new System.Drawing.Icon(path);//托盘中显示的图标
-            notifyIcon.ShowBalloonTip(1000);//托盘气泡显示时间
-
-            //鼠标点击事件
-            notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(notifyIcon_MouseClick);
-
-            //右键菜单--设置面板
-            MenuItem SetupPanel = new MenuItem("设置面板");
-            SetupPanel.Click += new EventHandler(SetupPanel_Click);
-
-            //右键菜单--清零工作时间
-            MenuItem reset_time = new MenuItem("重置工作时间");
-            reset_time.Click += new EventHandler(ResetTime_Click);
-
-            //右键菜单--显示&隐藏|桌面插件
-            MenuItem DesktopControls = new MenuItem("桌面插件");
-            //二级菜单
-            MenuItem Display = new MenuItem("显示");
-            Display.Tag = "display";
-            Display.Click += new EventHandler(WhetherToDisplay_Click);
-            MenuItem Hide = new MenuItem("隐藏");
-            Hide.Tag = "hide";
-            Hide.Click += new EventHandler(WhetherToDisplay_Click);
-            DesktopControls.MenuItems.Add(Display);
-            DesktopControls.MenuItems.Add(Hide);
-
-            //右键菜单--手动锁定
-            MenuItem LockScreen = new MenuItem("锁屏");
-            LockScreen.Click += new EventHandler(LockScreen_Click);
-
-
-            //开机启动项
-            MenuItem Whether = new MenuItem("是否开机自启");
-            //二级菜单
-            MenuItem SelfStarting = new MenuItem("开机自启");
-            SelfStarting.Tag = "SelfStarting";
-            SelfStarting.Click += new EventHandler(StartupItem_Click);
-            MenuItem SelfCancellation = new MenuItem("取消开机自启");
-            SelfCancellation.Tag = "SelfCancellation";
-            SelfCancellation.Click += new EventHandler(StartupItem_Click);
-            Whether.MenuItems.Add(SelfStarting);
-            Whether.MenuItems.Add(SelfCancellation);
-
-
-            //右键菜单--恢复位置
-            MenuItem Location = new MenuItem("恢复位置");
-            Location.Click += new EventHandler(RestoreLocation_Click);
-
-            //右键菜单--关于
-            MenuItem about = new MenuItem("关于");
-            about.Click += new EventHandler(about_Click);
-
-            //右键菜单--退出菜单项
-            MenuItem exit = new MenuItem("退出");
-            exit.Click += new EventHandler(exit_Click);
-
-
-            //关联托盘控件
-            MenuItem[] childen = new MenuItem[] {SetupPanel, reset_time,DesktopControls, LockScreen , Whether, Location, about,exit };
-            notifyIcon.ContextMenu = new ContextMenu(childen);
+            
         }
 
         /// <summary>
@@ -157,7 +92,7 @@ namespace EyeGuard
             }
             catch
             {
-                System.Windows.Forms.MenuItem mi = (System.Windows.Forms.MenuItem)sender;
+                MenuItem mi = (MenuItem)sender;
                 state = mi.Tag.ToString();
             }
 
@@ -189,29 +124,16 @@ namespace EyeGuard
         {
 
             #region WPF方法的锁屏界面会出现锁屏界面无法置顶的偶尔性BUG
-            //if (LockScreen.Function == false)
-            //{
-            //    md.State = (state)1;
-            //    LockScreen ls = new LockScreen(this);
-            //    ls.md = md;
-            //    ls.Show();
-            //} 
-            #endregion
-
-            if (LockScreenⅡ.Function == false)
+            if (LockScreen.Function == false)
             {
                 md.State = (state)1;
-                LockScreenⅡ ls = new LockScreenⅡ(this);
+                LockScreen ls = new LockScreen(this);
                 ls.md = md;
-
-                try
-                {
-                    Screen[] sc = Screen.AllScreens;
-                    ls.Location = new System.Drawing.Point(sc[0].Bounds.Left, sc[0].Bounds.Top);
-                }
-                catch { }
+                ls.Left = 0;
+                ls.Top = 0;
                 ls.Show();
             }
+            #endregion
         }
 
         /// <summary>
@@ -241,7 +163,7 @@ namespace EyeGuard
         /// <summary>
         /// 显示&隐藏桌面插件
         /// </summary>
-        private void WhetherToDisplay_Click(object sender, EventArgs e)
+        private void WhetherToDisplay_Click(object sender, RoutedEventArgs e)
         {
             Dal dal = new Dal();
             //状态
@@ -251,19 +173,19 @@ namespace EyeGuard
                 System.Windows.Controls.MenuItem mi = (System.Windows.Controls.MenuItem)sender;
                 state = mi.Tag.ToString();
             }
-            catch 
+            catch
             {
                 try
                 {
                     MenuItem mi = (MenuItem)sender;
                     state = mi.Tag.ToString();
                 }
-                catch 
+                catch
                 {
 
                 }
             }
-           
+
             if (state == "hide")
             {
                 this.Visibility = Visibility.Hidden;
@@ -306,36 +228,6 @@ namespace EyeGuard
         }
 
 
-        // 托盘图标鼠标单击事件
-        private void notifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            //鼠标左键
-            if (e.Button == MouseButtons.Left)
-            {
-                //获得焦点
-                this.Focus();
-                /*
-                if ((int)md.TimerMode == 2)
-                {
-                    Count = 0;
-                    if (Tips.Function == false)
-                    {
-                        Tips tp = new Tips("加班模式下点击托盘会进行重新计时，您当前的工作时间已被重置~");
-                        tp.Show();
-                    }
-                    return;
-                }*/
-                
-
-
-                if (Tips.Function == false)
-                {
-                    Tips tp = new Tips("您已经工作了"+(Count/60)+"分钟，"+ (md.Work-(Count / 60)) + "分后进入休息时间");
-                    tp.Show();
-                }
-            }
-        }
-
         /// <summary>
         /// 恢复位置
         /// </summary>
@@ -366,7 +258,6 @@ namespace EyeGuard
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += timer_Tick;
             timer.Start();
-
         }
         #region 当前登录的用户变化（登录、注销和解锁屏）
 
@@ -427,7 +318,7 @@ namespace EyeGuard
             //锁屏后执行
             dateBegin = DateTime.Now;
             md.State = (state)1;
-        } 
+        }
         #endregion
 
         /// <summary>
@@ -445,9 +336,9 @@ namespace EyeGuard
         /// 智能计时动作
         /// </summary>
         /// <param name="action">动作</param>
-        private void SmartTiming(Action action=null)
+        private void SmartTiming(Action action = null)
         {
-            if (Bll.GetLastInputTime() < 1000|| Bll.IsAudioPlaying())
+            if (Bll.GetLastInputTime() < 1000 || Bll.IsAudioPlaying())
             {
                 FreeCount = 0;
                 if (action != null)
@@ -513,7 +404,7 @@ namespace EyeGuard
                 this.Visibility = Visibility.Collapsed;
                 return;
             }
-            
+
 
             if (md.Display != 0)
             {
@@ -586,7 +477,7 @@ namespace EyeGuard
                             //清空暂离状态
                             FreeCount = 0;
                         }
-                            
+
                         break;
                     }
 
@@ -639,7 +530,7 @@ namespace EyeGuard
                 else
                 {
                     //到达关机时间
-                    if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == (md.Shutdown.Branch-1) && Convert.ToInt32(time[2]) == 3)
+                    if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == (md.Shutdown.Branch - 1) && Convert.ToInt32(time[2]) == 3)
                     {
                         if (Tips.Function == false)
                         {
@@ -649,7 +540,7 @@ namespace EyeGuard
                         }
                     }
                 }
-               
+
                 //到达关机时间
                 if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == md.Shutdown.Branch && Convert.ToInt32(time[2]) == 1)
                 {
@@ -682,7 +573,7 @@ namespace EyeGuard
             if ((md.Work - 1) * 60 == Count)
             {
                 new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeRest.mp3").Play();
-                if ((int)md.TimerMode == 1&& bll.FullScreen())
+                if ((int)md.TimerMode == 1 && bll.FullScreen())
                 {
                     return;
                 }
@@ -698,35 +589,52 @@ namespace EyeGuard
             {
                 new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3").Play();
 
-                if (Bll.IsAudioPlaying())
+                switch (md.LockMode)
                 {
-                    //此处智能化一些，暂停播放的音乐
-                    keybd_event((byte)Keys.MediaPlayPause, 0, 0, 0);
-                    keybd_event((byte)Keys.MediaPlayPause, 0, 2, 0);
-
-                    keybd_event((byte)Keys.Play, 0, 0, 0);
-                    keybd_event((byte)Keys.Play, 0, 2, 0);
-                }
-               
-
-                md.State = (state)1;
-                if (LockScreenⅡ.Function == false)
-                {
-                    LockScreenⅡ ls = new LockScreenⅡ(md);
-                    try
-                    {
-                        //限制到第一个屏幕显示
-                        Screen[] sc = Screen.AllScreens;
-                        ls.Location = new System.Drawing.Point(sc[0].Bounds.Left, sc[0].Bounds.Top);
-                    }
-                    catch
-                    {
-
-                    }
-                    ls.Show();
+                    case lock_mode.透明模式:
+                    case lock_mode.半透明模式:
+                    case lock_mode.屏保模式:
+                    case lock_mode.时间锁屏:
+                        StopPlaying();
+                        if (LockScreen.Function == false)
+                        {
+                            md.State = (state)1;
+                            LockScreen ls = new LockScreen(md);
+                            ls.Left = 0;
+                            ls.Top = 0;
+                            ls.Show();
+                        }
+                        break;
+                    case lock_mode.语音模式:
+                        //语音模式下不会进行锁屏的
+                        //既然不锁屏，那就清空本次时间把~
+                        Count = 0;
+                        break;
+                    case lock_mode.锁定Windows:
+                        Count = 0;
+                        StopPlaying();
+                        LockWorkStation();
+                        break;
+                    default:
+                        break;
                 }
             }
+        }
 
+        /// <summary>
+        /// 停止播放
+        /// </summary>
+        private void StopPlaying()
+        {
+            if (Bll.IsAudioPlaying())
+            {
+                //此处智能化一些，暂停播放的音乐
+                keybd_event((byte)Keys.MediaPlayPause, 0, 0, 0);
+                keybd_event((byte)Keys.MediaPlayPause, 0, 2, 0);
+
+                keybd_event((byte)Keys.Play, 0, 0, 0);
+                keybd_event((byte)Keys.Play, 0, 2, 0);
+            }
         }
 
 
@@ -758,6 +666,15 @@ namespace EyeGuard
             {
                 this.Visibility = Visibility.Hidden;
             }
+
+            Uri uri = new Uri(AppDomain.CurrentDomain.BaseDirectory + "Resources/favicon.ico", UriKind.Absolute);
+            ImageSource imgSource = new BitmapImage(uri);
+            
+            MyNotifyIcon.Icon = imgSource;
+
+
+            //初始化，获取屏幕信息
+            Bll.GetInfoOnTheScreens();
         }
         /// <summary>
         /// 无边框移动
@@ -767,6 +684,36 @@ namespace EyeGuard
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 this.DragMove();
+            }
+        }
+
+
+        /// <summary>
+        /// 托盘图标鼠标单击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MyNotifyIcon_Click(object sender, RoutedEventArgs e)
+        {
+
+            //获得焦点
+            this.Focus();
+            /*
+            if ((int)md.TimerMode == 2)
+            {
+                Count = 0;
+                if (Tips.Function == false)
+                {
+                    Tips tp = new Tips("加班模式下点击托盘会进行重新计时，您当前的工作时间已被重置~");
+                    tp.Show();
+                }
+                return;
+            }*/
+
+            if (Tips.Function == false)
+            {
+                Tips tp = new Tips("您已经工作了" + (Count / 60) + "分钟，" + (md.Work - (Count / 60)) + "分后进入休息时间");
+                tp.Show();
             }
         }
     }

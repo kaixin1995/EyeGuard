@@ -4,9 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:EyeGuard"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
     Title="EyeGuard"
-    Width="99.077"
-    Height="52.923"
+    Width="98"
+    Height="52"
     WindowStyle="None"
     ResizeMode="NoResize"
     AllowsTransparency="True"
@@ -55,7 +57,7 @@
             </ContextMenu>
         </Grid.ContextMenu>
         <Border
-            Margin="2,2,2,2"
+            Margin="2"
             CornerRadius="15,15,15,15"
             BorderThickness="1"
             BorderBrush="White"
@@ -71,19 +73,47 @@
                 />
 
         </Border>
-        <Grid>
-            <ContentPresenter />
-        </Grid>
+
         <TextBlock
             Name="Time"
             Text="00:00"
-            Width="86"
-            Height="35"
-            Margin="11,8,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
             Foreground="White"
             FontSize="30"
             />
+        <hc:NotifyIcon
+            Name="MyNotifyIcon"
+            Text="眼睛卫士"
+            Visibility="Visible"
+            Click="MyNotifyIcon_Click"
+            >
+            <hc:NotifyIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Click="SetupPanel_Click" Header="设置面板" />
+                    <MenuItem Click="ResetTime_Click" Header="重置工作时间" />
+                    <MenuItem Header="桌面插件">
+                        <MenuItem
+                            Click="WhetherToDisplay_Click"
+                            Tag="display"
+                            Header="显示"
+                            />
+                        <MenuItem
+                            Click="WhetherToDisplay_Click"
+                            Tag="hide"
+                            Header="隐藏"
+                            />
+                    </MenuItem>
+                    <MenuItem Click="LockScreen_Click" Header="锁屏" />
+                    <MenuItem Header="是否开机自启">
+                        <MenuItem Click="StartupItem_Click" Header="开机自启" />
+                        <MenuItem Click="StartupItem_Click" Header="取消开机自启" />
+                    </MenuItem>
+                    <MenuItem Click="RestoreLocation_Click" Header="恢复位置" />
+                    <MenuItem Click="about_Click" Header="关于" />
+                    <MenuItem Click="exit_Click" Header="退出" />
+                </ContextMenu>
+            </hc:NotifyIcon.ContextMenu>
+        </hc:NotifyIcon>
     </Grid>
 </Window>

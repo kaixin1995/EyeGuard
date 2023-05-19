@@ -20,7 +20,7 @@ namespace EyeGuard
         /// <summary>
         /// 版本号
         /// </summary>
-        public static string Edition = "2.16";
+        public static string Edition = "3.10";
 
 
         /// <summary>
@@ -45,9 +45,9 @@ namespace EyeGuard
             md.BreakPoints = Data["BreakPoints"];
             md.LockMode = (Model.lock_mode)Data["LockMode"];
             md.TimerMode = (Model.timer_mode)Data["TimerMode"];
-            md.Display= Data["Display"];
-            md.Unlock= Data["Unlock"];
-            md.Shutdown = new TurnOffTime {Branch= Data["ShutdownPoints"],Time= Data["ShutdownTime"] };
+            md.Display = Data["Display"];
+            md.Unlock = Data["Unlock"];
+            md.Shutdown = new TurnOffTime { Branch = Data["ShutdownPoints"], Time = Data["ShutdownTime"] };
             md.IsIntelligent = Data["IsIntelligent"];
             md.Shutdown.ShutdownMode = (TurnOffTime.shutdown_mode)Data["ShutdownMode"];
             return md;
@@ -78,7 +78,7 @@ namespace EyeGuard
         /// </summary>
         public void Deserialize()
         {
-            
+
             //获取配置文件中的内容
             string Work = ConfigHelper.GetConfig("Work");
             string BreakPoints = ConfigHelper.GetConfig("BreakPoints");
@@ -123,5 +123,5 @@ namespace EyeGuard
             ConfigHelper.SetConfig("ShutdownMode", Data["ShutdownMode"].ToString());
         }
     }
-    
+
 }

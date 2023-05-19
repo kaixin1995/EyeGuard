@@ -3,9 +3,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    xmlns:local="clr-namespace:EyeGuard.UI"
     Title="SetUp"
     Width="245"
     Height="349.63"
@@ -15,17 +16,6 @@
     ShowInTaskbar="False"
     mc:Ignorable="d"
     >
-
-    <!--<Controls:MetroWindow.RightWindowCommands>
-        <Controls:WindowCommands>
-            <Button Content="Github" Name="OpenUrl" Click="OpenUrl_Click" />
-            <Button>
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="定时关机" Name="SwitchBoard" Click="Switch_Click" />
-                </StackPanel>
-            </Button>
-        </Controls:WindowCommands>
-    </Controls:MetroWindow.RightWindowCommands>-->
     <Grid>
 
         <TabControl Style="{StaticResource TabControlInLine}">
@@ -131,17 +121,19 @@
 
                     <ToggleButton
                         Name="Unlock"
+                        Height="Auto"
                         Margin="109,205,94,58"
                         HorizontalAlignment="Center"
                         Style="{StaticResource ToggleButtonSwitch}"
-                        RenderTransformOrigin="0.492,-0.67" Height="Auto"
+                        RenderTransformOrigin="0.492,-0.67"
                         />
                     <Label Content="是否智能计时" Margin="7,242,138,19" />
                     <ToggleButton
                         Name="IsIntelligent"
+                        Height="Auto"
                         Margin="109,243,94,21"
                         HorizontalAlignment="Center"
-                        Style="{StaticResource ToggleButtonSwitch}" Height="Auto"
+                        Style="{StaticResource ToggleButtonSwitch}"
                         />
                     <!--<Controls:ToggleSwitch OnLabel="允许解锁" Name="Unlock" OffLabel="禁止解锁" Margin="10,199,95.429,49" />
             <Controls:ToggleSwitch OnLabel="智能计时" x:Name="IsIntelligent" OffLabel="普通计时" Margin="10,237,95.429,11" />-->
@@ -181,8 +173,8 @@
                         VerticalAlignment="Top"
                         />
                     <Button
-                        Content="保存"
                         Name="btn_ShutDownToSave"
+                        Content="保存"
                         Width="218"
                         Height="110"
                         Margin="11,160,0,0"
@@ -219,5 +211,4 @@
             </TabItem>
         </TabControl>
     </Grid>
-
 </hc:Window>

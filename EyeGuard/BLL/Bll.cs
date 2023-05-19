@@ -1,16 +1,11 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Interop;
-using System.Xml;
 
 namespace EyeGuard
 {
@@ -160,17 +155,19 @@ namespace EyeGuard
         [DllImport("user32.dll", SetLastError = true)]
         private static extern int GetWindowRect(IntPtr hwnd, out RECT rc);
 
+        #region 因为桌面窗口和Shell窗口也是全屏，要排除在其他全屏程序之外。 
         //桌面窗口句柄 
-        private IntPtr desktopHandle; //Window handle for the desktop  
+        private IntPtr desktopHandle;
         //Shell窗口句柄 
-        private IntPtr shellHandle; //Window handle for the shell  因为桌面窗口和Shell窗口也是全屏，要排除在其他全屏程序之外。 
+        private IntPtr shellHandle;    
+        #endregion
 
 
         /// <summary>
         /// 检测是否全屏
         /// </summary>
         /// <returns>返回true则是全屏</returns>
-        public  bool FullScreen()
+        public bool FullScreen()
         {
             //取得桌面和Shell窗口句柄 
             desktopHandle = GetDesktopWindow();
@@ -187,9 +184,8 @@ namespace EyeGuard
                 {
                     //取得窗口大小 
                     GetWindowRect(hWnd, out appBounds);
-                    //判断是否全屏 
-                    screenBounds = Screen.FromHandle(hWnd).Bounds;
-                    if ((appBounds.Bottom - appBounds.Top) == screenBounds.Height && (appBounds.Right - appBounds.Left) == screenBounds.Width)
+                    //判断是否全屏
+                    if ((appBounds.Bottom - appBounds.Top) == System.Windows.SystemParameters.PrimaryScreenHeight && (appBounds.Right - appBounds.Left) == System.Windows.SystemParameters.PrimaryScreenWidth)
                     {
                         return true;
 
@@ -211,9 +207,10 @@ namespace EyeGuard
         {
             try
             {
-                var value = Application.ExecutablePath.Replace("/", "\\");
                 if (Whether)
                 {
+                    string path = $"{Process.GetCurrentProcess().MainModule.FileName}";
+                    var value = path.Replace("/", "\\");
                     var currentUser = Registry.CurrentUser;
                     var registryKey = currentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
                     registryKey.SetValue("EyeGuard", value);
@@ -231,23 +228,46 @@ namespace EyeGuard
             }
             catch (Exception)
             {
-                MessageBox.Show("您需要管理员权限修改", "提示");
+                System.Windows.MessageBox.Show("您需要管理员权限修改", "提示");
             }
         }
         #endregion
 
+        [DllImport("PublicTools.dll", EntryPoint = "_GetStateOfTheSound@0")]
+        private static extern int GetStateOfTheSound();
 
-        ///// <summary>
-        ///// 获取默认声音设备
-        ///// </summary>
-        ///// <returns></returns>
-        //public static MMDevice GetDefaultRenderDevice()
-        //{
-        //    using (var enumerator = new MMDeviceEnumerator())
-        //    {
-        //        return enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
-        //    }
-        //}
+        //_GetInfoOnTheScreen@4
+        [DllImport("PublicTools.dll", EntryPoint = "GetInfoOnTheScreen")]
+        private static extern IntPtr GetInfoOnTheScreen();
+
+        /// <summary>
+        /// 全部屏幕信息
+        /// </summary>
+        public static List<InfoOnTheScreen> InfoOnTheScreens = new List<InfoOnTheScreen>();
+
+
+        /// <summary>
+        /// 获取全部屏幕信息
+        /// </summary>
+        public static void GetInfoOnTheScreens()
+        {
+            string value = Marshal.PtrToStringAnsi(GetInfoOnTheScreen());
+            string[] Displays = value.Split(',');
+
+            for (int i = 0; i < Displays.Length; i++)
+            {
+                string[] _value = Displays[i].Split("X");
+                if (_value.Length == 2)
+                {
+                    InfoOnTheScreen infoOnThe = new InfoOnTheScreen();
+                    infoOnThe.Width = Convert.ToInt32(_value[0]);
+                    infoOnThe.Height = Convert.ToInt32(_value[1]);
+                    infoOnThe.Order = i;
+                    InfoOnTheScreens.Add(infoOnThe);
+                }
+            }
+            
+        }
 
         /// <summary>
         /// 是否正在播放
@@ -255,14 +275,11 @@ namespace EyeGuard
         /// <returns></returns>
         public static bool IsAudioPlaying()
         {
-            using (var enumerator = new CSCore.CoreAudioAPI.MMDeviceEnumerator())
+            if (GetStateOfTheSound() == 1)
             {
-                using (var meter = CSCore.CoreAudioAPI.AudioMeterInformation.FromDevice(enumerator.GetDefaultAudioEndpoint(CSCore.CoreAudioAPI.DataFlow.Render, CSCore.CoreAudioAPI.Role.Console)))
-                {
-                    return meter.PeakValue > 0;
-                }
-
+                return true;
             }
+            return false;
         }
     }
 

@@ -55,17 +55,17 @@ namespace EyeGuard.UI
             Lock.ItemsSource = LockModes;
             Lock.SelectedValuePath = "Key";
             Lock.DisplayMemberPath = "Value";
-            
+
             //加载数据
             rest.Value = md.BreakPoints;
             work.Value = md.Work;
             this.Time.SelectedIndex = (int)md.TimerMode;
             this.Lock.SelectedIndex = (int)md.LockMode;
-            
+
 
             bool SF = (md.Unlock == 0) ? false : true;
 
-            bool _isIntelligent = (md.IsIntelligent == 0) ? false:true;
+            bool _isIntelligent = (md.IsIntelligent == 0) ? false : true;
 
             Unlock.IsChecked = SF;
             IsIntelligent.IsChecked = _isIntelligent;
@@ -98,9 +98,9 @@ namespace EyeGuard.UI
         {
             if (DisplayTime != null)
             {
-                DisplayTime.Text = "工作时间为"+ work.Value+ "分";
+                DisplayTime.Text = "工作时间为" + work.Value + "分";
             }
-            
+
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace EyeGuard.UI
                 DisplayTime.Text = "休息时间为" + rest.Value + "分";
             }
 
-            
+
         }
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace EyeGuard.UI
         {
             if (DisplayTime != null)
             {
-                DisplayTime.Text = "您已经工作了"+md.AlreadyWorked + "分";
+                DisplayTime.Text = "您已经工作了" + md.AlreadyWorked + "分";
             }
         }
 
@@ -154,13 +154,13 @@ namespace EyeGuard.UI
             {
                 //这里是定时关机的数据保存
                 md.Shutdown.Time = Convert.ToInt32(ShutdownTime.Text);
-                md.Shutdown.Branch= Convert.ToInt32(ShutdownPoints.Text);
-                int i= ShutdownMode.SelectedIndex; 
+                md.Shutdown.Branch = Convert.ToInt32(ShutdownPoints.Text);
+                int i = ShutdownMode.SelectedIndex;
                 md.Shutdown.ShutdownMode = (TurnOffTime.shutdown_mode)ShutdownMode.SelectedIndex;
             }
 
 
-           
+
 
             //提醒
             Bll bll = new Bll();
@@ -170,7 +170,7 @@ namespace EyeGuard.UI
                 Tips tp = new Tips("已经成功保存~");
                 tp.Show();
             }
-           
+
             this.Close();
         }
 

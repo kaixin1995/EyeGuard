@@ -2,7 +2,7 @@
 {
     public class Model
     {
-        
+
         /// <summary>
         /// 工作时间
         /// </summary>
@@ -45,7 +45,7 @@
         /// <summary>
         /// 状态枚举
         /// </summary>
-        public enum state { 工作 = 0, 休息 = 1}
+        public enum state { 工作 = 0, 休息 = 1 }
 
         /// <summary>
         /// 当前工作状态
@@ -67,13 +67,13 @@
         /// <summary>
         /// 设置锁屏风格枚举
         /// </summary>
-        public enum lock_mode {透明模式=0,半透明模式=1,屏保模式=2}
+        public enum lock_mode { 透明模式 = 0, 半透明模式 = 1, 屏保模式 = 2, 语音模式 = 3 ,锁定Windows =4,时间锁屏=5 }
 
         /// <summary>
         /// 锁屏界面
         /// </summary>
         public lock_mode LockMode { set; get; }
-        
+
         /// <summary>
         /// 窗体初始位置
         /// </summary>
@@ -100,7 +100,7 @@
         /// <summary>
         /// 设置关机模式枚举
         /// </summary>
-        public enum shutdown_mode { 关机 = 0, 休眠 = 1,注销=2,睡眠=3,锁定=4,重启=5 }
+        public enum shutdown_mode { 关机 = 0, 休眠 = 1, 注销 = 2, 睡眠 = 3, 锁定 = 4, 重启 = 5 }
 
         /// <summary>
         /// 设置关机模式-到达关机时间后的操作
@@ -140,5 +140,31 @@
         /// Value
         /// </summary>
         public string Value { set; get; }
+    }
+
+
+    /// <summary>
+    /// 屏幕帮助类
+    /// </summary>
+    public class InfoOnTheScreen
+    { 
+
+        /// <summary>
+        /// 宽度
+        /// </summary>
+        public int Width { get; set; }
+
+
+        /// <summary>
+        /// 高度
+        /// </summary>
+        public int Height { get; set; }
+
+
+        /// <summary>
+        /// 顺序，用来区分主屏幕与否  
+        /// 以及为后面的扩展留下接口
+        /// </summary>
+        public int Order { get; set; }
     }
 }
