@@ -1,11 +1,17 @@
-﻿using Microsoft.Win32;
+﻿using EyeGuard.BLL;
+using Microsoft.Win32;
+using NAudio.CoreAudioApi;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using WpfScreenHelper;
 
 namespace EyeGuard
 {
@@ -66,7 +72,7 @@ namespace EyeGuard
             int TotalSeconds = Convert.ToInt32(value);
 
             int branch = TotalSeconds / 60;
-            int second= TotalSeconds % 60;
+            int second = TotalSeconds % 60;
             return GetFormattingTime(branch) + ":" + GetFormattingTime(second);
         }
 
@@ -81,7 +87,7 @@ namespace EyeGuard
         {
             TimeSpan ts1 = new TimeSpan(dateBegin.Ticks);
             TimeSpan ts2 = new TimeSpan(dateEnd.Ticks);
-            TimeSpan ts3 = ts2- ts1;
+            TimeSpan ts3 = ts2 - ts1;
             //得到相差的分钟数
             return ts3.TotalMinutes;
         }
@@ -159,7 +165,7 @@ namespace EyeGuard
         //桌面窗口句柄 
         private IntPtr desktopHandle;
         //Shell窗口句柄 
-        private IntPtr shellHandle;    
+        private IntPtr shellHandle;
         #endregion
 
 
@@ -233,12 +239,6 @@ namespace EyeGuard
         }
         #endregion
 
-        [DllImport("PublicTools.dll", EntryPoint = "_GetStateOfTheSound@0")]
-        private static extern int GetStateOfTheSound();
-
-        //_GetInfoOnTheScreen@4
-        [DllImport("PublicTools.dll", EntryPoint = "GetInfoOnTheScreen")]
-        private static extern IntPtr GetInfoOnTheScreen();
 
         /// <summary>
         /// 全部屏幕信息
@@ -251,22 +251,16 @@ namespace EyeGuard
         /// </summary>
         public static void GetInfoOnTheScreens()
         {
-            string value = Marshal.PtrToStringAnsi(GetInfoOnTheScreen());
-            string[] Displays = value.Split(',');
-
-            for (int i = 0; i < Displays.Length; i++)
+            for (int i = 0; i < Screen.AllScreens.Count(); i++)
             {
-                string[] _value = Displays[i].Split("X");
-                if (_value.Length == 2)
-                {
-                    InfoOnTheScreen infoOnThe = new InfoOnTheScreen();
-                    infoOnThe.Width = Convert.ToInt32(_value[0]);
-                    infoOnThe.Height = Convert.ToInt32(_value[1]);
-                    infoOnThe.Order = i;
-                    InfoOnTheScreens.Add(infoOnThe);
-                }
+                var _value = Screen.AllScreens.ToList()[i];
+                InfoOnTheScreen infoOnThe = new InfoOnTheScreen();
+                infoOnThe.Width = Convert.ToInt32(_value.Bounds.Width);
+                infoOnThe.Height = Convert.ToInt32(_value.Bounds.Height);
+                infoOnThe.Order = i;
+                InfoOnTheScreens.Add(infoOnThe);
             }
-            
+
         }
 
         /// <summary>
@@ -275,11 +269,12 @@ namespace EyeGuard
         /// <returns></returns>
         public static bool IsAudioPlaying()
         {
-            if (GetStateOfTheSound() == 1)
+            using (var enumerator = new MMDeviceEnumerator())
             {
-                return true;
+                var defaultDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+                bool state= defaultDevice.AudioMeterInformation.MasterPeakValue > 0;
+                return state;
             }
-            return false;
         }
     }
 
