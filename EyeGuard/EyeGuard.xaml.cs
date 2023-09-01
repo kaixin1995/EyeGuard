@@ -223,8 +223,9 @@ namespace EyeGuard
         /// </summary>
         private void exit_Click(object sender, EventArgs e)
         {
+            this.Close();
             //退出
-            System.Environment.Exit(0);
+            //System.Environment.Exit(0);
         }
 
 
@@ -675,7 +676,15 @@ namespace EyeGuard
 
             //初始化，获取屏幕信息
             Bll.GetInfoOnTheScreens();
+
+            this.Closed += MainWindow_Closed;
         }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            MyNotifyIcon.Visibility = Visibility.Collapsed;
+        }
+
         /// <summary>
         /// 无边框移动
         /// </summary>

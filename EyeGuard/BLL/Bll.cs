@@ -251,6 +251,7 @@ namespace EyeGuard
         /// </summary>
         public static void GetInfoOnTheScreens()
         {
+            InfoOnTheScreens=new List<InfoOnTheScreen>();
             for (int i = 0; i < Screen.AllScreens.Count(); i++)
             {
                 var _value = Screen.AllScreens.ToList()[i];

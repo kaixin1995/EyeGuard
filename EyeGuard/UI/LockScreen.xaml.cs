@@ -64,6 +64,7 @@ namespace EyeGuard.UI
         /// <param name="md"></param>
         private void DoubleScreen(Model md)
         {
+            Bll.GetInfoOnTheScreens();
             if (Bll.InfoOnTheScreens.Count == 2)
             {
                 lockScreenⅡ = new LockScreen();
@@ -268,8 +269,8 @@ namespace EyeGuard.UI
                     break;
             }
 
-            this.Width = Bll.InfoOnTheScreens[0].Width;
-            this.Height = Bll.InfoOnTheScreens[0].Height;
+            //this.Width = Bll.InfoOnTheScreens[0].Width;
+            //this.Height = Bll.InfoOnTheScreens[0].Height;
             this.WindowState = WindowState.Maximized;
             if (lockScreenⅡ == null && FunctionⅡ == false)
             {
