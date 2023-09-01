@@ -25,31 +25,22 @@
 
 
 
-### 2021/10/30 更新
-1.第一版的core版本，因为部分类库的原因，这个版本暂时无法双屏显示锁屏。
-
-### 2023/3/13 更新
-1.该版本已经支持双屏锁屏，并且优化布局调整，增加锁屏时自动音乐暂停、增加语音提醒功能等
-
-
- 
-
 ## 界面
 + 桌面插件  
-  ![桌面插件](https://github.com/kaixin1995/EyeGuard/blob/master/Images/%E6%A1%8C%E9%9D%A2%E6%8F%92%E4%BB%B6.png)
+  ![桌面插件.png](https://img.haokaikai.cn/2023/09/01/d817345b48557.png)
 
 + 提醒页面
   - 点击托盘后工作时间  
-    ![点击托盘后工作时间](https://github.com/kaixin1995/EyeGuard/blob/master/Images/%E6%8F%90%E7%A4%BA%E9%9D%A2%E6%9D%BF.png)
+    ![提示面板.png](https://img.haokaikai.cn/2023/09/01/c9ddc155bf82a.png)
 
   - 休息前提醒页面  
-    ![休息前提醒页面](https://github.com/kaixin1995/EyeGuard/blob/master/Images/%E4%BC%91%E6%81%AF%E5%89%8D%E6%8F%90%E9%86%92.png)
+    ![休息前提醒.png](https://img.haokaikai.cn/2023/09/01/ac868f7b4d60a.png)
 
 + 设置面板  
-  ![设置面板](https://github.com/kaixin1995/EyeGuard/blob/master/Images/%E8%AE%BE%E7%BD%AE%E9%9D%A2%E6%9D%BF.png)
+  ![设置面板.png](https://img.haokaikai.cn/2023/09/01/e995130cad8b2.png)
 
 + 定时关机页面  
-  ![定时关机页面](https://github.com/kaixin1995/EyeGuard/blob/master/Images/%E8%87%AA%E5%8A%A8%E5%85%B3%E6%9C%BA.png)
+  ![自动关机.png](https://img.haokaikai.cn/2023/09/01/df8797167feb5.png)
 
 
 ## 本软件使用.net6进行开发，界面使用WPF，界面UI模块使用的是开源UI组件[HandyControl](https://github.com/HandyOrg/HandyControl)
