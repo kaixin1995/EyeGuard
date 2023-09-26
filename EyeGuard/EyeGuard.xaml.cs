@@ -668,10 +668,9 @@ namespace EyeGuard
                 this.Visibility = Visibility.Hidden;
             }
 
-            Uri uri = new Uri(AppDomain.CurrentDomain.BaseDirectory + "Resources/favicon.ico", UriKind.Absolute);
+            Uri uri = new Uri("pack://application:,,,/EyeGuard;component/Resources/favicon.ico");
             ImageSource imgSource = new BitmapImage(uri);
-            
-            MyNotifyIcon.Icon = imgSource;
+            MyNotifyIcon.IconSource = imgSource;
 
 
             //初始化，获取屏幕信息

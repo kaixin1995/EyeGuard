@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:EyeGuard"
     xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:tb="http://www.hardcodet.net/taskbar"
     Title="EyeGuard"
     Width="98"
     Height="52"
@@ -82,13 +83,9 @@
             Foreground="White"
             FontSize="30"
             />
-        <hc:NotifyIcon
-            Name="MyNotifyIcon"
-            Text="眼睛卫士"
-            Visibility="Visible"
-            Click="MyNotifyIcon_Click"
-            >
-            <hc:NotifyIcon.ContextMenu>
+
+        <tb:TaskbarIcon Name="MyNotifyIcon" ToolTipText="便捷模板工具">
+            <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
                     <MenuItem Click="SetupPanel_Click" Header="设置面板" />
                     <MenuItem Click="ResetTime_Click" Header="重置工作时间" />
@@ -113,7 +110,7 @@
                     <MenuItem Click="about_Click" Header="关于" />
                     <MenuItem Click="exit_Click" Header="退出" />
                 </ContextMenu>
-            </hc:NotifyIcon.ContextMenu>
-        </hc:NotifyIcon>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
     </Grid>
 </Window>
