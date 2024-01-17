@@ -261,8 +261,8 @@ namespace EyeGuard
                 infoOnThe.Order = i;
                 InfoOnTheScreens.Add(infoOnThe);
             }
-
         }
+
 
         /// <summary>
         /// 是否正在播放
@@ -270,14 +270,31 @@ namespace EyeGuard
         /// <returns></returns>
         public static bool IsAudioPlaying()
         {
+            //上次的MasterPeakValue值
+            float _oldMasterPeakValue = GetMasterPeakValue();
+            if (_oldMasterPeakValue <= 0)
+            {
+                return false;
+            }
+            if (_oldMasterPeakValue != GetMasterPeakValue())
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 获取正在播放的声音峰值
+        /// </summary>
+        /// <returns></returns>
+        public static float GetMasterPeakValue()
+        {
             using (var enumerator = new MMDeviceEnumerator())
             {
                 var defaultDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-                bool state= defaultDevice.AudioMeterInformation.MasterPeakValue > 0;
-                return state;
+                var _masterPeakValue = defaultDevice.AudioMeterInformation.MasterPeakValue;
+                return _masterPeakValue;
             }
         }
     }
-
-
 }

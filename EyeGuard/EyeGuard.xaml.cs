@@ -339,7 +339,7 @@ namespace EyeGuard
         /// <param name="action">动作</param>
         private void SmartTiming(Action action = null)
         {
-            if (Bll.GetLastInputTime() < 1000 || Bll.IsAudioPlaying())
+            if (Bll.GetLastInputTime() < 1000)
             {
                 FreeCount = 0;
                 if (action != null)
