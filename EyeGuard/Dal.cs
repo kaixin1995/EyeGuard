@@ -20,7 +20,7 @@ namespace EyeGuard
         /// <summary>
         /// 版本号
         /// </summary>
-        public static string Edition = "3.23";
+        public static string Edition = "3.2.3";
 
 
         /// <summary>
