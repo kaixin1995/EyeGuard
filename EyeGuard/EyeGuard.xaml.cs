@@ -695,7 +695,7 @@ namespace EyeGuard
             }
         }
 
-
+        /*
         /// <summary>
         /// 托盘图标鼠标单击事件
         /// </summary>
@@ -706,7 +706,7 @@ namespace EyeGuard
 
             //获得焦点
             this.Focus();
-            /*
+            
             if ((int)md.TimerMode == 2)
             {
                 Count = 0;
@@ -716,12 +716,40 @@ namespace EyeGuard
                     tp.Show();
                 }
                 return;
-            }*/
+            }
 
             if (Tips.Function == false)
             {
                 Tips tp = new Tips("您已经工作了" + (Count / 60) + "分钟，" + (md.Work - (Count / 60)) + "分后进入休息时间");
                 tp.Show();
+            }
+        }
+        */
+
+        /// <summary>
+        /// 重启自身
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Reboot_Click(object sender, RoutedEventArgs e)
+        {
+            // 关闭所有窗口
+            foreach (Window window in Application.Current.Windows)
+            {
+                window.Close();
+            }
+
+            // 重启应用程序
+            try
+            {
+                string appPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "EyeGuard.exe");
+                System.Diagnostics.Process.Start(appPath);
+                System.Windows.Application.Current.Shutdown(); // 关闭当前应用程序
+            }
+            catch (Exception ex)
+            {
+                // 处理异常，例如记录日志或显示错误消息
+                MessageBox.Show("重新启动应用程序时出现错误：" + ex.Message);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 
@@ -31,19 +32,23 @@ namespace EyeGuard.UI
             Function = false;
         }
 
-
         /// <summary>
         /// 打开github
         /// </summary>
         private void Github_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            string url = "https://github.com/kaixin1995/EyeGuard";
             try
             {
-                System.Diagnostics.Process.Start("https://github.com/kaixin1995/EyeGuard");
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show($"打开页面错误，您可以手动打开:https://github.com/kaixin1995/EyeGuard","错误提示");
+                MessageBox.Show($"打开页面错误，您可以手动打开:{url}", "错误提示");
             }
         }
 
