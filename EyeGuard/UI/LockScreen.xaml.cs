@@ -112,9 +112,9 @@ namespace EyeGuard.UI
 
             PromptText.Text = "距离解锁时间还有" + Count + "秒";
             //PromptText.Width = (Bll.GetStringLength(PromptText.Text.ToString()) / 2) * 44;
-            
-            //加班模式下无法隐藏强制解锁按钮
-            if (md.Unlock == 0&& (int)md.TimerMode != 2)
+
+            //强制休息模式下会强制隐藏解锁按钮
+            if (md.Unlock == 0|| (int)md.TimerMode == 2)
             {
                 Unlock.Visibility = Visibility.Collapsed;
             }

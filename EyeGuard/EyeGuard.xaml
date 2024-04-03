@@ -19,7 +19,7 @@
     Topmost="True"
     WindowStyle="None"
     mc:Ignorable="d">
-    <Grid>
+    <Grid MouseDown="Grid_MouseDown">
         <Grid.ContextMenu>
             <ContextMenu Name="menu" StaysOpen="true">
                 <MenuItem Click="SetupPanel_Click" Header="设置面板" />
@@ -75,9 +75,7 @@
             Foreground="White"
             Text="00:00" />
 
-        <tb:TaskbarIcon
-            Name="MyNotifyIcon"
-            ToolTipText="眼睛卫士">
+        <tb:TaskbarIcon Name="MyNotifyIcon" ToolTipText="眼睛卫士">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
                     <MenuItem Click="SetupPanel_Click" Header="设置面板" />

@@ -74,6 +74,10 @@ namespace EyeGuard
         /// </summary>
         private void ResetTime_Click(object sender, EventArgs e)
         {
+            if ((int)md.TimerMode == 2)
+            {
+                return;
+            }
             Count = 0;
         }
 
@@ -213,8 +217,6 @@ namespace EyeGuard
                     Tips tp = new Tips("桌面插件已经恢复显示~");
                     tp.Show();
                 }
-
-
             }
         }
 
@@ -574,7 +576,7 @@ namespace EyeGuard
             if ((md.Work - 1) * 60 == Count)
             {
                 new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeRest.mp3").Play();
-                if ((int)md.TimerMode == 1 && bll.FullScreen())
+                if (((int)md.TimerMode == 1 && bll.FullScreen())|| (int)md.TimerMode == 2)
                 {
                     return;
                 }
@@ -750,6 +752,21 @@ namespace EyeGuard
             {
                 // 处理异常，例如记录日志或显示错误消息
                 MessageBox.Show("重新启动应用程序时出现错误：" + ex.Message);
+            }
+        }
+
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Middle)
+            {
+                //获得焦点
+                this.Focus();
+
+                if (Tips.Function == false)
+                {
+                    Tips tp = new Tips("您已经工作了" + (Count / 60) + "分钟，" + (md.Work - (Count / 60)) + "分后进入休息时间");
+                    tp.Show();
+                }
             }
         }
     }

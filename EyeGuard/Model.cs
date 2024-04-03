@@ -55,8 +55,9 @@
 
         /// <summary>
         /// 设置计时模式枚举
+        /// 2024-4-3 新增强制休息模式，此模式下将会无休息前提示，无法跳过休息时间，且无法通过解锁按钮进行解锁
         /// </summary>
-        public enum timer_mode { 正常模式 = 0, 游戏模式 = 1 }
+        public enum timer_mode { 正常模式 = 0, 游戏模式 = 1, 强制休息 = 2}
 
 
         /// <summary>
@@ -67,7 +68,7 @@
         /// <summary>
         /// 设置锁屏风格枚举
         /// </summary>
-        public enum lock_mode { 透明模式 = 0, 半透明模式 = 1, 屏保模式 = 2, 语音模式 = 3 ,锁定Windows =4,时间锁屏=5 }
+        public enum lock_mode { 透明模式 = 0, 半透明模式 = 1, 屏保模式 = 2, 语音模式 = 3 ,锁定Windows =4,时间锁屏=5}
 
         /// <summary>
         /// 锁屏界面
