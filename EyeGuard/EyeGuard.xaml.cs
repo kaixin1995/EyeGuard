@@ -483,6 +483,16 @@ namespace EyeGuard
 
                         break;
                     }
+                default:
+                    if (md.IsIntelligent == 1)
+                    {
+                        SmartTiming();
+                    }
+                    else
+                    {
+                        Count++;
+                    }
+                    break;
 
             }
 
