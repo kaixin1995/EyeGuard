@@ -76,6 +76,8 @@ namespace EyeGuard
         {
             if ((int)md.TimerMode == 2)
             {
+                Tips tp = new Tips("强制休息模式下无法重置工作时间");
+                tp.Show();
                 return;
             }
             Count = 0;
@@ -357,6 +359,19 @@ namespace EyeGuard
             {
                 //判断是否处于暂离状态
                 FreeCount++;
+
+                //如果小于一分钟，那么将认为不处于暂离状态
+                if (FreeCount < 60)
+                {
+                    if (action != null)
+                    {
+                        action();
+                    }
+                    else
+                    {
+                        Count++;
+                    }
+                }
                 //如果电脑5分无人进行操作，那么就重新开始计时
                 if (FreeCount >= 300)
                 {
@@ -401,6 +416,9 @@ namespace EyeGuard
         /// <param name="e"></param>
         private void timer_Tick(object sender, EventArgs e)
         {
+            if (Pause)
+                return;
+
             if ((int)md.State == 1)
             {
                 Count = 0;
@@ -778,6 +796,21 @@ namespace EyeGuard
                     tp.Show();
                 }
             }
+        }
+
+        /// <summary>
+        /// 是否暂停计时
+        /// </summary>
+        private bool Pause = false;
+
+        /// <summary>
+        /// 启动或者暂停计时
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StartOrPause_Click(object sender, RoutedEventArgs e)
+        {
+            Pause = !Pause;
         }
     }
 }

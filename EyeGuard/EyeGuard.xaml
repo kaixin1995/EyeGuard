@@ -27,6 +27,7 @@
                     Name="ResetTime"
                     Click="ResetTime_Click"
                     Header="重置工作时间" />
+                <MenuItem Click="StartOrPause_Click" Header="启动/暂停计时" />
                 <MenuItem Header="桌面插件显示">
                     <MenuItem
                         Click="WhetherToDisplay_Click"
@@ -38,6 +39,7 @@
                         Tag="hide" />
                 </MenuItem>
                 <MenuItem Click="LockScreen_Click" Header="锁屏" />
+
                 <MenuItem Header="是否开机自启">
                     <MenuItem
                         Click="StartupItem_Click"
@@ -79,6 +81,7 @@
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
                     <MenuItem Click="SetupPanel_Click" Header="设置面板" />
+                    <MenuItem Click="StartOrPause_Click" Header="启动/暂停计时" />
                     <MenuItem Click="ResetTime_Click" Header="重置工作时间" />
                     <MenuItem Header="桌面插件">
                         <MenuItem
