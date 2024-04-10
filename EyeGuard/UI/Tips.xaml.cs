@@ -11,7 +11,19 @@ namespace EyeGuard.UI
     /// </summary>
     public partial class Tips : Window
     {
-        public Tips(string Value)
+        /// <summary>
+        /// 外部调用，保证只有一个实例
+        /// </summary>
+        /// <param name="value"></param>
+        public static void Show(string value)
+        {
+            if (Tips.Function == false)
+            {
+                Tips tp = new Tips(value);
+                tp.Show();
+            }
+        }
+        private Tips(string Value)
         {
             if (Function == true)
             {
@@ -45,7 +57,7 @@ namespace EyeGuard.UI
         /// <summary>
         /// 是否已经打开，保证一个实例
         /// </summary>
-        public static bool Function = false;
+        private static bool Function = false;
 
 
         /// <summary>

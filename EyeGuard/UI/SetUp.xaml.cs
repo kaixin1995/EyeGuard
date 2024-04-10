@@ -165,12 +165,7 @@ namespace EyeGuard.UI
             //提醒
             Bll bll = new Bll();
             bll.SetData(md);
-            if (Tips.Function == false)
-            {
-                Tips tp = new Tips("已经成功保存~");
-                tp.Show();
-            }
-
+            Tips.Show("已经成功保存~");
             this.Close();
         }
 

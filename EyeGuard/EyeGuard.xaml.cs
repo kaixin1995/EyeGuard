@@ -35,9 +35,6 @@ namespace EyeGuard
         /// </summary>
         private DateTime? dateBegin = null;
 
-
-
-
         /// <summary>
         /// 最小化系统托盘
         /// </summary>
@@ -76,8 +73,7 @@ namespace EyeGuard
         {
             if ((int)md.TimerMode == 2)
             {
-                Tips tp = new Tips("强制休息模式下无法重置工作时间");
-                tp.Show();
+                Tips.Show("强制休息模式下无法重置工作时间");
                 return;
             }
             Count = 0;
@@ -106,20 +102,12 @@ namespace EyeGuard
             if (state == "SelfStarting")
             {
                 Bll.BootUp();
-                if (Tips.Function == false)
-                {
-                    Tips tp = new Tips("已经设置开机自启~");
-                    tp.Show();
-                }
+                Tips.Show("已经设置开机自启~");
             }
             else
             {
                 Bll.BootUp(false);
-                if (Tips.Function == false)
-                {
-                    Tips tp = new Tips("已经取消了开机自启~");
-                    tp.Show();
-                }
+                Tips.Show("已经取消了开机自启~");
             }
         }
 
@@ -199,11 +187,7 @@ namespace EyeGuard
                 this.ShowInTaskbar = false;//使Form不在任务栏上显示
                 md.Display = 0;
                 dal.SetData(md);
-                if (Tips.Function == false)
-                {
-                    Tips tp = new Tips("桌面插件已经隐藏~");
-                    tp.Show();
-                }
+                Tips.Show("桌面插件已经隐藏~");
 
             }
             else
@@ -214,11 +198,7 @@ namespace EyeGuard
                 this.Activate();
                 md.Display = 1;
                 dal.SetData(md);
-                if (Tips.Function == false)
-                {
-                    Tips tp = new Tips("桌面插件已经恢复显示~");
-                    tp.Show();
-                }
+                Tips.Show("桌面插件已经恢复显示~");
             }
         }
 
@@ -537,24 +517,16 @@ namespace EyeGuard
                     {
                         if (Convert.ToInt32(time[0]) == 23 && Convert.ToInt32(time[1]) == 59 && Convert.ToInt32(time[2]) == 3)
                         {
-                            if (Tips.Function == false)
-                            {
-                                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
-                                Tips tp = new Tips("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
-                                tp.Show();
-                            }
+                            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
+                            Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                         }
                     }
                     else
                     {
                         if (Convert.ToInt32(time[0]) == (md.Shutdown.Time - 1) && Convert.ToInt32(time[1]) == 59 && Convert.ToInt32(time[2]) == 3)
                         {
-                            if (Tips.Function == false)
-                            {
-                                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
-                                Tips tp = new Tips("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
-                                tp.Show();
-                            }
+                            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
+                            Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                         }
                     }
                 }
@@ -563,12 +535,8 @@ namespace EyeGuard
                     //到达关机时间
                     if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == (md.Shutdown.Branch - 1) && Convert.ToInt32(time[2]) == 3)
                     {
-                        if (Tips.Function == false)
-                        {
-                            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
-                            Tips tp = new Tips("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
-                            tp.Show();
-                        }
+                        new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
+                        Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                     }
                 }
 
@@ -608,11 +576,7 @@ namespace EyeGuard
                 {
                     return;
                 }
-                if (Tips.Function == false)
-                {
-                    Tips tp = new Tips("您已经工作了" + (Count / 60) + "分钟，1分钟后进入休息时间！");
-                    tp.Show();
-                }
+                Tips.Show("您已经工作了" + (Count / 60) + "分钟，1分钟后进入休息时间！");
             }
 
             //到达休息时间
@@ -789,12 +753,7 @@ namespace EyeGuard
             {
                 //获得焦点
                 this.Focus();
-
-                if (Tips.Function == false)
-                {
-                    Tips tp = new Tips("您已经工作了" + (Count / 60) + "分钟，" + (md.Work - (Count / 60)) + "分后进入休息时间");
-                    tp.Show();
-                }
+                Tips.Show("您已经工作了" + (Count / 60) + "分钟，" + (md.Work - (Count / 60)) + "分后进入休息时间");
             }
         }
 
