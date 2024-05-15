@@ -292,6 +292,27 @@ namespace EyeGuard
                 {
                     MainWindow.Count = 0;
                 }
+                if (fen >= 60*24)
+                {
+                    // 关闭所有窗口
+                    foreach (Window window in Application.Current.Windows)
+                    {
+                        window.Close();
+                    }
+
+                    // 重启应用程序
+                    try
+                    {
+                        string appPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "EyeGuard.exe");
+                        System.Diagnostics.Process.Start(appPath);
+                        System.Windows.Application.Current.Shutdown(); // 关闭当前应用程序
+                    }
+                    catch (Exception ex)
+                    {
+                        // 处理异常，例如记录日志或显示错误消息
+                        MessageBox.Show("重新启动应用程序时出现错误：" + ex.Message);
+                    }
+                }
             }
         }
 
