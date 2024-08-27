@@ -16,6 +16,8 @@ namespace EyeGuard.UI
     /// </summary>
     public partial class LockScreen : Window
     {
+        public static LockScreen GetLockScreen{get;set;}
+
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -33,6 +35,7 @@ namespace EyeGuard.UI
             PromptText.Text = "点击右下角小锁即可解锁";
             Position();
             mainWindow.Focus();
+            GetLockScreen = this;
         }
 
 
@@ -125,6 +128,7 @@ namespace EyeGuard.UI
             timer.Interval = new TimeSpan(0, 0, 1);
             timer.Tick += timer1_Tick;
             timer.Start();
+            GetLockScreen = this;
         }
 
         /// <summary>

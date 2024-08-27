@@ -267,6 +267,7 @@ namespace EyeGuard
                 //锁屏
                 case SessionSwitchReason.SessionLock:
                     BeginSessionLock();
+                    LockScreen.GetLockScreen?.Close();
                     break;
                 //注销
                 case SessionSwitchReason.SessionLogoff:
