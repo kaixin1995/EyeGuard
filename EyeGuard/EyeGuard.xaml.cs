@@ -3,6 +3,7 @@ using EyeGuard.UI;
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -291,29 +292,16 @@ namespace EyeGuard
                 //如果两个时间的分钟差大于指定值，就证明 是启用系统锁定等功能   默认算是休息过了。
                 if (fen >= 3)
                 {
-                    MainWindow.Count = 0;
+                    Count = 0;
                 }
-                if (fen >= 60*24)
-                {
-                    // 关闭所有窗口
-                    foreach (Window window in Application.Current.Windows)
-                    {
-                        window.Close();
-                    }
-
-                    // 重启应用程序
-                    try
-                    {
-                        string appPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "EyeGuard.exe");
-                        System.Diagnostics.Process.Start(appPath);
-                        System.Windows.Application.Current.Shutdown(); // 关闭当前应用程序
-                    }
-                    catch (Exception ex)
-                    {
-                        // 处理异常，例如记录日志或显示错误消息
-                        MessageBox.Show("重新启动应用程序时出现错误：" + ex.Message);
-                    }
-                }
+                //if (fen >= 60*24)
+                //{
+                //    Reboot();
+                //}
+            }
+            if (!timer.IsEnabled)
+            {
+                timer.Start();
             }
         }
 
@@ -325,6 +313,10 @@ namespace EyeGuard
             //锁屏后执行
             dateBegin = DateTime.Now;
             md.State = (state)1;
+            if (timer.IsEnabled)
+            {
+                timer.Stop();
+            }
         }
         #endregion
 
@@ -745,28 +737,67 @@ namespace EyeGuard
         /// <summary>
         /// 重启自身
         /// </summary>
+        private void Reboot()
+        {
+            string programLauncherPaht = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "EX", "ProgramLauncher.exe");
+            if (!File.Exists(programLauncherPaht))
+            {
+                MessageBox.Show("程序根目录下的EX目录下未找到ProgramLauncher程序，请仔细检查", "错误提示", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            string appPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "EyeGuard.exe");
+
+            // 定义延迟启动时间（秒）
+            int delaySeconds = 2;
+
+            // 定义是否显示控制台
+            bool showConsole = false;
+
+            string arguments = $"\"{appPath}\" {delaySeconds} {showConsole.ToString().ToLower()}";
+
+            // 设置进程启动信息
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = programLauncherPaht,
+                Arguments = arguments,
+                // 可选设置：
+                // UseShellExecute = false, // 如果需要重定向输出，可设置为 false
+                // RedirectStandardOutput = true,
+                // RedirectStandardError = true,
+                // CreateNoWindow = true, // 如果不希望启动器程序显示自己的控制台窗口
+            };
+
+
+            try
+            {
+                // 启动 Process
+                using (Process process = Process.Start(startInfo))
+                {
+                    if (process == null)
+                    {
+                        MessageBox.Show("错误: 无法启动 ProgramLauncher.exe", "错误提示", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                    
+                    Console.WriteLine($"ProgramLauncher.exe 已启动，进程ID: {process.Id}");
+                    System.Environment.Exit(0);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"发生异常: {ex.Message}");
+            }
+
+        }
+
+
+        /// <summary>
+        /// 点击重启选项
+        /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Reboot_Click(object sender, RoutedEventArgs e)
         {
-            // 关闭所有窗口
-            foreach (Window window in Application.Current.Windows)
-            {
-                window.Close();
-            }
-
-            // 重启应用程序
-            try
-            {
-                string appPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "EyeGuard.exe");
-                System.Diagnostics.Process.Start(appPath);
-                System.Windows.Application.Current.Shutdown(); // 关闭当前应用程序
-            }
-            catch (Exception ex)
-            {
-                // 处理异常，例如记录日志或显示错误消息
-                MessageBox.Show("重新启动应用程序时出现错误：" + ex.Message);
-            }
+            Reboot();
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)

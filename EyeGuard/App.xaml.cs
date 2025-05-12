@@ -41,6 +41,10 @@ namespace EyeGuard
 
         void App_Startup(object sender, StartupEventArgs e)
         {
+            // 获取当前程序的进程名称
+            string processName = Process.GetCurrentProcess().ProcessName;
+            Console.WriteLine($"当前程序的进程名称是: {processName}");
+            KillOtherProcessesByName(processName);
             bool ret;
             mutex = new System.Threading.Mutex(true, "EyeGuard", out ret);
 
@@ -50,6 +54,51 @@ namespace EyeGuard
                 HandleRunningInstance(instance);
             }
 
+        }
+
+        /// <summary>
+        /// 终止指定名称的进程，但保留当前运行的进程。
+        /// </summary>
+        /// <param name="processName">要终止的进程名称（不带扩展名）</param>
+        public static void KillOtherProcessesByName(string processName)
+        {
+            if (string.IsNullOrWhiteSpace(processName))
+            {
+                throw new ArgumentException("进程名称不能为空或空字符串。", nameof(processName));
+            }
+
+            try
+            {
+                // 获取当前进程的信息
+                Process currentProcess = Process.GetCurrentProcess();
+                int currentProcessId = currentProcess.Id;
+
+                // 获取所有与目标名称匹配的进程
+                Process[] processes = Process.GetProcessesByName(processName);
+
+                bool foundOtherProcesses = false;
+
+                foreach (var process in processes)
+                {
+                    // 排除当前进程
+                    if (process.Id != currentProcessId)
+                    {
+                        foundOtherProcesses = true;
+                        Console.WriteLine($"正在终止进程 ID: {process.Id}");
+                        process.Kill(); // 终止进程
+                        process.WaitForExit(); // 等待进程完全退出
+                    }
+                }
+
+                if (!foundOtherProcesses)
+                {
+                    Console.WriteLine("没有找到其他需要终止的进程。");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"发生错误: {ex.Message}");
+            }
         }
 
         /// <summary>
