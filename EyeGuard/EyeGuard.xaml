@@ -77,7 +77,11 @@
             Foreground="White"
             Text="00:00" />
 
-        <tb:TaskbarIcon Name="MyNotifyIcon" ToolTipText="眼睛卫士">
+        <tb:TaskbarIcon
+            Name="MyNotifyIcon"
+            ToolTipText="眼睛卫士"
+            TrayLeftMouseUp="NotifyIcon_TrayLeftMouseUp"
+            TrayMouseDoubleClick="NotifyIcon_TrayMouseDoubleClick">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
                     <MenuItem Click="SetupPanel_Click" Header="设置面板" />

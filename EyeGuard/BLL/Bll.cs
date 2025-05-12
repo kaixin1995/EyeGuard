@@ -24,8 +24,7 @@ namespace EyeGuard
         public Model Initialization()
         {
             //实例化类
-            Dal dl = new Dal();
-            return dl.ReturnData();
+            return Dal.ReturnData();
         }
 
 
@@ -36,8 +35,7 @@ namespace EyeGuard
         public void SetData(Model md)
         {
             //实例化类
-            Dal dl = new Dal();
-            dl.SetData(md);
+            Dal.SetData(md);
         }
 
         /// <summary>
@@ -251,7 +249,8 @@ namespace EyeGuard
         /// </summary>
         public static void GetInfoOnTheScreens()
         {
-            InfoOnTheScreens=new List<InfoOnTheScreen>();
+            // 获取显示器信息
+            InfoOnTheScreens =new List<InfoOnTheScreen>();
             for (int i = 0; i < Screen.AllScreens.Count(); i++)
             {
                 var _value = Screen.AllScreens.ToList()[i];

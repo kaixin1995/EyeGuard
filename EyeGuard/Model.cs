@@ -24,6 +24,30 @@
         /// </summary>
         public TurnOffTime Shutdown { set; get; }
 
+        private string imgPath { set; get; }
+
+        /// <summary>
+        /// 锁屏图片所在路径(相对路径)
+        /// </summary>
+        public string ImgPath
+        {
+            get 
+            {
+                if (string.IsNullOrWhiteSpace(imgPath))
+                {
+                    return "Resources/wallpaper.jpg";
+                }
+                else
+                { 
+                   return imgPath;
+                }
+            }
+            set
+            { 
+               imgPath = value;
+            }
+        }
+
 
         /// <summary>
         /// 是否允许强制解锁  0是不允许  1是允许

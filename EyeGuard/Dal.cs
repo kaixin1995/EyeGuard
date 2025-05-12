@@ -9,37 +9,40 @@ namespace EyeGuard
     /// <summary>
     /// 操作配置文件
     /// </summary>
-    class Dal
+    public static class Dal
     {
         /// <summary>
         /// 用户的所有数据
         /// </summary>
-        private Dictionary<string, int> Data = new Dictionary<string, int>();
+        private static Dictionary<string, int> Data = new Dictionary<string, int>();
 
 
         /// <summary>
         /// 版本号
         /// </summary>
-        public static string Edition = "3.2.4";
+        public static string Edition = "3.2.5";
 
 
         /// <summary>
         /// 在构造函数中初始化
         /// </summary>
-        public Dal()
+        static Dal()
         {
             Deserialize();
         }
 
 
         /// <summary>
+        /// 实例化类
+        /// </summary>
+        private static Model md = new Model();
+
+        /// <summary>
         /// 返回实体类
         /// </summary>
         /// <returns>返回实体类</returns>
-        public Model ReturnData()
+        public static Model ReturnData()
         {
-            //实例化类
-            Model md = new Model();
             //读取配置项中的配置
             md.Work = Data["Work"];
             md.BreakPoints = Data["BreakPoints"];
@@ -57,9 +60,9 @@ namespace EyeGuard
         /// 写入配置
         /// </summary>
         /// <param name="md">实体类对象</param>
-        public void SetData(Model md)
+        public static void SetData(Model md)
         {
-            Data["Work"] = md.Work; ;
+            Data["Work"] = md.Work;
             Data["BreakPoints"] = md.BreakPoints;
             Data["TimerMode"] = (int)md.TimerMode;
             Data["LockMode"] = (int)md.LockMode;
@@ -76,9 +79,8 @@ namespace EyeGuard
         /// <summary>
         /// 反序列化
         /// </summary>
-        public void Deserialize()
+        public static void Deserialize()
         {
-
             //获取配置文件中的内容
             string Work = ConfigHelper.GetConfig("Work");
             string BreakPoints = ConfigHelper.GetConfig("BreakPoints");
@@ -90,7 +92,8 @@ namespace EyeGuard
             string Unlock = ConfigHelper.GetConfig("Unlock");
             string IsIntelligent = ConfigHelper.GetConfig("IsIntelligent");
             string ShutdownMode = ConfigHelper.GetConfig("ShutdownMode");
-
+            string ImgPath = ConfigHelper.GetConfig("ImgPath");
+            md.ImgPath = ImgPath;
 
             Data.Add("Work", Convert.ToInt32(Work));
             Data.Add("BreakPoints", Convert.ToInt32(BreakPoints));
@@ -108,7 +111,7 @@ namespace EyeGuard
         /// <summary>
         /// 序列化
         /// </summary>
-        public void Serialize()
+        public static void Serialize()
         {
             //序列化写入本地
             ConfigHelper.SetConfig("Work", Data["Work"].ToString());

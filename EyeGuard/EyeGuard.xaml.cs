@@ -160,7 +160,6 @@ namespace EyeGuard
         /// </summary>
         private void WhetherToDisplay_Click(object sender, RoutedEventArgs e)
         {
-            Dal dal = new Dal();
             //状态
             string state = string.Empty;
             try
@@ -187,7 +186,7 @@ namespace EyeGuard
                 //解决最小化到任务栏可以强行关闭程序的问题。
                 this.ShowInTaskbar = false;//使Form不在任务栏上显示
                 md.Display = 0;
-                dal.SetData(md);
+                Dal.SetData(md);
                 Tips.Show("桌面插件已经隐藏~");
 
             }
@@ -198,7 +197,7 @@ namespace EyeGuard
                 this.ShowInTaskbar = false;//使Form不在任务栏上显示
                 this.Activate();
                 md.Display = 1;
-                dal.SetData(md);
+                Dal.SetData(md);
                 Tips.Show("桌面插件已经恢复显示~");
             }
         }
@@ -703,36 +702,7 @@ namespace EyeGuard
             }
         }
 
-        /*
-        /// <summary>
-        /// 托盘图标鼠标单击事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MyNotifyIcon_Click(object sender, RoutedEventArgs e)
-        {
 
-            //获得焦点
-            this.Focus();
-            
-            if ((int)md.TimerMode == 2)
-            {
-                Count = 0;
-                if (Tips.Function == false)
-                {
-                    Tips tp = new Tips("加班模式下点击托盘会进行重新计时，您当前的工作时间已被重置~");
-                    tp.Show();
-                }
-                return;
-            }
-
-            if (Tips.Function == false)
-            {
-                Tips tp = new Tips("您已经工作了" + (Count / 60) + "分钟，" + (md.Work - (Count / 60)) + "分后进入休息时间");
-                tp.Show();
-            }
-        }
-        */
 
         /// <summary>
         /// 重启自身
@@ -823,6 +793,37 @@ namespace EyeGuard
         private void StartOrPause_Click(object sender, RoutedEventArgs e)
         {
             Pause = !Pause;
+        }
+
+        /// <summary>
+        /// 点击托盘
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NotifyIcon_TrayLeftMouseUp(object sender, RoutedEventArgs e)
+        {
+            //获得焦点
+            this.Focus();
+            Tips.Show("您已经工作了" + (Count / 60) + "分钟，" + (md.Work - (Count / 60)) + "分后进入休息时间");
+        }
+
+
+        /// <summary>
+        /// 双击托盘
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NotifyIcon_TrayMouseDoubleClick(object sender, RoutedEventArgs e)
+        {
+            //获得焦点
+            this.Focus();
+
+            if ((int)md.TimerMode == 2)
+            {
+                Count = 0;
+                Tips.Show("加班模式下点击托盘会进行重新计时，您当前的工作时间已被重置~");
+                return;
+            }
         }
     }
 }

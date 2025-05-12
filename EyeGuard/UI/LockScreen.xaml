@@ -15,8 +15,7 @@
     ShowInTaskbar="False"
     Topmost="True"
     WindowStyle="None"
-    mc:Ignorable="d"
-    >
+    mc:Ignorable="d">
     <Window.Resources>
         <Style x:Key="FlipNumberStyle1" TargetType="{x:Type hc:FlipNumber}">
             <Setter Property="FontSize" Value="70" />
@@ -39,33 +38,27 @@
                             <hc:FlipNumber
                                 Margin="-20"
                                 Number="{Binding NumberList[0], RelativeSource={RelativeSource TemplatedParent}}"
-                                Style="{DynamicResource FlipNumberStyle1}"
-                                />
+                                Style="{DynamicResource FlipNumberStyle1}" />
                             <hc:FlipNumber
                                 Margin="-20"
-                                Style="{DynamicResource FlipNumberStyle1}"
                                 Number="{Binding NumberList[1], RelativeSource={RelativeSource TemplatedParent}}"
-                                />
+                                Style="{DynamicResource FlipNumberStyle1}" />
                             <hc:FlipNumber
                                 Margin="0,-20,-20,-20"
-                                Style="{DynamicResource FlipNumberStyle1}"
                                 Number="{Binding NumberList[2], RelativeSource={RelativeSource TemplatedParent}}"
-                                />
+                                Style="{DynamicResource FlipNumberStyle1}" />
                             <hc:FlipNumber
                                 Margin="-20"
-                                Style="{DynamicResource FlipNumberStyle1}"
                                 Number="{Binding NumberList[3], RelativeSource={RelativeSource TemplatedParent}}"
-                                />
+                                Style="{DynamicResource FlipNumberStyle1}" />
                             <hc:FlipNumber
                                 Margin="0,-20,-20,-20"
-                                Style="{DynamicResource FlipNumberStyle1}"
                                 Number="{Binding NumberList[4], RelativeSource={RelativeSource TemplatedParent}}"
-                                />
+                                Style="{DynamicResource FlipNumberStyle1}" />
                             <hc:FlipNumber
                                 Margin="-20"
-                                Style="{DynamicResource FlipNumberStyle1}"
                                 Number="{Binding NumberList[5], RelativeSource={RelativeSource TemplatedParent}}"
-                                />
+                                Style="{DynamicResource FlipNumberStyle1}" />
                         </StackPanel>
                     </ControlTemplate>
                 </Setter.Value>
@@ -80,24 +73,21 @@
             BorderBrush="White"
             BorderThickness="1"
             CornerRadius="0"
-            Opacity="0.5"
-            >
+            Opacity="0.5">
             <Border
                 Name="hyaline2"
                 Margin="0"
                 Background="Black"
                 CornerRadius="0"
-                Opacity="0.5"
-                />
+                Opacity="0.5" />
         </Border>
         <hc:FlipClock
             Name="filpclock"
             Margin="32"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Visibility="Collapsed"
             Style="{DynamicResource FlipClockStyle1}"
-            />
+            Visibility="Collapsed" />
         <Image Name="img" />
         <Image
             Name="Unlock"
@@ -106,29 +96,26 @@
             Margin="498,268,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            MouseLeftButtonDown="Image_MouseLeftButtonDown"
-            />
+            MouseLeftButtonDown="Image_MouseLeftButtonDown" />
         <TextBlock
             Name="PromptText"
-            Text="距离解锁时间还有0秒"
             Width="Auto"
             Height="61"
-            TextWrapping="NoWrap"
             Margin="0,0,0,10"
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
             FontSize="40"
-            >
+            Text="距离解锁时间还有0秒"
+            TextWrapping="NoWrap">
             <TextBlock.Foreground>
                 <SolidColorBrush Color="White" />
             </TextBlock.Foreground>
             <TextBlock.Effect>
                 <DropShadowEffect
-                    Direction="0"
                     BlurRadius="10"
+                    Direction="0"
                     Opacity="1"
-                    Color="#7F7F7F"
-                    />
+                    Color="#7F7F7F" />
             </TextBlock.Effect>
         </TextBlock>
     </Grid>

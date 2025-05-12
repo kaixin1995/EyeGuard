@@ -1,6 +1,5 @@
-﻿using HandyControl.Controls;
-using System;
-using System.Diagnostics;
+﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -87,10 +86,14 @@ namespace EyeGuard.UI
                 }
                 #endregion
 
-               lockScreenⅡ.Show();
+                lockScreenⅡ.Show();
 
                 //lockScreenⅡ.TopTimer.Stop();
                 lockScreenⅡ.WindowState = WindowState.Maximized;
+
+                lockScreenⅡ.img.Width = lockScreenⅡ.ActualWidth;
+                lockScreenⅡ.img.Height = lockScreenⅡ.ActualHeight;
+                lockScreenⅡ.img.Stretch = Stretch.Uniform;
             }
         }
 
@@ -210,8 +213,6 @@ namespace EyeGuard.UI
 
             this.Width = System.Windows.SystemParameters.PrimaryScreenWidth;
             this.Height = System.Windows.SystemParameters.PrimaryScreenHeight;
-            //this.Top = 0;
-            //this.Left = 0;
             this.img.Stretch = Stretch.Fill;
             img.Width = this.Width;
             img.Height = this.Height;
@@ -219,7 +220,6 @@ namespace EyeGuard.UI
 
 
             Unlock.Margin = new Thickness((this.Width - Unlock.Width - 8), (this.Height - Unlock.Height - 10), 0, 0);
-            //PromptText.Margin = new Thickness(this.Width / 2 - PromptText.Width / 2, (this.Height - PromptText.Height), 0, 0);
 
         }
 
@@ -255,7 +255,8 @@ namespace EyeGuard.UI
                     hyaline.Opacity = 0.7;
                     break;
                 case lock_mode.屏保模式:
-                    img.Source = new BitmapImage(new Uri(path + "Resources/wallpaper.jpg"));
+                    string imgPhth = Path.Combine(path, Dal.ReturnData().ImgPath);
+                    img.Source = new BitmapImage(new Uri(imgPhth));
                     hyaline2.Opacity = 1;
                     hyaline.Opacity = 1;
                     break;
