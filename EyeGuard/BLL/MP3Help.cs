@@ -72,9 +72,18 @@ namespace EyeGuard.BLL
                 }
             }
         }
+
+        /// <summary>
+        /// 是否启用播放
+        /// </summary>
+        public static bool IsPlayEnabled = true;
+
         //播放
         public void Play()
         {
+            if (!IsPlayEnabled)
+                return;
+            //查看是否启动语言模式
             TemStr = "";
             TemStr = TemStr.PadLeft(127, Convert.ToChar(" "));
             APIClass.mciSendString("play media", TemStr, TemStr.Length, 0);

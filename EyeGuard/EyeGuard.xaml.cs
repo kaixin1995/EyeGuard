@@ -412,49 +412,70 @@ namespace EyeGuard
             if (Pause)
                 return;
 
-            if ((int)md.State == 1)
+            try
             {
-                Count = 0;
-                this.Visibility = Visibility.Collapsed;
-                return;
-            }
-
-
-            if (md.Display != 0)
-            {
-                //非全屏显示，全屏下隐藏
-                if (!bll.FullScreen())
+                if ((int)md.State == 1)
                 {
-                    this.Visibility = Visibility.Visible;
-                }
-                else
-                {
+                    Count = 0;
                     this.Visibility = Visibility.Collapsed;
+                    return;
                 }
-            }
 
-            //正常模式 = 0, 游戏模式 = 1
-            switch ((int)md.TimerMode)
-            {
-                //正常模式
-                case 0:
+
+                if (md.Display != 0)
+                {
+                    //非全屏显示，全屏下隐藏
+                    if (!bll.FullScreen())
                     {
-                        if (md.IsIntelligent == 1)
-                        {
-                            SmartTiming();
-                        }
-                        else
-                        {
-                            Count++;
-                        }
-                        break;
+                        this.Visibility = Visibility.Visible;
                     }
-                //游戏模式
-                case 1:
+                    else
                     {
-                        if (md.IsIntelligent == 1)
+                        this.Visibility = Visibility.Collapsed;
+                    }
+                }
+
+                //正常模式 = 0, 游戏模式 = 1
+                switch ((int)md.TimerMode)
+                {
+                    //正常模式
+                    case 0:
                         {
-                            SmartTiming(() =>
+                            if (md.IsIntelligent == 1)
+                            {
+                                SmartTiming();
+                            }
+                            else
+                            {
+                                Count++;
+                            }
+                            break;
+                        }
+                    //游戏模式
+                    case 1:
+                        {
+                            if (md.IsIntelligent == 1)
+                            {
+                                SmartTiming(() =>
+                                {
+                                    //非全屏
+                                    if (!bll.FullScreen())
+                                    {
+                                        Count++;
+                                    }
+                                    else
+                                    {
+                                        //判断工作时间是否已经到达，在游戏模式中，如果检测到全屏，会在即将锁屏的前一秒停止计时
+                                        if (md.Work * 60 > (Count + 1))
+                                        {
+                                            Count++;
+                                        }
+                                    }
+                                    //清空暂离状态
+                                    FreeCount = 0;
+                                });
+                            }
+                            else
                             {
                                 //非全屏
                                 if (!bll.FullScreen())
@@ -471,161 +492,147 @@ namespace EyeGuard
                                 }
                                 //清空暂离状态
                                 FreeCount = 0;
-                            });
+                            }
+
+                            break;
+                        }
+                    default:
+                        if (md.IsIntelligent == 1)
+                        {
+                            SmartTiming();
                         }
                         else
                         {
-                            //非全屏
-                            if (!bll.FullScreen())
-                            {
-                                Count++;
-                            }
-                            else
-                            {
-                                //判断工作时间是否已经到达，在游戏模式中，如果检测到全屏，会在即将锁屏的前一秒停止计时
-                                if (md.Work * 60 > (Count + 1))
-                                {
-                                    Count++;
-                                }
-                            }
-                            //清空暂离状态
-                            FreeCount = 0;
+                            Count++;
                         }
-
                         break;
-                    }
-                default:
-                    if (md.IsIntelligent == 1)
-                    {
-                        SmartTiming();
-                    }
-                    else
-                    {
-                        Count++;
-                    }
-                    break;
 
-            }
-
-            if (md.Work * 60 >= Count)
-            {
-                Time.Text = Bll.GetFormattingTime(Count.ToString());
-                md.AlreadyWorked = md.Work / 60;
-            }
-
-
-            //判断是否启用自动关机
-            if (md.Shutdown.Time != -1 && md.Shutdown.Branch != -1)
-            {
-                //分割时间
-                string[] time = DateTime.Now.ToLongTimeString().ToString().Split(new string[] { ":" }, StringSplitOptions.None);
-
-                //关机前的提醒，如果是整点，也就是0，你需要做好这个判断
-
-                //是否为0分
-                if (md.Shutdown.Branch == 0)
-                {
-                    //是否为0时
-                    if (md.Shutdown.Time == 0)
-                    {
-                        if (Convert.ToInt32(time[0]) == 23 && Convert.ToInt32(time[1]) == 59 && Convert.ToInt32(time[2]) == 3)
-                        {
-                            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
-                            Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
-                        }
-                    }
-                    else
-                    {
-                        if (Convert.ToInt32(time[0]) == (md.Shutdown.Time - 1) && Convert.ToInt32(time[1]) == 59 && Convert.ToInt32(time[2]) == 3)
-                        {
-                            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
-                            Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
-                        }
-                    }
                 }
-                else
+
+                if (md.Work * 60 >= Count)
                 {
+                    Time.Text = Bll.GetFormattingTime(Count.ToString());
+                    md.AlreadyWorked = md.Work / 60;
+                }
+
+
+                //判断是否启用自动关机
+                if (md.Shutdown.Time != -1 && md.Shutdown.Branch != -1)
+                {
+                    //分割时间
+                    string[] time = DateTime.Now.ToLongTimeString().ToString().Split(new string[] { ":" }, StringSplitOptions.None);
+
+                    //关机前的提醒，如果是整点，也就是0，你需要做好这个判断
+
+                    //是否为0分
+                    if (md.Shutdown.Branch == 0)
+                    {
+                        //是否为0时
+                        if (md.Shutdown.Time == 0)
+                        {
+                            if (Convert.ToInt32(time[0]) == 23 && Convert.ToInt32(time[1]) == 59 && Convert.ToInt32(time[2]) == 3)
+                            {
+                                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
+                                Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
+                            }
+                        }
+                        else
+                        {
+                            if (Convert.ToInt32(time[0]) == (md.Shutdown.Time - 1) && Convert.ToInt32(time[1]) == 59 && Convert.ToInt32(time[2]) == 3)
+                            {
+                                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
+                                Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //到达关机时间
+                        if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == (md.Shutdown.Branch - 1) && Convert.ToInt32(time[2]) == 3)
+                        {
+                            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
+                            Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
+                        }
+                    }
+
                     //到达关机时间
-                    if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == (md.Shutdown.Branch - 1) && Convert.ToInt32(time[2]) == 3)
+                    if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == md.Shutdown.Branch && Convert.ToInt32(time[2]) == 1)
                     {
-                        new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
-                        Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
+                        timer.Stop();
+                        switch ((int)md.Shutdown.ShutdownMode)
+                        {
+                            case 0://关机
+                                Process.Start("shutdown", " -s -t 0");
+                                break;
+                            case 1://休眠
+                                SetSuspendState(true, true, true);
+                                break;
+                            case 2://注销
+                                ExitWindowsEx(0, 0);
+                                break;
+                            case 3://睡眠
+                                SetSuspendState(false, true, true);
+                                break;
+                            case 4://锁定
+                                LockWorkStation();
+                                break;
+                            case 5://重启
+                                Process.Start("shutdown", "/r /t 0");
+                                break;
+                        }
                     }
                 }
 
-                //到达关机时间
-                if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == md.Shutdown.Branch && Convert.ToInt32(time[2]) == 1)
+                //休息前的提醒 游戏模式下不进行提醒
+                if ((md.Work - 1) * 60 == Count)
                 {
-                    timer.Stop();
-                    switch ((int)md.Shutdown.ShutdownMode)
+                    new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeRest.mp3").Play();
+                    if (((int)md.TimerMode == 1 && bll.FullScreen()) || (int)md.TimerMode == 2)
                     {
-                        case 0://关机
-                            Process.Start("shutdown", " -s -t 0");
+                        return;
+                    }
+                    Tips.Show("您已经工作了" + (Count / 60) + "分钟，1分钟后进入休息时间！");
+                }
+
+                //到达休息时间
+                if (md.Work * 60 == Count)
+                {
+                    new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3").Play();
+
+                    switch (md.LockMode)
+                    {
+                        case lock_mode.透明模式:
+                        case lock_mode.半透明模式:
+                        case lock_mode.屏保模式:
+                        case lock_mode.时间锁屏:
+                            StopPlaying();
+                            if (LockScreen.Function == false)
+                            {
+                                md.State = (state)1;
+                                LockScreen ls = new LockScreen(md);
+                                ls.Left = 0;
+                                ls.Top = 0;
+                                ls.Show();
+                            }
                             break;
-                        case 1://休眠
-                            SetSuspendState(true, true, true);
+                        case lock_mode.语音模式:
+                            //语音模式下不会进行锁屏的
+                            //既然不锁屏，那就清空本次时间把~
+                            Count = 0;
                             break;
-                        case 2://注销
-                            ExitWindowsEx(0, 0);
-                            break;
-                        case 3://睡眠
-                            SetSuspendState(false, true, true);
-                            break;
-                        case 4://锁定
+                        case lock_mode.锁定Windows:
+                            Count = 0;
+                            StopPlaying();
                             LockWorkStation();
                             break;
-                        case 5://重启
-                            Process.Start("shutdown", "/r /t 0");
+                        default:
                             break;
                     }
                 }
             }
-
-            //休息前的提醒 游戏模式下不进行提醒
-            if ((md.Work - 1) * 60 == Count)
+            catch (Exception ex)
             {
-                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeRest.mp3").Play();
-                if (((int)md.TimerMode == 1 && bll.FullScreen())|| (int)md.TimerMode == 2)
-                {
-                    return;
-                }
-                Tips.Show("您已经工作了" + (Count / 60) + "分钟，1分钟后进入休息时间！");
-            }
 
-            //到达休息时间
-            if (md.Work * 60 == Count)
-            {
-                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3").Play();
-
-                switch (md.LockMode)
-                {
-                    case lock_mode.透明模式:
-                    case lock_mode.半透明模式:
-                    case lock_mode.屏保模式:
-                    case lock_mode.时间锁屏:
-                        StopPlaying();
-                        if (LockScreen.Function == false)
-                        {
-                            md.State = (state)1;
-                            LockScreen ls = new LockScreen(md);
-                            ls.Left = 0;
-                            ls.Top = 0;
-                            ls.Show();
-                        }
-                        break;
-                    case lock_mode.语音模式:
-                        //语音模式下不会进行锁屏的
-                        //既然不锁屏，那就清空本次时间把~
-                        Count = 0;
-                        break;
-                    case lock_mode.锁定Windows:
-                        Count = 0;
-                        StopPlaying();
-                        LockWorkStation();
-                        break;
-                    default:
-                        break;
-                }
             }
         }
 
@@ -824,6 +831,19 @@ namespace EyeGuard
                 Tips.Show("加班模式下点击托盘会进行重新计时，您当前的工作时间已被重置~");
                 return;
             }
+        }
+
+        private void ToggleLanguageReminder_Click(object sender, RoutedEventArgs e)
+        {
+            if (MP3Help.IsPlayEnabled)
+            {
+                Tips.Show("语言提醒已经关闭~");
+            }
+            else
+            {
+                Tips.Show("语言提醒已经开启~");
+            }
+            MP3Help.IsPlayEnabled = !MP3Help.IsPlayEnabled;
         }
     }
 }
