@@ -9,7 +9,7 @@
     xmlns:local="clr-namespace:EyeGuard.UI"
     Title="SetUp"
     Width="245"
-    Height="349.63"
+    Height="364"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     Loaded="MetroWindow_Loaded"
@@ -20,7 +20,7 @@
 
         <TabControl Style="{StaticResource TabControlInLine}">
             <TabItem Header="休息设置">
-                <Grid Name="RestPanel">
+                <Grid Name="RestPanel" Height="330">
                     <Label
                         Content="工作时间:"
                         Margin="7,37,0,0"
@@ -99,7 +99,7 @@
                         Content="保存"
                         Width="60"
                         Height="66"
-                        Margin="159,203,0,0"
+                        Margin="159,211,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         Click="Preservation_Click"
@@ -117,23 +117,32 @@
 
 
 
-                    <Label Content="是否允许解锁" Margin="7,205,138,56" />
+                    <Label Content="是否允许解锁" Margin="10,231,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
 
                     <ToggleButton
                         Name="Unlock"
                         Height="Auto"
-                        Margin="109,205,94,58"
-                        HorizontalAlignment="Center"
+                        Margin="112,235,0,73"
+                        HorizontalAlignment="Left"
                         Style="{StaticResource ToggleButtonSwitch}"
-                        RenderTransformOrigin="0.492,-0.67"
+                        RenderTransformOrigin="0.492,-0.67" Checked="Unlock_Checked"
                         />
-                    <Label Content="是否智能计时" Margin="7,242,138,19" />
+                    <Label Content="是否智能计时" Margin="10,265,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
                     <ToggleButton
                         Name="IsIntelligent"
                         Height="Auto"
-                        Margin="109,243,94,21"
-                        HorizontalAlignment="Center"
+                        Margin="112,269,0,39"
+                        HorizontalAlignment="Left"
                         Style="{StaticResource ToggleButtonSwitch}"
+                        />
+                    <Label Content="播放语音提示" Margin="10,196,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                    <ToggleButton
+                        x:Name="VoiceNotice"
+                        Height="Auto"
+                        Margin="112,199,0,109"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource ToggleButtonSwitch}"
+                        RenderTransformOrigin="0.492,-0.67" IsChecked="True"
                         />
                     <!--<Controls:ToggleSwitch OnLabel="允许解锁" Name="Unlock" OffLabel="禁止解锁" Margin="10,199,95.429,49" />
             <Controls:ToggleSwitch OnLabel="智能计时" x:Name="IsIntelligent" OffLabel="普通计时" Margin="10,237,95.429,11" />-->

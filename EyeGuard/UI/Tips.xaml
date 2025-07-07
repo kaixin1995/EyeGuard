@@ -31,7 +31,7 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             FontSize="35"
-            Foreground="White"
+            Foreground="White" FontFamily="Microsoft YaHei UI Light"
             />
     </Grid>
 </Window>

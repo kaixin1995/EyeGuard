@@ -68,6 +68,7 @@ namespace EyeGuard.UI
             bool _isIntelligent = (md.IsIntelligent == 0) ? false : true;
 
             Unlock.IsChecked = SF;
+            VoiceNotice.IsChecked = md.Voice;
             IsIntelligent.IsChecked = _isIntelligent;
 
         }
@@ -148,6 +149,7 @@ namespace EyeGuard.UI
                 md.TimerMode = (Model.timer_mode)Time.SelectedIndex;
                 md.LockMode = (Model.lock_mode)Lock.SelectedIndex;
                 md.Unlock = (bool)Unlock.IsChecked ? 1 : 0;
+                md.Voice = (bool)VoiceNotice.IsChecked;
                 md.IsIntelligent = (bool)IsIntelligent.IsChecked ? 1 : 0;
             }
             else
@@ -218,6 +220,11 @@ namespace EyeGuard.UI
             this.ShutdownTime.SelectedIndex = md.Shutdown.Time + 1;
             this.ShutdownPoints.SelectedIndex = md.Shutdown.Branch + 1;
             this.ShutdownMode.SelectedIndex = (int)md.Shutdown.ShutdownMode;
+        }
+
+        private void Unlock_Checked(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

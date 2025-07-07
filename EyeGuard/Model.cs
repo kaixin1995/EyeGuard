@@ -9,6 +9,11 @@
         public int Work { set; get; }
 
         /// <summary>
+        /// enable /disable voice notice
+        /// </summary>
+        public bool Voice { set; get; }
+
+        /// <summary>
         /// 已经工作时间
         /// </summary>
         public int AlreadyWorked { get; set; }

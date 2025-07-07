@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using System.Runtime.InteropServices;
 
 namespace EyeGuard.UI
 {
@@ -101,7 +102,10 @@ namespace EyeGuard.UI
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("提示窗口已经正确运行……");
-            BLL.TopMostTool.setTop(this.Title);
+            IntPtr hwnd = new WindowInteropHelper(this).Handle;
+            BLL.TopMostTool.setClickThrough(hwnd);
+            BLL.TopMostTool.setTop(hwnd);
+            this.ShowActivated = false;
         }
     }
 }

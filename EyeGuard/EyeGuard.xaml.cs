@@ -517,7 +517,10 @@ namespace EyeGuard
                     {
                         if (Convert.ToInt32(time[0]) == 23 && Convert.ToInt32(time[1]) == 59 && Convert.ToInt32(time[2]) == 3)
                         {
-                            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
+                            if (md.Voice)
+                            {
+                                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
+                            }
                             Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                         }
                     }
@@ -525,7 +528,10 @@ namespace EyeGuard
                     {
                         if (Convert.ToInt32(time[0]) == (md.Shutdown.Time - 1) && Convert.ToInt32(time[1]) == 59 && Convert.ToInt32(time[2]) == 3)
                         {
-                            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
+                            if (md.Voice)
+                            {
+                                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
+                            }
                             Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                         }
                     }
@@ -535,7 +541,10 @@ namespace EyeGuard
                     //到达关机时间
                     if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == (md.Shutdown.Branch - 1) && Convert.ToInt32(time[2]) == 3)
                     {
-                        new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
+                        if (md.Voice)
+                        {
+                            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3").Play();
+                        }
                         Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                     }
                 }
@@ -571,7 +580,10 @@ namespace EyeGuard
             //休息前的提醒 游戏模式下不进行提醒
             if ((md.Work - 1) * 60 == Count)
             {
-                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeRest.mp3").Play();
+                if (md.Voice)
+                {
+                    new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeRest.mp3").Play();
+                }
                 if (((int)md.TimerMode == 1 && bll.FullScreen())|| (int)md.TimerMode == 2)
                 {
                     return;
@@ -582,8 +594,10 @@ namespace EyeGuard
             //到达休息时间
             if (md.Work * 60 == Count)
             {
-                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3").Play();
-
+                if (md.Voice)
+                {
+                    new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3").Play();
+                }
                 switch (md.LockMode)
                 {
                     case lock_mode.透明模式:
@@ -655,7 +669,10 @@ namespace EyeGuard
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Firing.mp3").Play();
+            if (md.Voice)
+            {
+                new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Firing.mp3").Play();
+            }
             md = bll.Initialization();
             if (md.Display == 0)
             {
