@@ -22,6 +22,8 @@ namespace EyeGuard.BLL
         public const int GWL_EXSTYLE = -20;
         public const int WS_EX_TRANSPARENT = 0x00000020;
         public const int WS_EX_LAYERED = 0x00080000;
+        public const int WS_EX_NOACTIVATE = 0x08000000;
+        public const int WS_EX_TOOLWINDOW = 0x00000080;
 
         // Declare the WinAPI functions
         [DllImport("user32.dll")]
@@ -58,7 +60,7 @@ namespace EyeGuard.BLL
         public static void setClickThrough(IntPtr CustomBar)
         {
             int initialStyle = GetWindowLong(CustomBar, GWL_EXSTYLE);
-            SetWindowLong(CustomBar, GWL_EXSTYLE, initialStyle | WS_EX_TRANSPARENT | WS_EX_LAYERED);
+            SetWindowLong(CustomBar, GWL_EXSTYLE, initialStyle | WS_EX_TRANSPARENT | WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE);
         }
 
 

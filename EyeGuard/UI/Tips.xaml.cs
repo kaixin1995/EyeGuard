@@ -21,6 +21,9 @@ namespace EyeGuard.UI
             if (Tips.Function == false)
             {
                 Tips tp = new Tips(value);
+                tp.ShowActivated = false;
+                tp.Focusable = false;
+                tp.ShowInTaskbar = false;
                 tp.Show();
             }
         }

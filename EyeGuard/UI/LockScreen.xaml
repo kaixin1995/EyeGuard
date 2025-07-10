@@ -117,7 +117,7 @@
             Margin="0,0,0,10"
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
-            FontSize="40"
+            FontSize="40" FontFamily="Microsoft YaHei UI Light"
             >
             <TextBlock.Foreground>
                 <SolidColorBrush Color="White" />
