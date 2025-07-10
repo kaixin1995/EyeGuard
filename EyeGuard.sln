@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31729.503
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34009.444
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EyeGuard", "EyeGuard\EyeGuard.csproj", "{9BA2871B-1F35-48CE-9316-9CEF99382BA2}"
 EndProject
