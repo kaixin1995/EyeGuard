@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EyeGuard
 {
@@ -45,6 +42,7 @@ namespace EyeGuard
         {
             //读取配置项中的配置
             md.Work = Data["Work"];
+            md.Voice = Data["Voice"] != 0;
             md.BreakPoints = Data["BreakPoints"];
             md.LockMode = (Model.lock_mode)Data["LockMode"];
             md.TimerMode = (Model.timer_mode)Data["TimerMode"];
@@ -72,6 +70,7 @@ namespace EyeGuard
             Data["Unlock"] = md.Unlock;
             Data["IsIntelligent"] = md.IsIntelligent;
             Data["ShutdownMode"] = (int)md.Shutdown.ShutdownMode;
+            Data["Voice"] = md.Voice ? 1 : 0;
             Serialize();
         }
 
@@ -93,6 +92,7 @@ namespace EyeGuard
             string IsIntelligent = ConfigHelper.GetConfig("IsIntelligent");
             string ShutdownMode = ConfigHelper.GetConfig("ShutdownMode");
             string ImgPath = ConfigHelper.GetConfig("ImgPath");
+            string Voice = ConfigHelper.GetConfig("Voice");
             md.ImgPath = ImgPath;
 
             Data.Add("Work", Convert.ToInt32(Work));
@@ -105,6 +105,7 @@ namespace EyeGuard
             Data.Add("Unlock", Convert.ToInt32(Unlock));
             Data.Add("IsIntelligent", Convert.ToInt32(IsIntelligent));
             Data.Add("ShutdownMode", Convert.ToInt32(ShutdownMode));
+            Data.Add("Voice", Convert.ToInt32(Voice));
 
         }
 
@@ -124,6 +125,7 @@ namespace EyeGuard
             ConfigHelper.SetConfig("Unlock", Data["Unlock"].ToString());
             ConfigHelper.SetConfig("IsIntelligent", Data["IsIntelligent"].ToString());
             ConfigHelper.SetConfig("ShutdownMode", Data["ShutdownMode"].ToString());
+            ConfigHelper.SetConfig("Voice", Data["Voice"].ToString());
         }
     }
 

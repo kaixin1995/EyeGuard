@@ -28,7 +28,6 @@
                     Click="ResetTime_Click"
                     Header="重置工作时间" />
                 <MenuItem Click="StartOrPause_Click" Header="启动/暂停计时" />
-                <MenuItem Click="ToggleLanguageReminder_Click" Header="开启/关闭语言提醒" />
                 <MenuItem Header="桌面插件显示">
                     <MenuItem
                         Click="WhetherToDisplay_Click"

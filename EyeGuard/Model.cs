@@ -20,6 +20,12 @@
 
 
         /// <summary>
+        /// 是否静音
+        /// </summary>
+        public bool Voice { get; set; }
+
+
+        /// <summary>
         /// 关机时间
         /// </summary>
         public TurnOffTime Shutdown { set; get; }
