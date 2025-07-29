@@ -104,6 +104,7 @@
             Margin="0,0,0,10"
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
+            FontFamily="Microsoft YaHei UI Light"
             FontSize="40"
             Text="距离解锁时间还有0秒"
             TextWrapping="NoWrap">

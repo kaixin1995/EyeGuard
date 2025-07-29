@@ -18,7 +18,19 @@ namespace EyeGuard.BLL
         public static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);    //取消窗体置顶
         public const uint SWP_NOMOVE = 0x0002;    //不调整窗体位置
         public const uint SWP_NOSIZE = 0x0001;    //不调整窗体大小
+        public const uint SWP_NOACTIVATE = 0x0010;  // do not grab focus of the current foreground window
+        public const int GWL_EXSTYLE = -20;
+        public const int WS_EX_TRANSPARENT = 0x00000020;
+        public const int WS_EX_LAYERED = 0x00080000;
+        public const int WS_EX_NOACTIVATE = 0x08000000;
+        public const int WS_EX_TOOLWINDOW = 0x00000080;
 
+        // Declare the WinAPI functions
+        [DllImport("user32.dll")]
+        public static extern int GetWindowLong(IntPtr hwnd, int index);
+
+        [DllImport("user32.dll")]
+        public static extern int SetWindowLong(IntPtr hwnd, int index, int newStyle);
         /// <summary>
         /// 是否显示最前
         /// </summary>
@@ -42,7 +54,13 @@ namespace EyeGuard.BLL
         /// <param name="CustomBar">需要置顶的窗体的IntPtr</param>
         public static void setTop(IntPtr CustomBar)
         {
-            SetWindowPos(CustomBar, TopMostTool.HWND_TOPMOST, 0, 0, 0, 0, TopMostTool.SWP_NOMOVE | TopMostTool.SWP_NOSIZE);
+            SetWindowPos(CustomBar, TopMostTool.HWND_TOPMOST, 0, 0, 0, 0, TopMostTool.SWP_NOMOVE | TopMostTool.SWP_NOSIZE | TopMostTool.SWP_NOACTIVATE);
+        }
+
+        public static void setClickThrough(IntPtr CustomBar)
+        {
+            int initialStyle = GetWindowLong(CustomBar, GWL_EXSTYLE);
+            SetWindowLong(CustomBar, GWL_EXSTYLE, initialStyle | WS_EX_TRANSPARENT | WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE);
         }
 
 
@@ -51,7 +69,7 @@ namespace EyeGuard.BLL
         /// </summary>
         /// <param name="Name">需要置顶的窗体的名字</param>
         /// <param name="Sustain">是否持续置顶</param>
-        public static void setTop(string Name,bool Sustain=true)
+        public static void setTop(string Name, bool Sustain = true)
         {
             IntPtr CustomBar = FindWindow(null, Name);
 
@@ -60,7 +78,7 @@ namespace EyeGuard.BLL
             {
                 if (CustomBar != null)
                 {
-                    SetWindowPos(CustomBar, TopMostTool.HWND_TOPMOST, 0, 0, 0, 0, TopMostTool.SWP_NOMOVE | TopMostTool.SWP_NOSIZE);
+                    SetWindowPos(CustomBar, TopMostTool.HWND_TOPMOST, 0, 0, 0, 0, TopMostTool.SWP_NOMOVE | TopMostTool.SWP_NOSIZE | TopMostTool.SWP_NOACTIVATE);
                     return;
                 }
             }
@@ -72,7 +90,7 @@ namespace EyeGuard.BLL
                     Thread.Sleep(800);
                     if (CustomBar != null)
                     {
-                        SetWindowPos(CustomBar, TopMostTool.HWND_TOPMOST, 0, 0, 0, 0, TopMostTool.SWP_NOMOVE | TopMostTool.SWP_NOSIZE);
+                        SetWindowPos(CustomBar, TopMostTool.HWND_TOPMOST, 0, 0, 0, 0, TopMostTool.SWP_NOMOVE | TopMostTool.SWP_NOSIZE | TopMostTool.SWP_NOACTIVATE);
                     }
                 }
                 Isop = false;
