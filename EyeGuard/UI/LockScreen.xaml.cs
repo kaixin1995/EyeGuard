@@ -145,11 +145,21 @@ namespace EyeGuard.UI
             {
                 md.State = (state)0;
             }
-            h.Hook_Clear();
+            try
+            {
+                h.Hook_Clear();
+            }
+            catch { }
+
+            timer?.Stop();
+            timer = null;
+            TopTimer?.Stop();
+            TopTimer = null;
 
             if (lockScreenⅡ != null)
             {
                 lockScreenⅡ.Close();
+                lockScreenⅡ = null;
             }
         }
 

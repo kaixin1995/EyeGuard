@@ -11,7 +11,7 @@ namespace EyeGuard.BLL
     /// <summary>
     /// clsMci 的摘要说明。
     /// </summary>
-    public class MP3Help
+    public class MP3Help : IDisposable
     {
         public MP3Help(string FileName)
         {
@@ -91,6 +91,22 @@ namespace EyeGuard.BLL
             ilong = APIClass.mciSendString("close media", TemStr, 128, 0);
             ilong = APIClass.mciSendString("close all", TemStr, 128, 0);
             mc.state = State.mStop;
+        }
+
+        private bool disposed = false;
+        public void Dispose()
+        {
+            if (!disposed)
+            {
+                StopT();
+                disposed = true;
+            }
+            GC.SuppressFinalize(this);
+        }
+
+        ~MP3Help()
+        {
+            Dispose();
         }
         public void Puase()
         {
