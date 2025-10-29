@@ -18,7 +18,7 @@ namespace EyeGuard.UI
                 this.Close();
             }
             Function = true;
-            Edition.Content = "当前版本：" + Dal.Edition;
+            Edition.Text = "当前版本：" + Dal.Edition;
             this.Closed += About_Closed;
 
         }
@@ -31,6 +31,13 @@ namespace EyeGuard.UI
         {
             Function = false;
         }
+
+        
+
+        /// <summary>
+        /// 是否已经打开，保证一个实例
+        /// </summary>
+        public static bool Function = false;
 
         /// <summary>
         /// 打开github
@@ -51,12 +58,5 @@ namespace EyeGuard.UI
                 MessageBox.Show($"打开页面错误，您可以手动打开:{url}", "错误提示");
             }
         }
-
-        /// <summary>
-        /// 是否已经打开，保证一个实例
-        /// </summary>
-        public static bool Function = false;
-
-
     }
 }

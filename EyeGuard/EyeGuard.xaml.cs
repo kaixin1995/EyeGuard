@@ -417,7 +417,15 @@ namespace EyeGuard
             md.WidgetStyle = (Model.widget_style)Convert.ToInt32(style);
             Dal.SetData(md);
             ApplyWidgetStyle();
-            Tips.Show("已切换为" + (md.WidgetStyle == Model.widget_style.经典风格 ? "经典风格" : "现代风格"));
+            string styleName = md.WidgetStyle switch
+            {
+                Model.widget_style.经典风格 => "经典风格",
+                Model.widget_style.现代风格 => "现代风格",
+                Model.widget_style.科技风格 => "科技风格",
+                Model.widget_style.简洁风格 => "简洁风格",
+                _ => "经典风格"
+            };
+            Tips.Show("已切换为" + styleName);
         }
 
         /// <summary>
@@ -425,23 +433,43 @@ namespace EyeGuard
         /// </summary>
         private void ApplyWidgetStyle()
         {
-            if (md.WidgetStyle == Model.widget_style.经典风格)
+            ClassicWidget.Visibility = Visibility.Collapsed;
+            ClassicTime.Visibility = Visibility.Collapsed;
+            ModernWidget.Visibility = Visibility.Collapsed;
+            ModernTime.Visibility = Visibility.Collapsed;
+            TechWidget.Visibility = Visibility.Collapsed;
+            TechTime.Visibility = Visibility.Collapsed;
+            TechProgress.Visibility = Visibility.Collapsed;
+            MinimalWidget.Visibility = Visibility.Collapsed;
+            MinimalTime.Visibility = Visibility.Collapsed;
+
+            switch (md.WidgetStyle)
             {
-                this.Width = 98;
-                this.Height = 52;
-                ClassicWidget.Visibility = Visibility.Visible;
-                ClassicTime.Visibility = Visibility.Visible;
-                ModernWidget.Visibility = Visibility.Collapsed;
-                ModernTime.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                this.Width = 120;
-                this.Height = 60;
-                ClassicWidget.Visibility = Visibility.Collapsed;
-                ClassicTime.Visibility = Visibility.Collapsed;
-                ModernWidget.Visibility = Visibility.Visible;
-                ModernTime.Visibility = Visibility.Visible;
+                case Model.widget_style.经典风格:
+                    this.Width = 98;
+                    this.Height = 52;
+                    ClassicWidget.Visibility = Visibility.Visible;
+                    ClassicTime.Visibility = Visibility.Visible;
+                    break;
+                case Model.widget_style.现代风格:
+                    this.Width = 120;
+                    this.Height = 60;
+                    ModernWidget.Visibility = Visibility.Visible;
+                    ModernTime.Visibility = Visibility.Visible;
+                    break;
+                case Model.widget_style.科技风格:
+                    this.Width = 115;
+                    this.Height = 55;
+                    TechWidget.Visibility = Visibility.Visible;
+                    TechTime.Visibility = Visibility.Visible;
+                    TechProgress.Visibility = Visibility.Visible;
+                    break;
+                case Model.widget_style.简洁风格:
+                    this.Width = 110;
+                    this.Height = 45;
+                    MinimalWidget.Visibility = Visibility.Visible;
+                    MinimalTime.Visibility = Visibility.Visible;
+                    break;
             }
         }
 
@@ -557,6 +585,15 @@ namespace EyeGuard
                     string timeText = Bll.GetFormattingTime(Count.ToString());
                     ClassicTime.Text = timeText;
                     ModernTime.Text = timeText;
+                    TechTime.Text = timeText;
+                    MinimalTime.Text = timeText;
+                    
+                    if (md.WidgetStyle == Model.widget_style.科技风格)
+                    {
+                        TechProgress.Maximum = md.Work * 60;
+                        TechProgress.Value = Count;
+                    }
+                    
                     md.AlreadyWorked = md.Work / 60;
                 }
 

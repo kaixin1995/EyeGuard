@@ -24,53 +24,200 @@
         <Grid.ContextMenu>
             <ContextMenu Name="menu" StaysOpen="true">
                 <MenuItem Click="SetupPanel_Click" Header="⚙️ 设置面板" />
-                <MenuItem Name="ResetTime" Click="ResetTime_Click" Header="🔄 重置工作时间" />
+                <MenuItem
+                    Name="ResetTime"
+                    Click="ResetTime_Click"
+                    Header="🔄 重置工作时间" />
                 <MenuItem Click="StartOrPause_Click" Header="⏯️ 启动/暂停计时" />
-                <Separator/>
+                <Separator />
                 <MenuItem Header="👁️ 桌面插件">
-                    <MenuItem Click="WhetherToDisplay_Click" Header="显示" Tag="display" />
-                    <MenuItem Click="WhetherToDisplay_Click" Header="隐藏" Tag="hide" />
-                    <Separator/>
-                    <MenuItem Click="WidgetStyle_Click" Header="经典风格" Tag="0" />
-                    <MenuItem Click="WidgetStyle_Click" Header="现代风格" Tag="1" />
+                    <MenuItem
+                        Click="WhetherToDisplay_Click"
+                        Header="显示"
+                        Tag="display" />
+                    <MenuItem
+                        Click="WhetherToDisplay_Click"
+                        Header="隐藏"
+                        Tag="hide" />
+                    <Separator />
+                    <MenuItem
+                        Click="WidgetStyle_Click"
+                        Header="经典风格"
+                        Tag="0" />
+                    <MenuItem
+                        Click="WidgetStyle_Click"
+                        Header="现代风格"
+                        Tag="1" />
+                    <MenuItem
+                        Click="WidgetStyle_Click"
+                        Header="科技风格"
+                        Tag="2" />
+                    <MenuItem
+                        Click="WidgetStyle_Click"
+                        Header="简洁风格"
+                        Tag="3" />
                 </MenuItem>
                 <MenuItem Click="LockScreen_Click" Header="🔒 锁屏" />
-                <Separator/>
+                <Separator />
                 <MenuItem Header="🚀 开机自启">
-                    <MenuItem Click="StartupItem_Click" Header="启用" Tag="SelfStarting" />
-                    <MenuItem Click="StartupItem_Click" Header="禁用" Tag="SelfCancellation" />
+                    <MenuItem
+                        Click="StartupItem_Click"
+                        Header="启用"
+                        Tag="SelfStarting" />
+                    <MenuItem
+                        Click="StartupItem_Click"
+                        Header="禁用"
+                        Tag="SelfCancellation" />
                 </MenuItem>
                 <MenuItem Click="exit_Click" Header="❌ 退出" />
             </ContextMenu>
         </Grid.ContextMenu>
-        
-        <!-- 经典风格 -->
-        <Border Name="ClassicWidget" Margin="2" BorderBrush="White" BorderThickness="1" 
-                CornerRadius="15" Opacity="0.5" Visibility="Collapsed">
-            <Border Background="Black" BorderBrush="Gray" BorderThickness="1" 
-                    CornerRadius="15" Opacity="0.5" />
-        </Border>
-        <TextBlock Name="ClassicTime" Text="00:00" FontSize="30" Foreground="White"
-                   HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
 
-        <!-- 现代风格 -->
-        <Border Name="ModernWidget" Margin="3" CornerRadius="18" Effect="{DynamicResource EffectShadow2}" Visibility="Collapsed">
-            <Border Background="{DynamicResource RegionBrush}" BorderBrush="{DynamicResource BorderBrush}" 
-                    BorderThickness="1" CornerRadius="18" Opacity="0.95">
+        <!--  经典风格  -->
+        <Border
+            Name="ClassicWidget"
+            Margin="2"
+            BorderBrush="White"
+            BorderThickness="1"
+            CornerRadius="15"
+            Opacity="0.5"
+            Visibility="Collapsed">
+            <Border
+                Background="Black"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                CornerRadius="15"
+                Opacity="0.5" />
+        </Border>
+        <TextBlock
+            Name="ClassicTime"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontSize="30"
+            Foreground="White"
+            Text="00:00"
+            Visibility="Collapsed" />
+
+        <!--  现代风格  -->
+        <Border
+            Name="ModernWidget"
+            Margin="3"
+            CornerRadius="18"
+            Effect="{DynamicResource EffectShadow2}"
+            Visibility="Collapsed">
+            <Border
+                Background="{DynamicResource RegionBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="18"
+                Opacity="0.95">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    
-                    <TextBlock Text="⏰" FontSize="16" HorizontalAlignment="Center" 
-                               Margin="0,4,0,0" Opacity="0.7"/>
-                    
-                    <TextBlock Name="ModernTime" Grid.Row="1" Text="00:00" FontSize="24" FontWeight="Bold"
-                               HorizontalAlignment="Center" VerticalAlignment="Center"
-                               Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,4"/>
+
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        HorizontalAlignment="Center"
+                        FontSize="16"
+                        Opacity="0.7"
+                        Text="⏰" />
+
+                    <TextBlock
+                        Name="ModernTime"
+                        Grid.Row="1"
+                        Margin="0,0,0,4"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="24"
+                        FontWeight="Bold"
+                        Foreground="{DynamicResource PrimaryBrush}"
+                        Text="00:00" />
                 </Grid>
             </Border>
+        </Border>
+
+        <!--  科技风格  -->
+        <Border
+            Name="TechWidget"
+            Margin="2"
+            CornerRadius="6"
+            Effect="{DynamicResource EffectShadow3}"
+            Visibility="Collapsed">
+            <Border
+                Background="#1a1a2e"
+                BorderBrush="#0f3460"
+                BorderThickness="2"
+                CornerRadius="6">
+                <Grid Margin="6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock
+                        Name="TechTime"
+                        HorizontalAlignment="Center"
+                        FontFamily="Consolas"
+                        FontSize="32"
+                        FontWeight="Bold"
+                        Foreground="#00d9ff"
+                        Text="00:00" />
+
+                    <ProgressBar
+                        Name="TechProgress"
+                        Grid.Row="1"
+                        Height="3"
+                        Margin="0,5,0,0"
+                        Background="#0f3460"
+                        BorderThickness="0"
+                        Foreground="#00d9ff" />
+                </Grid>
+            </Border>
+        </Border>
+
+        <!--  简洁风格  -->
+        <Border
+            Name="MinimalWidget"
+            Background="#15FFFFFF"
+            BorderBrush="#30000000"
+            BorderThickness="1"
+            CornerRadius="12"
+            Visibility="Collapsed">
+            <Grid>
+                <!--  白色光晕层  -->
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="32"
+                    FontWeight="Bold"
+                    Foreground="White"
+                    Opacity="0.8"
+                    Text="00:00">
+                    <TextBlock.Effect>
+                        <BlurEffect Radius="8" />
+                    </TextBlock.Effect>
+                </TextBlock>
+
+                <!--  主文字  -->
+                <TextBlock
+                    Name="MinimalTime"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="32"
+                    FontWeight="Bold"
+                    Foreground="#1a1a1a"
+                    Text="00:00">
+                    <TextBlock.Effect>
+                        <DropShadowEffect
+                            BlurRadius="6"
+                            Opacity="1"
+                            ShadowDepth="0"
+                            Color="White" />
+                    </TextBlock.Effect>
+                </TextBlock>
+            </Grid>
         </Border>
 
         <tb:TaskbarIcon
@@ -83,24 +230,50 @@
                     <MenuItem Click="SetupPanel_Click" Header="⚙️ 设置面板" />
                     <MenuItem Click="StartOrPause_Click" Header="⏯️ 启动/暂停计时" />
                     <MenuItem Click="ResetTime_Click" Header="🔄 重置工作时间" />
-                    <Separator/>
+                    <Separator />
                     <MenuItem Header="👁️ 桌面插件">
-                        <MenuItem Click="WhetherToDisplay_Click" Header="显示" Tag="display" />
-                        <MenuItem Click="WhetherToDisplay_Click" Header="隐藏" Tag="hide" />
-                        <Separator/>
-                        <MenuItem Click="WidgetStyle_Click" Header="经典风格" Tag="0" />
-                        <MenuItem Click="WidgetStyle_Click" Header="现代风格" Tag="1" />
+                        <MenuItem
+                            Click="WhetherToDisplay_Click"
+                            Header="显示"
+                            Tag="display" />
+                        <MenuItem
+                            Click="WhetherToDisplay_Click"
+                            Header="隐藏"
+                            Tag="hide" />
+                        <Separator />
+                        <MenuItem
+                            Click="WidgetStyle_Click"
+                            Header="经典风格"
+                            Tag="0" />
+                        <MenuItem
+                            Click="WidgetStyle_Click"
+                            Header="现代风格"
+                            Tag="1" />
+                        <MenuItem
+                            Click="WidgetStyle_Click"
+                            Header="科技风格"
+                            Tag="2" />
+                        <MenuItem
+                            Click="WidgetStyle_Click"
+                            Header="简洁风格"
+                            Tag="3" />
                     </MenuItem>
                     <MenuItem Click="LockScreen_Click" Header="🔒 锁屏" />
-                    <Separator/>
+                    <Separator />
                     <MenuItem Header="🚀 开机自启">
-                        <MenuItem Click="StartupItem_Click" Header="启用" Tag="SelfStarting"/>
-                        <MenuItem Click="StartupItem_Click" Header="禁用" Tag="SelfCancellation"/>
+                        <MenuItem
+                            Click="StartupItem_Click"
+                            Header="启用"
+                            Tag="SelfStarting" />
+                        <MenuItem
+                            Click="StartupItem_Click"
+                            Header="禁用"
+                            Tag="SelfCancellation" />
                     </MenuItem>
                     <MenuItem Click="RestoreLocation_Click" Header="📍 恢复位置" />
                     <MenuItem Click="Reboot_Click" Header="🔄 重启自身" />
                     <MenuItem Click="about_Click" Header="ℹ️ 关于" />
-                    <Separator/>
+                    <Separator />
                     <MenuItem Click="exit_Click" Header="❌ 退出" />
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>

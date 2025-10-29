@@ -113,7 +113,7 @@
         /// <summary>
         /// 桌面插件风格枚举
         /// </summary>
-        public enum widget_style { 经典风格 = 0, 现代风格 = 1 }
+        public enum widget_style { 经典风格 = 0, 现代风格 = 1, 科技风格 = 2, 简洁风格 = 3 }
 
         /// <summary>
         /// 桌面插件风格
