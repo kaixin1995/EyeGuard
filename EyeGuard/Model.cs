@@ -109,6 +109,16 @@
         /// 窗体初始位置
         /// </summary>
         public Position InitialPosition { set; get; }
+
+        /// <summary>
+        /// 桌面插件风格枚举
+        /// </summary>
+        public enum widget_style { 经典风格 = 0, 现代风格 = 1 }
+
+        /// <summary>
+        /// 桌面插件风格
+        /// </summary>
+        public widget_style WidgetStyle { set; get; }
     }
 
     /// <summary>

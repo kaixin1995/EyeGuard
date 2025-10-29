@@ -398,6 +398,54 @@ namespace EyeGuard
         #endregion
 
         /// <summary>
+        /// 切换桌面插件风格
+        /// </summary>
+        private void WidgetStyle_Click(object sender, EventArgs e)
+        {
+            string style = string.Empty;
+            try
+            {
+                System.Windows.Controls.MenuItem mi = (System.Windows.Controls.MenuItem)sender;
+                style = mi.Tag.ToString();
+            }
+            catch
+            {
+                MenuItem mi = (MenuItem)sender;
+                style = mi.Tag.ToString();
+            }
+
+            md.WidgetStyle = (Model.widget_style)Convert.ToInt32(style);
+            Dal.SetData(md);
+            ApplyWidgetStyle();
+            Tips.Show("已切换为" + (md.WidgetStyle == Model.widget_style.经典风格 ? "经典风格" : "现代风格"));
+        }
+
+        /// <summary>
+        /// 应用桌面插件风格
+        /// </summary>
+        private void ApplyWidgetStyle()
+        {
+            if (md.WidgetStyle == Model.widget_style.经典风格)
+            {
+                this.Width = 98;
+                this.Height = 52;
+                ClassicWidget.Visibility = Visibility.Visible;
+                ClassicTime.Visibility = Visibility.Visible;
+                ModernWidget.Visibility = Visibility.Collapsed;
+                ModernTime.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                this.Width = 120;
+                this.Height = 60;
+                ClassicWidget.Visibility = Visibility.Collapsed;
+                ClassicTime.Visibility = Visibility.Collapsed;
+                ModernWidget.Visibility = Visibility.Visible;
+                ModernTime.Visibility = Visibility.Visible;
+            }
+        }
+
+        /// <summary>
         /// 时钟事件
         /// </summary>
         /// <param name="sender"></param>
@@ -506,7 +554,9 @@ namespace EyeGuard
 
                 if (md.Work * 60 >= Count)
                 {
-                    Time.Text = Bll.GetFormattingTime(Count.ToString());
+                    string timeText = Bll.GetFormattingTime(Count.ToString());
+                    ClassicTime.Text = timeText;
+                    ModernTime.Text = timeText;
                     md.AlreadyWorked = md.Work / 60;
                 }
 
@@ -708,6 +758,7 @@ namespace EyeGuard
                 }
             }
             md = bll.Initialization();
+            ApplyWidgetStyle();
             if (md.Display == 0)
             {
                 this.Visibility = Visibility.Hidden;

@@ -1,4 +1,5 @@
-﻿<Window
+
+<Window
     x:Class="EyeGuard.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,8 +9,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tb="http://www.hardcodet.net/taskbar"
     Title="EyeGuard"
-    Width="98"
-    Height="52"
+    Width="120"
+    Height="60"
     AllowsTransparency="True"
     Background="Transparent"
     Loaded="Window_Loaded"
@@ -22,90 +23,85 @@
     <Grid MouseDown="Grid_MouseDown">
         <Grid.ContextMenu>
             <ContextMenu Name="menu" StaysOpen="true">
-                <MenuItem Click="SetupPanel_Click" Header="设置面板" />
-                <MenuItem
-                    Name="ResetTime"
-                    Click="ResetTime_Click"
-                    Header="重置工作时间" />
-                <MenuItem Click="StartOrPause_Click" Header="启动/暂停计时" />
-                <MenuItem Header="桌面插件显示">
-                    <MenuItem
-                        Click="WhetherToDisplay_Click"
-                        Header="显示"
-                        Tag="display" />
-                    <MenuItem
-                        Click="WhetherToDisplay_Click"
-                        Header="隐藏"
-                        Tag="hide" />
+                <MenuItem Click="SetupPanel_Click" Header="⚙️ 设置面板" />
+                <MenuItem Name="ResetTime" Click="ResetTime_Click" Header="🔄 重置工作时间" />
+                <MenuItem Click="StartOrPause_Click" Header="⏯️ 启动/暂停计时" />
+                <Separator/>
+                <MenuItem Header="👁️ 桌面插件">
+                    <MenuItem Click="WhetherToDisplay_Click" Header="显示" Tag="display" />
+                    <MenuItem Click="WhetherToDisplay_Click" Header="隐藏" Tag="hide" />
+                    <Separator/>
+                    <MenuItem Click="WidgetStyle_Click" Header="经典风格" Tag="0" />
+                    <MenuItem Click="WidgetStyle_Click" Header="现代风格" Tag="1" />
                 </MenuItem>
-                <MenuItem Click="LockScreen_Click" Header="锁屏" />
-
-                <MenuItem Header="是否开机自启">
-                    <MenuItem
-                        Click="StartupItem_Click"
-                        Header="开机自启"
-                        Tag="SelfStarting" />
-                    <MenuItem
-                        Click="StartupItem_Click"
-                        Header="取消开机自启"
-                        Tag="SelfCancellation" />
+                <MenuItem Click="LockScreen_Click" Header="🔒 锁屏" />
+                <Separator/>
+                <MenuItem Header="🚀 开机自启">
+                    <MenuItem Click="StartupItem_Click" Header="启用" Tag="SelfStarting" />
+                    <MenuItem Click="StartupItem_Click" Header="禁用" Tag="SelfCancellation" />
                 </MenuItem>
-                <MenuItem Click="exit_Click" Header="退出" />
+                <MenuItem Click="exit_Click" Header="❌ 退出" />
             </ContextMenu>
         </Grid.ContextMenu>
-        <Border
-            Margin="2"
-            BorderBrush="White"
-            BorderThickness="1"
-            CornerRadius="15,15,15,15"
-            Opacity="0.5">
-            <Border
-                Margin="0"
-                Background="Black"
-                BorderBrush="Gray"
-                BorderThickness="1"
-                CornerRadius="15,15,15,15"
-                Opacity="0.5" />
-
+        
+        <!-- 经典风格 -->
+        <Border Name="ClassicWidget" Margin="2" BorderBrush="White" BorderThickness="1" 
+                CornerRadius="15" Opacity="0.5" Visibility="Collapsed">
+            <Border Background="Black" BorderBrush="Gray" BorderThickness="1" 
+                    CornerRadius="15" Opacity="0.5" />
         </Border>
+        <TextBlock Name="ClassicTime" Text="00:00" FontSize="30" Foreground="White"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
 
-        <TextBlock
-            Name="Time"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            FontSize="30"
-            Foreground="White"
-            Text="00:00" />
+        <!-- 现代风格 -->
+        <Border Name="ModernWidget" Margin="3" CornerRadius="18" Effect="{DynamicResource EffectShadow2}" Visibility="Collapsed">
+            <Border Background="{DynamicResource RegionBrush}" BorderBrush="{DynamicResource BorderBrush}" 
+                    BorderThickness="1" CornerRadius="18" Opacity="0.95">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Text="⏰" FontSize="16" HorizontalAlignment="Center" 
+                               Margin="0,4,0,0" Opacity="0.7"/>
+                    
+                    <TextBlock Name="ModernTime" Grid.Row="1" Text="00:00" FontSize="24" FontWeight="Bold"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,4"/>
+                </Grid>
+            </Border>
+        </Border>
 
         <tb:TaskbarIcon
             Name="MyNotifyIcon"
-            ToolTipText="眼睛卫士"
+            ToolTipText="EyeGuard - 眼睛卫士"
             TrayLeftMouseUp="NotifyIcon_TrayLeftMouseUp"
             TrayMouseDoubleClick="NotifyIcon_TrayMouseDoubleClick">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Click="SetupPanel_Click" Header="设置面板" />
-                    <MenuItem Click="StartOrPause_Click" Header="启动/暂停计时" />
-                    <MenuItem Click="ResetTime_Click" Header="重置工作时间" />
-                    <MenuItem Header="桌面插件">
-                        <MenuItem
-                            Click="WhetherToDisplay_Click"
-                            Header="显示"
-                            Tag="display" />
-                        <MenuItem
-                            Click="WhetherToDisplay_Click"
-                            Header="隐藏"
-                            Tag="hide" />
+                    <MenuItem Click="SetupPanel_Click" Header="⚙️ 设置面板" />
+                    <MenuItem Click="StartOrPause_Click" Header="⏯️ 启动/暂停计时" />
+                    <MenuItem Click="ResetTime_Click" Header="🔄 重置工作时间" />
+                    <Separator/>
+                    <MenuItem Header="👁️ 桌面插件">
+                        <MenuItem Click="WhetherToDisplay_Click" Header="显示" Tag="display" />
+                        <MenuItem Click="WhetherToDisplay_Click" Header="隐藏" Tag="hide" />
+                        <Separator/>
+                        <MenuItem Click="WidgetStyle_Click" Header="经典风格" Tag="0" />
+                        <MenuItem Click="WidgetStyle_Click" Header="现代风格" Tag="1" />
                     </MenuItem>
-                    <MenuItem Click="LockScreen_Click" Header="锁屏" />
-                    <MenuItem Header="是否开机自启">
-                        <MenuItem Click="StartupItem_Click" Header="开机自启" />
-                        <MenuItem Click="StartupItem_Click" Header="取消开机自启" />
+                    <MenuItem Click="LockScreen_Click" Header="🔒 锁屏" />
+                    <Separator/>
+                    <MenuItem Header="🚀 开机自启">
+                        <MenuItem Click="StartupItem_Click" Header="启用" Tag="SelfStarting"/>
+                        <MenuItem Click="StartupItem_Click" Header="禁用" Tag="SelfCancellation"/>
                     </MenuItem>
-                    <MenuItem Click="RestoreLocation_Click" Header="恢复位置" />
-                    <MenuItem Click="Reboot_Click" Header="重启自身" />
-                    <MenuItem Click="about_Click" Header="关于" />
-                    <MenuItem Click="exit_Click" Header="退出" />
+                    <MenuItem Click="RestoreLocation_Click" Header="📍 恢复位置" />
+                    <MenuItem Click="Reboot_Click" Header="🔄 重启自身" />
+                    <MenuItem Click="about_Click" Header="ℹ️ 关于" />
+                    <Separator/>
+                    <MenuItem Click="exit_Click" Header="❌ 退出" />
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
         </tb:TaskbarIcon>
