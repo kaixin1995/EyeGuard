@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:EyeGuard.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="TipsWindow"
     Title="Tips"
     Width="236"
     Height="84"
@@ -17,17 +18,13 @@
     mc:Ignorable="d">
     <Grid>
         <Border
+            Name="TipsBorder"
             Margin="2,2,2,2"
             BorderBrush="White"
             BorderThickness="1"
             CornerRadius="0"
-            Opacity="0.5">
-            <Border
-                Margin="0"
-                Background="Black"
-                CornerRadius="0"
-                Opacity="0.5" />
-        </Border>
+            Background="Black"
+            Opacity="0.5" />
         <Grid>
             <ContentPresenter />
         </Grid>

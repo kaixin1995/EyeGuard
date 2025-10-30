@@ -38,8 +38,14 @@ namespace EyeGuard.UI
 
             Function = true;
 
-            //赋值提示的文字
+            // 赋值提示的文字
             TipsLable.Text = Value;
+            
+            // 获取当前配置并应用主题
+            Bll bll = new Bll();
+            Model md = bll.Initialization();
+            BLL.ThemeManager.ApplyTipsTheme(TipsBorder, TipsLable, md.WidgetStyle);
+            
             Position();
         }
 

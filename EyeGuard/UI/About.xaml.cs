@@ -10,6 +10,8 @@ namespace EyeGuard.UI
     /// </summary>
     public partial class About
     {
+        private Model md;
+        
         public About()
         {
             InitializeComponent();
@@ -20,7 +22,11 @@ namespace EyeGuard.UI
             Function = true;
             Edition.Text = "当前版本：" + Dal.Edition;
             this.Closed += About_Closed;
-
+            
+            // 获取当前配置并应用主题
+            Bll bll = new Bll();
+            md = bll.Initialization();
+            BLL.ThemeManager.ApplyAboutTheme(this, md.WidgetStyle);
         }
 
 

@@ -8,6 +8,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:EyeGuard.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="AboutWindow"
     Title="关于"
     Width="380"
     Height="320"

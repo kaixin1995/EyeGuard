@@ -8,6 +8,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:EyeGuard.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="SetUpWindow"
     Title="设置中心"
     Width="400"
     Height="480"
@@ -105,7 +106,7 @@
                                 <ComboBox
                                     Name="Time"
                                     Grid.Column="1"
-                                    Width="180"
+                                    Width="160"
                                     IsEditable="True"
                                     IsReadOnly="True" />
                             </Grid>
@@ -122,7 +123,7 @@
                                 <ComboBox
                                     Name="Lock"
                                     Grid.Column="1"
-                                    Width="180" />
+                                    Width="160" />
                             </Grid>
                         </hc:UniformSpacingPanel>
 

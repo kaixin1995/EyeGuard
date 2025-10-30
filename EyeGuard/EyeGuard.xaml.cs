@@ -398,7 +398,7 @@ namespace EyeGuard
         #endregion
 
         /// <summary>
-        /// 切换桌面插件风格
+        /// 切换桌面插件风格,同时应用到所有窗口主题
         /// </summary>
         private void WidgetStyle_Click(object sender, EventArgs e)
         {
@@ -417,6 +417,13 @@ namespace EyeGuard
             md.WidgetStyle = (Model.widget_style)Convert.ToInt32(style);
             Dal.SetData(md);
             ApplyWidgetStyle();
+            
+            // 如果设置页面已打开,应用主题
+            if (sp != null && SetUp.Function)
+            {
+                BLL.ThemeManager.ApplySetUpTheme(sp, md.WidgetStyle);
+            }
+            
             string styleName = md.WidgetStyle switch
             {
                 Model.widget_style.经典风格 => "经典风格",

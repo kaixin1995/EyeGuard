@@ -23,6 +23,9 @@ namespace EyeGuard.UI
 
             Function = true;
             InitializeComponent();
+            
+            // 应用主题
+            BLL.ThemeManager.ApplySetUpTheme(this, md.WidgetStyle);
 
 
             #region 绑定计时数据
