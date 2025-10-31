@@ -52,19 +52,14 @@ namespace EyeGuard
             {
                 KeyBoardHookProcedure = new HookProc(KeyBoardHookProc);
 
-
                 hHook = SetWindowsHookEx(WH_KEYBOARD_LL,
                            KeyBoardHookProcedure,
                           GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName), 0);
-                //如果设置钩子失败. 
+                //如果设置钩子失败 
                 if (hHook == 0)
                 {
-                    Hook_Clear();
-                    throw new Exception();
-                }
-                else
-                {
-
+                    KeyBoardHookProcedure = null;
+                    throw new Exception("SetWindowsHookEx failed.");
                 }
             }
         }
@@ -72,14 +67,19 @@ namespace EyeGuard
         //取消钩子事件 
         public void Hook_Clear()
         {
-            bool retKeyboard = true;
             if (hHook != 0)
             {
-                retKeyboard = UnhookWindowsHookEx(hHook);
-                hHook = 0;
+                try
+                {
+                    UnhookWindowsHookEx(hHook);
+                }
+                catch { }
+                finally
+                {
+                    hHook = 0;
+                    KeyBoardHookProcedure = null;
+                }
             }
-            //如果去掉钩子失败. 
-            if (!retKeyboard) throw new Exception("UnhookWindowsHookEx failed.");
         }
 
         //这里可以添加自己想要的信息处理 

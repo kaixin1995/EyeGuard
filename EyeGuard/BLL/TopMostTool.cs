@@ -73,46 +73,35 @@ namespace EyeGuard.BLL
         {
             IntPtr CustomBar = FindWindow(null, Name);
 
-            //如果为false则需要外部时钟持续调用，或者只置顶一次
+            // 如果为false则只置顶一次
             if (!Sustain)
             {
-                if (CustomBar != null)
+                if (CustomBar != IntPtr.Zero)
                 {
                     SetWindowPos(CustomBar, TopMostTool.HWND_TOPMOST, 0, 0, 0, 0, TopMostTool.SWP_NOMOVE | TopMostTool.SWP_NOSIZE | TopMostTool.SWP_NOACTIVATE);
-                    return;
                 }
+                return;
             }
-            bool Isop = true;
-            Thread thread = new Thread(new ThreadStart(delegate
+
+            // 持续置顶模式,使用后台线程
+            Thread thread = new Thread(() =>
             {
-                for (int i = 0; i <= 3; i++)
+                try
                 {
-                    Thread.Sleep(800);
-                    if (CustomBar != null)
+                    for (int i = 0; i <= 3; i++)
                     {
-                        SetWindowPos(CustomBar, TopMostTool.HWND_TOPMOST, 0, 0, 0, 0, TopMostTool.SWP_NOMOVE | TopMostTool.SWP_NOSIZE | TopMostTool.SWP_NOACTIVATE);
+                        Thread.Sleep(800);
+                        IntPtr hwnd = FindWindow(null, Name);
+                        if (hwnd != IntPtr.Zero)
+                        {
+                            SetWindowPos(hwnd, TopMostTool.HWND_TOPMOST, 0, 0, 0, 0, TopMostTool.SWP_NOMOVE | TopMostTool.SWP_NOSIZE | TopMostTool.SWP_NOACTIVATE);
+                        }
                     }
                 }
-                Isop = false;
-            }));
-            //是否为后台线程 System.Environment.Exit(0);
+                catch { }
+            });
             thread.IsBackground = true;
             thread.Start();
-
-            if (Isop == false)
-            {
-                thread.Join();
-                thread.Abort();
-            }
-            /*
-            if (CustomBar != null)
-            {
-                Console.WriteLine(isFirst?"真":"假");
-                if (isFirst)
-                {
-                    SetWindowPos(CustomBar, TopMostTool.HWND_TOPMOST, 0, 0, 0, 0, TopMostTool.SWP_NOMOVE | TopMostTool.SWP_NOSIZE);
-                }
-            }*/
         }
     }
 }

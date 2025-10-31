@@ -55,8 +55,13 @@ namespace EyeGuard.UI
         private void Tips_Closed(object sender, EventArgs e)
         {
             Function = false;
-            timer?.Stop();
-            timer = null;
+            
+            if (timer != null)
+            {
+                timer.Stop();
+                timer.Tick -= timer1_Tick;
+                timer = null;
+            }
         }
 
 

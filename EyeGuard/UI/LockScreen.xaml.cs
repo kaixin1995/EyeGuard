@@ -141,26 +141,60 @@ namespace EyeGuard.UI
         {
             Function = false;
             FunctionⅡ = false;
+            
             if (md != null)
             {
                 md.State = (state)0;
             }
+            
+            // 清理Hook
             try
             {
-                h.Hook_Clear();
+                if (h != null)
+                {
+                    h.Hook_Clear();
+                    h = null;
+                }
             }
             catch { }
 
-            timer?.Stop();
-            timer = null;
-            TopTimer?.Stop();
-            TopTimer = null;
+            // 清理计时器
+            if (timer != null)
+            {
+                timer.Stop();
+                timer.Tick -= timer1_Tick;
+                timer = null;
+            }
+            
+            if (TopTimer != null)
+            {
+                TopTimer.Stop();
+                TopTimer.Tick -= TopTimer_Tick;
+                TopTimer = null;
+            }
 
+            // 清理图像资源,防止内存泄漏
+            if (img.Source != null)
+            {
+                img.Source = null;
+            }
+            if (Unlock.Source != null)
+            {
+                Unlock.Source = null;
+            }
+
+            // 清理第二屏幕
             if (lockScreenⅡ != null)
             {
-                lockScreenⅡ.Close();
+                try
+                {
+                    lockScreenⅡ.Close();
+                }
+                catch { }
                 lockScreenⅡ = null;
             }
+            
+            GetLockScreen = null;
         }
 
         /// <summary>
@@ -226,11 +260,17 @@ namespace EyeGuard.UI
             this.img.Stretch = Stretch.Fill;
             img.Width = this.Width;
             img.Height = this.Height;
-            Unlock.Source = new BitmapImage(new Uri(path + "Resources/lock.png"));
-
+            
+            // 创建BitmapImage并立即加载到内存,防止内存泄漏
+            var unlockBitmap = new BitmapImage();
+            unlockBitmap.BeginInit();
+            unlockBitmap.UriSource = new Uri(path + "Resources/lock.png");
+            unlockBitmap.CacheOption = BitmapCacheOption.OnLoad;
+            unlockBitmap.EndInit();
+            unlockBitmap.Freeze();
+            Unlock.Source = unlockBitmap;
 
             Unlock.Margin = new Thickness((this.Width - Unlock.Width - 8), (this.Height - Unlock.Height - 10), 0, 0);
-
         }
 
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -266,7 +306,14 @@ namespace EyeGuard.UI
                     break;
                 case lock_mode.屏保模式:
                     string imgPhth = Path.Combine(path, Dal.ReturnData().ImgPath);
-                    img.Source = new BitmapImage(new Uri(imgPhth));
+                    // 创建BitmapImage并立即加载到内存,防止内存泄漏
+                    var wallpaperBitmap = new BitmapImage();
+                    wallpaperBitmap.BeginInit();
+                    wallpaperBitmap.UriSource = new Uri(imgPhth);
+                    wallpaperBitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    wallpaperBitmap.EndInit();
+                    wallpaperBitmap.Freeze();
+                    img.Source = wallpaperBitmap;
                     hyaline2.Opacity = 1;
                     hyaline.Opacity = 1;
                     break;
