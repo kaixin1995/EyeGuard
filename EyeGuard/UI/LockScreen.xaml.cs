@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -16,6 +17,11 @@ namespace EyeGuard.UI
     public partial class LockScreen : Window
     {
         public static LockScreen GetLockScreen{get;set;}
+
+        // 标记是否为副屏窗口，用于区分主屏逻辑
+        private bool isSecondary = false;
+        // 只在主屏首次显示时尝试获取焦点，避免主副屏抢焦点
+        private bool hasFocused = false;
 
         /// <summary>
         /// 构造函数
@@ -35,6 +41,7 @@ namespace EyeGuard.UI
             Position();
             mainWindow.Focus();
             GetLockScreen = this;
+            isSecondary = false;
         }
 
 
@@ -51,11 +58,17 @@ namespace EyeGuard.UI
         /// <param name="Count"></param>
         public LockScreen()
         {
+            isSecondary = true;
             InitializeComponent();
             Position();
 
             PromptText.Visibility = Visibility.Visible;
             PromptText.Text = "请在主屏幕进行解锁~";
+            // 副屏不参与焦点获取
+            this.ShowActivated = false;
+            this.Focusable = false;
+            // 副屏不需要交互，避免任何点击响应
+            this.IsHitTestVisible = false;
         }
 
 
@@ -86,6 +99,11 @@ namespace EyeGuard.UI
                 }
                 #endregion
 
+                // 副屏窗口不激活，避免抢主屏焦点
+                lockScreenⅡ.ShowActivated = false;
+                lockScreenⅡ.Focusable = false;
+                // 副屏不需要交互，避免点击与焦点变化
+                lockScreenⅡ.IsHitTestVisible = false;
                 lockScreenⅡ.Show();
 
                 //lockScreenⅡ.TopTimer.Stop();
@@ -132,6 +150,7 @@ namespace EyeGuard.UI
             timer.Tick += timer1_Tick;
             timer.Start();
             GetLockScreen = this;
+            isSecondary = false;
         }
 
         /// <summary>
@@ -291,9 +310,6 @@ namespace EyeGuard.UI
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Focus();
-
-
             switch (md.LockMode)
             {
                 case lock_mode.透明模式:
@@ -338,18 +354,46 @@ namespace EyeGuard.UI
             {
                 DoubleScreen(md);
             }
-            else
-            {
-                BLL.TopMostTool.setTop(this.Title);
 
-                //置顶 时钟
+            // 主屏始终置顶，避免被任务栏遮挡
+            EnsureTopMost();
+
+            if (!isSecondary)
+            {
+                // 置顶时钟只在主屏启用，避免副屏重复置顶引发闪烁
                 TopTimer = new DispatcherTimer();
                 TopTimer.Interval = new TimeSpan(0, 0, 1);
                 TopTimer.Tick += TopTimer_Tick;
                 TopTimer.Start();
-                h.Hook_Start();//按键屏蔽
+
+                // 仅在主屏开启键盘屏蔽
+                h.Hook_Start();
+                // 只在主屏首次加载时获取一次焦点，避免主副屏反复抢焦点
+                if (!hasFocused)
+                {
+                    this.Activate();
+                    this.Focus();
+                    hasFocused = true;
+                }
+            }
+            else
+            {
+                // 副屏确保不激活、不抢焦点、不响应点击
+                this.ShowActivated = false;
+                this.Focusable = false;
+                this.IsHitTestVisible = false;
             }
 
+        }
+
+        /// <summary>
+        /// 将窗口提升为最前并保持置顶
+        /// </summary>
+        private void EnsureTopMost()
+        {
+            var hwnd = new WindowInteropHelper(this).Handle;
+            BLL.TopMostTool.setTop(hwnd);
+            this.Topmost = true;
         }
 
 
@@ -358,9 +402,7 @@ namespace EyeGuard.UI
         /// </summary>
         private void TopTimer_Tick(object sender, EventArgs e)
         {
-            this.Topmost = true;
-            //获得焦点
-            this.Focus();
+            EnsureTopMost();
         }
     }
 }
