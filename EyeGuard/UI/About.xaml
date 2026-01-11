@@ -41,7 +41,11 @@
         </StackPanel>
 
         <!--  内容区域  -->
-        <ScrollViewer Grid.Row="1" Margin="0,0,0,20" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer
+            Grid.Row="1"
+            Margin="0,0,0,20"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <hc:Divider Margin="0,0,0,12" Content="软件介绍" />
 
@@ -77,8 +81,9 @@
                 Height="36"
                 Margin="0,0,10,0"
                 Content="🔗 访问 GitHub"
-                MouseDown="Github_MouseDown"
+                Click="Github_MouseDown"
                 Style="{StaticResource ButtonPrimary}" />
         </StackPanel>
     </Grid>
 </hc:Window>
+

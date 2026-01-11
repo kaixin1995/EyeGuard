@@ -45,10 +45,11 @@ namespace EyeGuard.UI
         /// </summary>
         public static bool Function = false;
 
+        
         /// <summary>
         /// 打开github
         /// </summary>
-        private void Github_MouseDown(object sender, MouseButtonEventArgs e)
+        private void Github_MouseDown(object sender, RoutedEventArgs e)
         {
             string url = "https://github.com/kaixin1995/EyeGuard";
             try
