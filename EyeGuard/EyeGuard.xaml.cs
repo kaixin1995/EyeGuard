@@ -78,6 +78,7 @@ namespace EyeGuard
                 return;
             }
             Count = 0;
+            Pause = false;
         }
 
 
