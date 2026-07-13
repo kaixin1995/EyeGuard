@@ -250,7 +250,16 @@ namespace EyeGuard
         //当前登录的用户变化（登录、注销和解锁屏）
         private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
         {
-            switch (e.Reason)
+            // 系统会在线程池触发该事件，统一切回 UI 线程避免与界面计时器竞争状态。
+            if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
+            {
+                Dispatcher.BeginInvoke(new Action(() => HandleSessionSwitch(e.Reason)));
+            }
+        }
+
+        private void HandleSessionSwitch(SessionSwitchReason reason)
+        {
+            switch (reason)
             {
                 //用户登录
                 case SessionSwitchReason.SessionLogon:
@@ -284,11 +293,12 @@ namespace EyeGuard
             if (dateBegin != null)
             {
                 double fen = Bll.ExecDateDiff((DateTime)dateBegin, DateTime.Now);
-                //如果两个时间的分钟差大于指定值，就证明 是启用系统锁定等功能   默认算是休息过了。
-                if (fen >= 3)
+                // 如果锁屏发生在休息临界点，或锁屏已满足休息时长，则开启新的工作周期。
+                if (Count >= md.Work * 60 || fen >= 3)
                 {
                     Count = 0;
                 }
+                dateBegin = null;
                 //if (fen >= 60*24)
                 //{
                 //    Reboot();
@@ -488,9 +498,6 @@ namespace EyeGuard
         /// <param name="e"></param>
         private void timer_Tick(object sender, EventArgs e)
         {
-            if (Pause)
-                return;
-
             try
             {
                 if ((int)md.State == 1)
@@ -499,6 +506,9 @@ namespace EyeGuard
                     this.Visibility = Visibility.Collapsed;
                     return;
                 }
+
+                if (Pause)
+                    return;
 
 
                 if (md.Display != 0)
@@ -709,25 +719,26 @@ namespace EyeGuard
                 }
 
                 //到达休息时间
-                if (md.Work * 60 == Count)
+                if (Count >= md.Work * 60)
                 {
-                    if (md.Voice)
-                    {
-                        using (var mp3 = new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3"))
-                        {
-                            mp3.Play();
-                        }
-                    }
-
                     switch (md.LockMode)
                     {
                         case lock_mode.透明模式:
                         case lock_mode.半透明模式:
                         case lock_mode.屏保模式:
                         case lock_mode.时间锁屏:
-                            StopPlaying();
-                            if (LockScreen.Function == false)
+                            if (LockScreen.GetLockScreen == null)
                             {
+                                if (md.Voice)
+                                {
+                                    using (var mp3 = new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3"))
+                                    {
+                                        mp3.Play();
+                                    }
+                                }
+                                StopPlaying();
+                                // 进入休息周期前立即清零，避免用户快速解锁时错过状态清理。
+                                Count = 0;
                                 md.State = (state)1;
                                 LockScreen ls = new LockScreen(md);
                                 ls.Left = 0;
@@ -736,11 +747,25 @@ namespace EyeGuard
                             }
                             break;
                         case lock_mode.语音模式:
+                            if (Count == md.Work * 60 && md.Voice)
+                            {
+                                using (var mp3 = new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3"))
+                                {
+                                    mp3.Play();
+                                }
+                            }
                             //语音模式下不会进行锁屏的
                             //既然不锁屏，那就清空本次时间把~
                             Count = 0;
                             break;
                         case lock_mode.锁定Windows:
+                            if (Count == md.Work * 60 && md.Voice)
+                            {
+                                using (var mp3 = new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3"))
+                                {
+                                    mp3.Play();
+                                }
+                            }
                             Count = 0;
                             StopPlaying();
                             LockWorkStation();

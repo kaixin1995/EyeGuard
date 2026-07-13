@@ -124,10 +124,6 @@ namespace EyeGuard.UI
         /// </summary>
         public LockScreen(Model Md)
         {
-            if (Function == true)
-            {
-                this.Close();
-            }
             this.Closed += LockScreen_Closed;
             md = Md;
             InitializeComponent();
@@ -165,7 +161,7 @@ namespace EyeGuard.UI
             {
                 md.State = (state)0;
             }
-            
+
             // 清理Hook
             try
             {

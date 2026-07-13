@@ -291,8 +291,8 @@ namespace EyeGuard
         public static float GetMasterPeakValue()
         {
             using (var enumerator = new MMDeviceEnumerator())
+            using (var defaultDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia))
             {
-                var defaultDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
                 var _masterPeakValue = defaultDevice.AudioMeterInformation.MasterPeakValue;
                 return _masterPeakValue;
             }
