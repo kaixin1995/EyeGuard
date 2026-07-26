@@ -83,18 +83,18 @@ namespace EyeGuard
         public static void Deserialize()
         {
             // 获取配置文件中的内容，缺失或非法值自动回退默认值并写回配置
-            int Work = GetIntWithDefault("Work", 45, "工作时间");
-            int BreakPoints = GetIntWithDefault("BreakPoints", 1, "休息时间");
-            int TimerMode = GetIntWithDefault("TimerMode", 0, "计时模式");
-            int LockMode = GetIntWithDefault("LockMode", 1, "锁屏模式");
-            int Display = GetIntWithDefault("Display", 1, "显示桌面插件");
-            int ShutdownTime = GetIntWithDefault("ShutdownTime", -1, "关机时间-小时");
-            int ShutdownPoints = GetIntWithDefault("ShutdownPoints", -1, "关机时间-分钟");
-            int Unlock = GetIntWithDefault("Unlock", 0, "允许解锁");
-            int IsIntelligent = GetIntWithDefault("IsIntelligent", 0, "智能计时");
-            int ShutdownMode = GetIntWithDefault("ShutdownMode", 0, "关机模式");
-            int Voice = GetIntWithDefault("Voice", 0, "语音提示");
-            int WidgetStyle = GetIntWithDefault("WidgetStyle", 0, "桌面插件风格");
+            int Work = GetIntWithDefault("Work", 45, "工作时间", 1, 60);
+            int BreakPoints = GetIntWithDefault("BreakPoints", 1, "休息时间", 1, 15);
+            int TimerMode = GetIntWithDefault("TimerMode", 0, "计时模式", 0, 2);
+            int LockMode = GetIntWithDefault("LockMode", 1, "锁屏模式", 0, 5);
+            int Display = GetIntWithDefault("Display", 1, "显示桌面插件", 0, 1);
+            int ShutdownTime = GetIntWithDefault("ShutdownTime", -1, "关机时间-小时", -1, 23);
+            int ShutdownPoints = GetIntWithDefault("ShutdownPoints", -1, "关机时间-分钟", -1, 59);
+            int Unlock = GetIntWithDefault("Unlock", 0, "允许解锁", 0, 1);
+            int IsIntelligent = GetIntWithDefault("IsIntelligent", 0, "智能计时", 0, 1);
+            int ShutdownMode = GetIntWithDefault("ShutdownMode", 0, "关机模式", 0, 5);
+            int Voice = GetIntWithDefault("Voice", 0, "语音提示", 0, 1);
+            int WidgetStyle = GetIntWithDefault("WidgetStyle", 0, "桌面插件风格", 0, 3);
 
             string ImgPath = ConfigHelper.GetConfig("ImgPath", "Resources/wallpaper.jpg");
             if (string.IsNullOrWhiteSpace(ImgPath))
@@ -120,9 +120,14 @@ namespace EyeGuard
         }
 
         /// <summary>
-        /// 读取整型配置，缺失或非法时回退默认值并写回配置，同时弹出警告
+        /// 读取整型配置，缺失或超出允许范围时回退默认值并写回配置，同时弹出警告
         /// </summary>
-        private static int GetIntWithDefault(string key, int defaultValue, string displayName)
+        private static int GetIntWithDefault(
+            string key,
+            int defaultValue,
+            string displayName,
+            int minimum,
+            int maximum)
         {
             string rawValue = ConfigHelper.GetConfig(key, defaultValue.ToString());
             if (string.IsNullOrWhiteSpace(rawValue))
@@ -132,7 +137,9 @@ namespace EyeGuard
                 return defaultValue;
             }
 
-            if (!int.TryParse(rawValue, out int parsed))
+            if (!int.TryParse(rawValue, out int parsed)
+                || parsed < minimum
+                || parsed > maximum)
             {
                 ConfigHelper.SetConfig(key, defaultValue.ToString());
                 System.Windows.MessageBox.Show($"{displayName}配置错误，已使用默认值 {defaultValue}", "配置提示");
