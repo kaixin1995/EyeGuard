@@ -130,8 +130,9 @@ namespace EyeGuard
             // 捕获时间  
             if (!GetLastInputInfo(ref vLastInputInfo))
                 return 0;
-            else
-                return Environment.TickCount - (long)vLastInputInfo.dwTime;
+
+            // 使用无符号差值保证 TickCount 回绕后空闲时长仍为非负值。
+            return unchecked((uint)Environment.TickCount - vLastInputInfo.dwTime);
         }
         #endregion
 
