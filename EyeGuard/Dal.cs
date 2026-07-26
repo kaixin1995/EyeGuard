@@ -61,19 +61,30 @@ namespace EyeGuard
         /// <param name="md">实体类对象</param>
         public static bool SetData(Model md)
         {
-            Data["Work"] = md.Work;
-            Data["BreakPoints"] = md.BreakPoints;
-            Data["TimerMode"] = (int)md.TimerMode;
-            Data["LockMode"] = (int)md.LockMode;
-            Data["Display"] = md.Display;
-            Data["ShutdownTime"] = md.Shutdown.Time;
-            Data["ShutdownPoints"] = md.Shutdown.Branch;
-            Data["Unlock"] = md.Unlock;
-            Data["IsIntelligent"] = md.IsIntelligent;
-            Data["ShutdownMode"] = (int)md.Shutdown.ShutdownMode;
-            Data["Voice"] = md.Voice ? 1 : 0;
-            Data["WidgetStyle"] = (int)md.WidgetStyle;
-            return Serialize();
+            Dictionary<string, int> updatedData = new Dictionary<string, int>(Data)
+            {
+                ["Work"] = md.Work,
+                ["BreakPoints"] = md.BreakPoints,
+                ["TimerMode"] = (int)md.TimerMode,
+                ["LockMode"] = (int)md.LockMode,
+                ["Display"] = md.Display,
+                ["ShutdownTime"] = md.Shutdown.Time,
+                ["ShutdownPoints"] = md.Shutdown.Branch,
+                ["Unlock"] = md.Unlock,
+                ["IsIntelligent"] = md.IsIntelligent,
+                ["ShutdownMode"] = (int)md.Shutdown.ShutdownMode,
+                ["Voice"] = md.Voice ? 1 : 0,
+                ["WidgetStyle"] = (int)md.WidgetStyle
+            };
+
+            if (!Serialize(updatedData))
+            {
+                return false;
+            }
+
+            // 配置文件保存成功后才更新内存数据。
+            Data = updatedData;
+            return true;
         }
 
 
@@ -154,9 +165,14 @@ namespace EyeGuard
         /// </summary>
         public static bool Serialize()
         {
+            return Serialize(Data);
+        }
+
+        private static bool Serialize(Dictionary<string, int> data)
+        {
             // 一次性保存全部配置，避免部分配置写入成功后仍被当作保存完成。
             Dictionary<string, string> config = new Dictionary<string, string>();
-            foreach (KeyValuePair<string, int> item in Data)
+            foreach (KeyValuePair<string, int> item in data)
             {
                 config.Add(item.Key, item.Value.ToString());
             }

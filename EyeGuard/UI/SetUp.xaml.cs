@@ -12,9 +12,33 @@ namespace EyeGuard.UI
     {
 
         Model md;
+        private readonly Model sourceModel;
         public SetUp(Model Md)
         {
-            md = Md;
+            sourceModel = Md;
+            // 使用副本承接界面修改，保存成功前不影响正在运行的配置。
+            md = new Model
+            {
+                Work = Md.Work,
+                AlreadyWorked = Md.AlreadyWorked,
+                IsIntelligent = Md.IsIntelligent,
+                Voice = Md.Voice,
+                ImgPath = Md.ImgPath,
+                Unlock = Md.Unlock,
+                Display = Md.Display,
+                BreakPoints = Md.BreakPoints,
+                State = Md.State,
+                TimerMode = Md.TimerMode,
+                LockMode = Md.LockMode,
+                InitialPosition = Md.InitialPosition,
+                WidgetStyle = Md.WidgetStyle,
+                Shutdown = new TurnOffTime
+                {
+                    Time = Md.Shutdown.Time,
+                    Branch = Md.Shutdown.Branch,
+                    ShutdownMode = Md.Shutdown.ShutdownMode
+                }
+            };
             if (Function == true)
             {
                 this.Close();
@@ -175,8 +199,23 @@ namespace EyeGuard.UI
                 return;
             }
 
+            ApplySavedSettings();
             Tips.Show("已经成功保存~");
             this.Close();
+        }
+
+        private void ApplySavedSettings()
+        {
+            sourceModel.Work = md.Work;
+            sourceModel.BreakPoints = md.BreakPoints;
+            sourceModel.TimerMode = md.TimerMode;
+            sourceModel.LockMode = md.LockMode;
+            sourceModel.Unlock = md.Unlock;
+            sourceModel.Voice = md.Voice;
+            sourceModel.IsIntelligent = md.IsIntelligent;
+            sourceModel.Shutdown.Time = md.Shutdown.Time;
+            sourceModel.Shutdown.Branch = md.Shutdown.Branch;
+            sourceModel.Shutdown.ShutdownMode = md.Shutdown.ShutdownMode;
         }
 
 
