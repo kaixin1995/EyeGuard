@@ -32,10 +32,10 @@ namespace EyeGuard
         /// 写入配置
         /// </summary>
         /// <param name="md"></param>
-        public void SetData(Model md)
+        public bool SetData(Model md)
         {
-            //实例化类
-            Dal.SetData(md);
+            // 将配置写入结果传递给界面，避免保存失败时仍提示成功。
+            return Dal.SetData(md);
         }
 
         /// <summary>

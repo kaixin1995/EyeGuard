@@ -59,7 +59,7 @@ namespace EyeGuard
         /// 写入配置
         /// </summary>
         /// <param name="md">实体类对象</param>
-        public static void SetData(Model md)
+        public static bool SetData(Model md)
         {
             Data["Work"] = md.Work;
             Data["BreakPoints"] = md.BreakPoints;
@@ -73,7 +73,7 @@ namespace EyeGuard
             Data["ShutdownMode"] = (int)md.Shutdown.ShutdownMode;
             Data["Voice"] = md.Voice ? 1 : 0;
             Data["WidgetStyle"] = (int)md.WidgetStyle;
-            Serialize();
+            return Serialize();
         }
 
 
@@ -152,21 +152,16 @@ namespace EyeGuard
         /// <summary>
         /// 序列化
         /// </summary>
-        public static void Serialize()
+        public static bool Serialize()
         {
-            //序列化写入本地
-            ConfigHelper.SetConfig("Work", Data["Work"].ToString());
-            ConfigHelper.SetConfig("BreakPoints", Data["BreakPoints"].ToString());
-            ConfigHelper.SetConfig("TimerMode", Data["TimerMode"].ToString());
-            ConfigHelper.SetConfig("LockMode", Data["LockMode"].ToString());
-            ConfigHelper.SetConfig("Display", Data["Display"].ToString());
-            ConfigHelper.SetConfig("ShutdownTime", Data["ShutdownTime"].ToString());
-            ConfigHelper.SetConfig("ShutdownPoints", Data["ShutdownPoints"].ToString());
-            ConfigHelper.SetConfig("Unlock", Data["Unlock"].ToString());
-            ConfigHelper.SetConfig("IsIntelligent", Data["IsIntelligent"].ToString());
-            ConfigHelper.SetConfig("ShutdownMode", Data["ShutdownMode"].ToString());
-            ConfigHelper.SetConfig("Voice", Data["Voice"].ToString());
-            ConfigHelper.SetConfig("WidgetStyle", Data["WidgetStyle"].ToString());
+            // 一次性保存全部配置，避免部分配置写入成功后仍被当作保存完成。
+            Dictionary<string, string> config = new Dictionary<string, string>();
+            foreach (KeyValuePair<string, int> item in Data)
+            {
+                config.Add(item.Key, item.Value.ToString());
+            }
+
+            return ConfigHelper.SetConfig(config);
         }
     }
 

@@ -169,7 +169,12 @@ namespace EyeGuard.UI
 
             //提醒
             Bll bll = new Bll();
-            bll.SetData(md);
+            if (!bll.SetData(md))
+            {
+                MessageBox.Show("保存失败，请检查配置文件是否可写。", "提示");
+                return;
+            }
+
             Tips.Show("已经成功保存~");
             this.Close();
         }
