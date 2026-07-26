@@ -615,7 +615,7 @@ namespace EyeGuard
                         TechProgress.Value = Count;
                     }
                     
-                    md.AlreadyWorked = md.Work / 60;
+                    md.AlreadyWorked = (int)(Count / 60);
                 }
 
 
