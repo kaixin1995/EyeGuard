@@ -207,32 +207,37 @@ namespace EyeGuard
         /// 是否开机启动
         /// </summary>
         /// <param name="Whether"></param>
-        public static void BootUp(bool Whether = true)
+        public static bool BootUp(bool Whether = true)
         {
             try
             {
-                if (Whether)
+                using (RegistryKey registryKey = Registry.CurrentUser.CreateSubKey(
+                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                 {
-                    string path = $"{Process.GetCurrentProcess().MainModule.FileName}";
-                    var value = path.Replace("/", "\\");
-                    var currentUser = Registry.CurrentUser;
-                    var registryKey = currentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
-                    registryKey.SetValue("EyeGuard", value);
-                    registryKey.Close();
-                    currentUser.Close();
+                    if (registryKey == null)
+                    {
+                        return false;
+                    }
+
+                    if (Whether)
+                    {
+                        using (Process currentProcess = Process.GetCurrentProcess())
+                        {
+                            string path = currentProcess.MainModule.FileName.Replace("/", "\\");
+                            registryKey.SetValue("EyeGuard", $"\"{path}\"");
+                        }
+                    }
+                    else
+                    {
+                        registryKey.DeleteValue("EyeGuard", false);
+                    }
                 }
-                else
-                {
-                    var currentUser2 = Registry.CurrentUser;
-                    var registryKey2 = currentUser2.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
-                    registryKey2.DeleteValue("EyeGuard", false);
-                    registryKey2.Close();
-                    currentUser2.Close();
-                }
+
+                return true;
             }
-            catch (Exception)
+            catch
             {
-                System.Windows.MessageBox.Show("您需要管理员权限修改", "提示");
+                return false;
             }
         }
         #endregion

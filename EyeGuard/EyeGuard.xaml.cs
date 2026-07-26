@@ -101,16 +101,14 @@ namespace EyeGuard
             }
 
             //开机启动
-            if (state == "SelfStarting")
+            bool enabled = state == "SelfStarting";
+            if (!Bll.BootUp(enabled))
             {
-                Bll.BootUp();
-                Tips.Show("已经设置开机自启~");
+                MessageBox.Show("开机启动设置失败，请检查系统权限。", "提示");
+                return;
             }
-            else
-            {
-                Bll.BootUp(false);
-                Tips.Show("已经取消了开机自启~");
-            }
+
+            Tips.Show(enabled ? "已经设置开机自启~" : "已经取消了开机自启~");
         }
 
         /// <summary>
