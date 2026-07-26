@@ -10,8 +10,8 @@ namespace EyeGuard
 {
     public class Hook
     {
-        public delegate int HookProc(int nCode, int wParam, IntPtr lParam);
-        static int hHook = 0;
+        public delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
+        static IntPtr hHook = IntPtr.Zero;
         public const int WH_KEYBOARD_LL = 13;
         //LowLevel键盘截获，如果是WH_KEYBOARD＝2，并不能对系统键盘截取，Acrobat Reader会在你截取之前获得键盘。 
         HookProc KeyBoardHookProcedure;
@@ -27,14 +27,14 @@ namespace EyeGuard
         }
         #region DllImport
         //设置钩子 
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hInstance, uint threadId);
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall, SetLastError = true)]
+        //抽掉钩子
+        public static extern bool UnhookWindowsHookEx(IntPtr idHook);
         [DllImport("user32.dll")]
-        public static extern int SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hInstance, int threadId);
-        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        //抽掉钩子 
-        public static extern bool UnhookWindowsHookEx(int idHook);
-        [DllImport("user32.dll")]
-        //调用下一个钩子 
-        public static extern int CallNextHookEx(int idHook, int nCode, int wParam, IntPtr lParam);
+        //调用下一个钩子
+        public static extern IntPtr CallNextHookEx(IntPtr idHook, int nCode, IntPtr wParam, IntPtr lParam);
 
         [DllImport("kernel32.dll")]
         public static extern int GetCurrentThreadId();
@@ -48,15 +48,15 @@ namespace EyeGuard
         public void Hook_Start()
         {
             // 安装键盘钩子 
-            if (hHook == 0)
+            if (hHook == IntPtr.Zero)
             {
                 KeyBoardHookProcedure = new HookProc(KeyBoardHookProc);
 
                 hHook = SetWindowsHookEx(WH_KEYBOARD_LL,
                            KeyBoardHookProcedure,
                           GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName), 0);
-                //如果设置钩子失败 
-                if (hHook == 0)
+                //如果设置钩子失败
+                if (hHook == IntPtr.Zero)
                 {
                     KeyBoardHookProcedure = null;
                     throw new Exception("SetWindowsHookEx failed.");
@@ -67,23 +67,18 @@ namespace EyeGuard
         //取消钩子事件 
         public void Hook_Clear()
         {
-            if (hHook != 0)
+            if (hHook != IntPtr.Zero)
             {
-                try
+                if (UnhookWindowsHookEx(hHook))
                 {
-                    UnhookWindowsHookEx(hHook);
-                }
-                catch { }
-                finally
-                {
-                    hHook = 0;
+                    hHook = IntPtr.Zero;
                     KeyBoardHookProcedure = null;
                 }
             }
         }
 
         //这里可以添加自己想要的信息处理 
-        public static int KeyBoardHookProc(int nCode, int wParam, IntPtr lParam)
+        public static IntPtr KeyBoardHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0)
             {
@@ -107,7 +102,7 @@ namespace EyeGuard
                     case 110://.键
                     case 46://Delete键
                     case 115://F4键
-                        return 1;
+                        return new IntPtr(1);
                 }
 
             }
