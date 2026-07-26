@@ -296,6 +296,30 @@ namespace EyeGuard.UI
 
         }
 
+        private BitmapImage LoadWallpaper(string imagePath)
+        {
+            try
+            {
+                return LoadBitmap(imagePath);
+            }
+            catch
+            {
+                // 自定义图片不可用时回退内置壁纸，保证锁屏窗口能够正常显示。
+                return LoadBitmap(Path.Combine(path, "Resources", "wallpaper.jpg"));
+            }
+        }
+
+        private static BitmapImage LoadBitmap(string imagePath)
+        {
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(imagePath, UriKind.Absolute);
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
+        }
+
         /// <summary>
         /// 锁屏定义
         /// </summary>
@@ -320,14 +344,7 @@ namespace EyeGuard.UI
                     break;
                 case lock_mode.屏保模式:
                     string imgPhth = Path.Combine(path, Dal.ReturnData().ImgPath);
-                    // 创建BitmapImage并立即加载到内存,防止内存泄漏
-                    var wallpaperBitmap = new BitmapImage();
-                    wallpaperBitmap.BeginInit();
-                    wallpaperBitmap.UriSource = new Uri(imgPhth);
-                    wallpaperBitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    wallpaperBitmap.EndInit();
-                    wallpaperBitmap.Freeze();
-                    img.Source = wallpaperBitmap;
+                    img.Source = LoadWallpaper(imgPhth);
                     hyaline2.Opacity = 1;
                     hyaline.Opacity = 1;
                     break;
