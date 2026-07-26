@@ -162,16 +162,18 @@ namespace EyeGuard.UI
                 md.State = (state)0;
             }
 
-            // 清理Hook
-            try
+            // 仅在成功解除后释放 Hook 对象，失败时保留引用并记录错误。
+            if (h != null)
             {
-                if (h != null)
+                if (h.Hook_Clear())
                 {
-                    h.Hook_Clear();
                     h = null;
                 }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("解除键盘 Hook 失败，已保留回调引用。");
+                }
             }
-            catch { }
 
             // 清理计时器
             if (timer != null)

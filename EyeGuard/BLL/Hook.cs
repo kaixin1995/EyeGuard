@@ -14,7 +14,7 @@ namespace EyeGuard
         static IntPtr hHook = IntPtr.Zero;
         public const int WH_KEYBOARD_LL = 13;
         //LowLevel键盘截获，如果是WH_KEYBOARD＝2，并不能对系统键盘截取，Acrobat Reader会在你截取之前获得键盘。 
-        HookProc KeyBoardHookProcedure;
+        static HookProc KeyBoardHookProcedure;
         //键盘Hook结构函数 
         [StructLayout(LayoutKind.Sequential)]
         public class KeyBoardHookStruct
@@ -65,16 +65,23 @@ namespace EyeGuard
         }
 
         //取消钩子事件 
-        public void Hook_Clear()
+        public bool Hook_Clear()
         {
-            if (hHook != IntPtr.Zero)
+            if (hHook == IntPtr.Zero)
             {
-                if (UnhookWindowsHookEx(hHook))
-                {
-                    hHook = IntPtr.Zero;
-                    KeyBoardHookProcedure = null;
-                }
+                KeyBoardHookProcedure = null;
+                return true;
             }
+
+            // 解除失败时重试一次，仍失败则保留静态回调，避免原生 Hook 调用已回收的委托。
+            if (!UnhookWindowsHookEx(hHook) && !UnhookWindowsHookEx(hHook))
+            {
+                return false;
+            }
+
+            hHook = IntPtr.Zero;
+            KeyBoardHookProcedure = null;
+            return true;
         }
 
         //这里可以添加自己想要的信息处理 
