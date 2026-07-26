@@ -291,20 +291,11 @@ namespace EyeGuard
             this.Focus();
             md.State = (state)0;
             RestoreLocation();
-            //解屏、登录后执行
+            // Windows 解锁后始终开启新的工作周期。
             if (dateBegin != null)
             {
-                double fen = Bll.ExecDateDiff((DateTime)dateBegin, DateTime.Now);
-                // 如果锁屏发生在休息临界点，或锁屏已满足休息时长，则开启新的工作周期。
-                if (Count >= md.Work * 60 || fen >= 3)
-                {
-                    Count = 0;
-                }
+                Count = 0;
                 dateBegin = null;
-                //if (fen >= 60*24)
-                //{
-                //    Reboot();
-                //}
             }
             if (!timer.IsEnabled)
             {
