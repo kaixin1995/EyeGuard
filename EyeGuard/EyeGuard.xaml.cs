@@ -799,11 +799,11 @@ namespace EyeGuard
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            md = bll.Initialization();
             if (md.Voice)
             {
                 BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "Firing.mp3"));
             }
-            md = bll.Initialization();
             ApplyWidgetStyle();
             if (md.Display == 0)
             {
