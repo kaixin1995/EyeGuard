@@ -271,17 +271,25 @@ namespace EyeGuard
         /// <returns></returns>
         public static bool IsAudioPlaying()
         {
-            //上次的MasterPeakValue值
-            float _oldMasterPeakValue = GetMasterPeakValue();
-            if (_oldMasterPeakValue <= 0)
+            try
             {
+                //上次的MasterPeakValue值
+                float _oldMasterPeakValue = GetMasterPeakValue();
+                if (_oldMasterPeakValue <= 0)
+                {
+                    return false;
+                }
+                if (_oldMasterPeakValue != GetMasterPeakValue())
+                {
+                    return true;
+                }
                 return false;
             }
-            if (_oldMasterPeakValue != GetMasterPeakValue())
+            catch
             {
-                return true;
+                // 无可用音频设备时按未播放处理，不能中断锁屏流程。
+                return false;
             }
-            return false;
         }
 
         /// <summary>
