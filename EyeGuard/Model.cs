@@ -191,19 +191,37 @@
     { 
 
         /// <summary>
+        /// 屏幕左侧坐标
+        /// </summary>
+        public double Left { get; set; }
+
+        /// <summary>
+        /// 屏幕顶部坐标
+        /// </summary>
+        public double Top { get; set; }
+
+        /// <summary>
         /// 宽度
         /// </summary>
-        public int Width { get; set; }
-
+        public double Width { get; set; }
 
         /// <summary>
         /// 高度
         /// </summary>
-        public int Height { get; set; }
-
+        public double Height { get; set; }
 
         /// <summary>
-        /// 顺序，用来区分主屏幕与否  
+        /// 是否为主屏幕
+        /// </summary>
+        public bool Primary { get; set; }
+
+        /// <summary>
+        /// 屏幕设备名称
+        /// </summary>
+        public string DeviceName { get; set; }
+
+        /// <summary>
+        /// 顺序，用来区分主屏幕与否
         /// 以及为后面的扩展留下接口
         /// </summary>
         public int Order { get; set; }

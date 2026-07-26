@@ -254,19 +254,19 @@ namespace EyeGuard
         /// </summary>
         public static void GetInfoOnTheScreens()
         {
-            if (InfoOnTheScreens != null && InfoOnTheScreens.Count > 0)
-                return;
-
-            InfoOnTheScreens = new List<InfoOnTheScreen>();
-            for (int i = 0; i < Screen.AllScreens.Count(); i++)
-            {
-                var _value = Screen.AllScreens.ToList()[i];
-                InfoOnTheScreen infoOnThe = new InfoOnTheScreen();
-                infoOnThe.Width = Convert.ToInt32(_value.Bounds.Width);
-                infoOnThe.Height = Convert.ToInt32(_value.Bounds.Height);
-                infoOnThe.Order = i;
-                InfoOnTheScreens.Add(infoOnThe);
-            }
+            // 每次锁屏前重新获取屏幕拓扑，避免插拔显示器后继续使用旧缓存。
+            InfoOnTheScreens = Screen.AllScreens
+                .Select((screen, index) => new InfoOnTheScreen
+                {
+                    Left = screen.WpfBounds.Left,
+                    Top = screen.WpfBounds.Top,
+                    Width = screen.WpfBounds.Width,
+                    Height = screen.WpfBounds.Height,
+                    Primary = screen.Primary,
+                    DeviceName = screen.DeviceName,
+                    Order = index
+                })
+                .ToList();
         }
 
 

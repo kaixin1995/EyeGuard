@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -22,6 +25,8 @@ namespace EyeGuard.UI
         private bool isSecondary = false;
         // 只在主屏首次显示时尝试获取焦点，避免主副屏抢焦点
         private bool hasFocused = false;
+        private readonly List<LockScreen> secondaryLockScreens = new List<LockScreen>();
+        private DispatcherTimer displayRefreshTimer;
 
         /// <summary>
         /// 构造函数
@@ -45,74 +50,124 @@ namespace EyeGuard.UI
         }
 
 
-        /// <summary>
-        /// 第二屏幕对象
-        /// </summary>
-        LockScreen lockScreenⅡ = null;
         public static bool FunctionⅡ = false;
 
-
         /// <summary>
-        /// 第二屏幕调用
+        /// 副屏遮罩窗口
         /// </summary>
-        /// <param name="Count"></param>
-        public LockScreen()
+        private LockScreen(Model model, InfoOnTheScreen screen)
         {
             isSecondary = true;
+            md = model;
             InitializeComponent();
-            Position();
-
-            PromptText.Visibility = Visibility.Visible;
+            ApplyScreenBounds(screen);
+            PromptText.Visibility = screen.Width < screen.Height
+                ? Visibility.Collapsed
+                : Visibility.Visible;
             PromptText.Text = "请在主屏幕进行解锁~";
-            // 副屏不参与焦点获取
-            this.ShowActivated = false;
-            this.Focusable = false;
-            // 副屏不需要交互，避免任何点击响应
-            this.IsHitTestVisible = false;
+            Unlock.Visibility = Visibility.Collapsed;
+            ShowActivated = false;
+            Focusable = false;
+            IsHitTestVisible = false;
         }
 
-
-
-        /// <summary>
-        /// 第二屏幕显示
-        /// </summary>
-        /// <param name="md"></param>
-        private void DoubleScreen(Model md)
+        private void RefreshScreens()
         {
-            Bll.GetInfoOnTheScreens();
-            if (Bll.InfoOnTheScreens.Count == 2)
+            if (isSecondary || isRefreshingScreens)
             {
-                lockScreenⅡ = new LockScreen();
-                lockScreenⅡ.md = md;
-                lockScreenⅡ.Left = Bll.InfoOnTheScreens[0].Width;
-                lockScreenⅡ.Top = 0;
-                FunctionⅡ = true;
-                lockScreenⅡ.Width = Bll.InfoOnTheScreens[1].Width;
-                lockScreenⅡ.Height = Bll.InfoOnTheScreens[1].Height;
-                lockScreenⅡ.Unlock.Visibility = Visibility.Collapsed;
-                #region 开始判定是否是竖屏
-                if (Bll.InfoOnTheScreens[1].Width < Bll.InfoOnTheScreens[1].Height)
-                {
-                    // 当前屏幕为竖屏  
-                    lockScreenⅡ.PromptText.Visibility = Visibility.Collapsed;
-                    lockScreenⅡ.PromptText.Text = "";
-                }
-                #endregion
-
-                // 副屏窗口不激活，避免抢主屏焦点
-                lockScreenⅡ.ShowActivated = false;
-                lockScreenⅡ.Focusable = false;
-                // 副屏不需要交互，避免点击与焦点变化
-                lockScreenⅡ.IsHitTestVisible = false;
-                lockScreenⅡ.Show();
-
-                //lockScreenⅡ.TopTimer.Stop();
-                lockScreenⅡ.WindowState = WindowState.Maximized;
-
-                lockScreenⅡ.img.Width = lockScreenⅡ.ActualWidth;
-                lockScreenⅡ.img.Height = lockScreenⅡ.ActualHeight;
-                lockScreenⅡ.img.Stretch = Stretch.Uniform;
+                return;
             }
+
+            isRefreshingScreens = true;
+            try
+            {
+                Bll.GetInfoOnTheScreens();
+                InfoOnTheScreen primaryScreen = Bll.InfoOnTheScreens.FirstOrDefault(screen => screen.Primary)
+                    ?? Bll.InfoOnTheScreens.FirstOrDefault(screen =>
+                        screen.Left <= 0
+                        && screen.Top <= 0
+                        && screen.Left + screen.Width > 0
+                        && screen.Top + screen.Height > 0)
+                    ?? Bll.InfoOnTheScreens.FirstOrDefault();
+                if (primaryScreen == null)
+                {
+                    // 检测失败时退化到当前系统主屏，确保解锁入口仍在可见区域。
+                    CloseSecondaryScreens();
+                    ApplySafePrimaryBounds();
+                    EnsureUnlockButtonVisible();
+                    return;
+                }
+
+                ApplyScreenBounds(primaryScreen);
+                EnsureUnlockButtonVisible();
+                CloseSecondaryScreens();
+
+                foreach (InfoOnTheScreen screen in Bll.InfoOnTheScreens.Where(screen =>
+                    !ReferenceEquals(screen, primaryScreen)))
+                {
+                    LockScreen secondary = new LockScreen(md, screen);
+                    secondary.Show();
+                    secondary.EnsureTopMost();
+                    secondaryLockScreens.Add(secondary);
+                }
+
+                FunctionⅡ = secondaryLockScreens.Count > 0;
+                EnsureTopMost();
+            }
+            catch (Exception ex)
+            {
+                // 屏幕拓扑异常时退化到主屏，优先保证解锁入口可见。
+                System.Diagnostics.Debug.WriteLine($"刷新锁屏显示器失败: {ex.Message}");
+                CloseSecondaryScreens();
+                ApplySafePrimaryBounds();
+                EnsureUnlockButtonVisible();
+            }
+            finally
+            {
+                isRefreshingScreens = false;
+            }
+        }
+
+        private void CloseSecondaryScreens()
+        {
+            LockScreen[] screens = secondaryLockScreens.ToArray();
+            secondaryLockScreens.Clear();
+            FunctionⅡ = false;
+
+            foreach (LockScreen secondary in screens)
+            {
+                try
+                {
+                    secondary.Close();
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        private void ApplyScreenBounds(InfoOnTheScreen screen)
+        {
+            WindowState = WindowState.Normal;
+            Left = screen.Left;
+            Top = screen.Top;
+            Width = screen.Width;
+            Height = screen.Height;
+            img.Width = Width;
+            img.Height = Height;
+            img.Stretch = Stretch.Fill;
+        }
+
+        private void ApplySafePrimaryBounds()
+        {
+            WindowState = WindowState.Normal;
+            Left = 0;
+            Top = 0;
+            Width = SystemParameters.PrimaryScreenWidth;
+            Height = SystemParameters.PrimaryScreenHeight;
+            img.Width = Width;
+            img.Height = Height;
+            img.Stretch = Stretch.Fill;
         }
 
 
@@ -154,16 +209,18 @@ namespace EyeGuard.UI
         /// </summary>
         private void LockScreen_Closed(object sender, EventArgs e)
         {
-            Function = false;
-            FunctionⅡ = false;
+            if (!isSecondary)
+            {
+                Function = false;
+            }
             
-            if (md != null)
+            if (!isSecondary && md != null)
             {
                 md.State = (state)0;
             }
 
-            // 仅在成功解除后释放 Hook 对象，失败时保留引用并记录错误。
-            if (h != null)
+            // 仅主屏安装了 Hook，副屏关闭时不能影响主屏 Hook。
+            if (!isSecondary && h != null)
             {
                 if (h.Hook_Clear())
                 {
@@ -173,6 +230,19 @@ namespace EyeGuard.UI
                 {
                     System.Diagnostics.Debug.WriteLine("解除键盘 Hook 失败，已保留回调引用。");
                 }
+            }
+
+            if (!isSecondary)
+            {
+                SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
+                if (displayRefreshTimer != null)
+                {
+                    displayRefreshTimer.Stop();
+                    displayRefreshTimer.Tick -= DisplayRefreshTimer_Tick;
+                    displayRefreshTimer = null;
+                }
+                CloseSecondaryScreens();
+                GetLockScreen = null;
             }
 
             // 清理计时器
@@ -200,18 +270,6 @@ namespace EyeGuard.UI
                 Unlock.Source = null;
             }
 
-            // 清理第二屏幕
-            if (lockScreenⅡ != null)
-            {
-                try
-                {
-                    lockScreenⅡ.Close();
-                }
-                catch { }
-                lockScreenⅡ = null;
-            }
-            
-            GetLockScreen = null;
         }
 
         /// <summary>
@@ -259,6 +317,7 @@ namespace EyeGuard.UI
         /// </summary>
         private DispatcherTimer timer;
         private DispatcherTimer TopTimer;
+        private bool isRefreshingScreens;
 
         /// <summary>
         /// 路径
@@ -287,7 +346,30 @@ namespace EyeGuard.UI
             unlockBitmap.Freeze();
             Unlock.Source = unlockBitmap;
 
-            Unlock.Margin = new Thickness((this.Width - Unlock.Width - 8), (this.Height - Unlock.Height - 10), 0, 0);
+            EnsureUnlockButtonVisible();
+        }
+
+        private void EnsureUnlockButtonVisible()
+        {
+            if (isSecondary)
+            {
+                return;
+            }
+
+            double safeWidth = double.IsNaN(Width) || Width <= 0
+                ? SystemParameters.PrimaryScreenWidth
+                : Width;
+            double safeHeight = double.IsNaN(Height) || Height <= 0
+                ? SystemParameters.PrimaryScreenHeight
+                : Height;
+            double left = Math.Max(8, safeWidth - Unlock.Width - 8);
+            double top = Math.Max(8, safeHeight - Unlock.Height - 10);
+            Unlock.Margin = new Thickness(left, top, 0, 0);
+
+            if (Unlock.Visibility == Visibility.Visible)
+            {
+                Unlock.IsHitTestVisible = true;
+            }
         }
 
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -362,19 +444,12 @@ namespace EyeGuard.UI
                     break;
             }
 
-            //this.Width = Bll.InfoOnTheScreens[0].Width;
-            //this.Height = Bll.InfoOnTheScreens[0].Height;
-            this.WindowState = WindowState.Maximized;
-            if (lockScreenⅡ == null && FunctionⅡ == false)
-            {
-                DoubleScreen(md);
-            }
-
-            // 主屏始终置顶，避免被任务栏遮挡
-            EnsureTopMost();
-
             if (!isSecondary)
             {
+                // 每次锁屏显示前重新检测屏幕，确保插拔显示器后使用当前拓扑。
+                RefreshScreens();
+                SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+
                 // 置顶时钟只在主屏启用，避免副屏重复置顶引发闪烁
                 TopTimer = new DispatcherTimer();
                 TopTimer.Interval = new TimeSpan(0, 0, 1);
@@ -394,11 +469,51 @@ namespace EyeGuard.UI
             else
             {
                 // 副屏确保不激活、不抢焦点、不响应点击
-                this.ShowActivated = false;
-                this.Focusable = false;
-                this.IsHitTestVisible = false;
+                ShowActivated = false;
+                Focusable = false;
+                IsHitTestVisible = false;
             }
 
+        }
+
+        private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
+        {
+            if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished)
+            {
+                return;
+            }
+
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (!IsLoaded || !IsVisible)
+                {
+                    return;
+                }
+
+                if (displayRefreshTimer == null)
+                {
+                    displayRefreshTimer = new DispatcherTimer
+                    {
+                        Interval = TimeSpan.FromMilliseconds(800)
+                    };
+                    displayRefreshTimer.Tick += DisplayRefreshTimer_Tick;
+                }
+
+                // 显示器切换可能连续触发，重新计时后只刷新一次。
+                displayRefreshTimer.Stop();
+                displayRefreshTimer.Start();
+            }));
+        }
+
+        private void DisplayRefreshTimer_Tick(object sender, EventArgs e)
+        {
+            displayRefreshTimer.Stop();
+            if (!IsLoaded || !IsVisible)
+            {
+                return;
+            }
+
+            RefreshScreens();
         }
 
         /// <summary>
@@ -408,7 +523,16 @@ namespace EyeGuard.UI
         {
             var hwnd = new WindowInteropHelper(this).Handle;
             BLL.TopMostTool.setTop(hwnd);
-            this.Topmost = true;
+            Topmost = true;
+
+            if (!isSecondary)
+            {
+                foreach (LockScreen secondary in secondaryLockScreens)
+                {
+                    var secondaryHandle = new WindowInteropHelper(secondary).Handle;
+                    BLL.TopMostTool.setTop(secondaryHandle);
+                }
+            }
         }
 
 
