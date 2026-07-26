@@ -4,7 +4,6 @@ using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -41,64 +40,22 @@ namespace EyeGuard
 
         void App_Startup(object sender, StartupEventArgs e)
         {
-            // 获取当前程序的进程名称
-            string processName = Process.GetCurrentProcess().ProcessName;
-            Console.WriteLine($"当前程序的进程名称是: {processName}");
-            KillOtherProcessesByName(processName);
-            bool ret;
-            mutex = new System.Threading.Mutex(true, "EyeGuard", out ret);
-
-            if (!ret)
+            bool createdNew;
+            mutex = new System.Threading.Mutex(true, "EyeGuard", out createdNew);
+            if (createdNew)
             {
-                Process instance = RunningInstance();
+                return;
+            }
+
+            // 已有实例时仅激活原窗口，绝不终止同名进程。
+            Process instance = RunningInstance();
+            if (instance != null)
+            {
                 HandleRunningInstance(instance);
+                instance.Dispose();
             }
 
-        }
-
-        /// <summary>
-        /// 终止指定名称的进程，但保留当前运行的进程。
-        /// </summary>
-        /// <param name="processName">要终止的进程名称（不带扩展名）</param>
-        public static void KillOtherProcessesByName(string processName)
-        {
-            if (string.IsNullOrWhiteSpace(processName))
-            {
-                throw new ArgumentException("进程名称不能为空或空字符串。", nameof(processName));
-            }
-
-            try
-            {
-                // 获取当前进程的信息
-                Process currentProcess = Process.GetCurrentProcess();
-                int currentProcessId = currentProcess.Id;
-
-                // 获取所有与目标名称匹配的进程
-                Process[] processes = Process.GetProcessesByName(processName);
-
-                bool foundOtherProcesses = false;
-
-                foreach (var process in processes)
-                {
-                    // 排除当前进程
-                    if (process.Id != currentProcessId)
-                    {
-                        foundOtherProcesses = true;
-                        Console.WriteLine($"正在终止进程 ID: {process.Id}");
-                        process.Kill(); // 终止进程
-                        process.WaitForExit(); // 等待进程完全退出
-                    }
-                }
-
-                if (!foundOtherProcesses)
-                {
-                    Console.WriteLine("没有找到其他需要终止的进程。");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"发生错误: {ex.Message}");
-            }
+            Shutdown();
         }
 
         /// <summary>
@@ -106,18 +63,37 @@ namespace EyeGuard
         /// </summary>
         public static Process RunningInstance()
         {
-            Process current = Process.GetCurrentProcess();
-            Process[] processes = Process.GetProcessesByName(current.ProcessName);
-            foreach (Process process in processes)
+            using (Process current = Process.GetCurrentProcess())
             {
-                if (process.Id != current.Id)
+                string currentPath = current.MainModule.FileName;
+                Process[] processes = Process.GetProcessesByName(current.ProcessName);
+                foreach (Process process in processes)
                 {
-                    if (Assembly.GetExecutingAssembly().Location.Replace("/", "\\") == current.MainModule.FileName)
+                    if (process.Id == current.Id)
                     {
-                        return process;
+                        process.Dispose();
+                        continue;
                     }
+
+                    try
+                    {
+                        if (string.Equals(
+                            currentPath,
+                            process.MainModule.FileName,
+                            StringComparison.OrdinalIgnoreCase))
+                        {
+                            return process;
+                        }
+                    }
+                    catch
+                    {
+                        // 无法读取候选进程路径时，不将其视为应用实例。
+                    }
+
+                    process.Dispose();
                 }
             }
+
             return null;
         }
 
