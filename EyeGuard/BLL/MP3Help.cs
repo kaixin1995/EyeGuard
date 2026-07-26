@@ -1,167 +1,118 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using NAudio.Wave;
+using System;
+using System.IO;
 
 namespace EyeGuard.BLL
 {
-    
     /// <summary>
-    /// clsMci 的摘要说明。
+    /// MP3 播放帮助类
     /// </summary>
-    public class MP3Help : IDisposable
+    public sealed class MP3Help : IDisposable
     {
-        public MP3Help(string FileName)
+        private static readonly object SyncRoot = new object();
+        private static MP3Help currentPlayer;
+
+        private AudioFileReader audioFile;
+        private WaveOutEvent outputDevice;
+        private bool disposed;
+
+        private MP3Help(string fileName)
         {
-            this.FileName = FileName;
-        }
-        //定义API函数使用的字符串变量 
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-        private string Name = "";
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-        private string durLength = "";
-        [MarshalAs(UnmanagedType.LPTStr, SizeConst = 128)]
-        private string TemStr = "";
-        int ilong;
-        //定义播放状态枚举变量
-        public enum State
-        {
-            mPlaying = 1,
-            mPuase = 2,
-            mStop = 3
-        };
-        //结构变量
-        public struct structMCI
-        {
-            public bool bMut;
-            public int iDur;
-            public int iPos;
-            public int iVol;
-            public int iBal;
-            public string iName;
-            public State state;
-        };
-        public structMCI mc = new structMCI();
-        //取得播放文件属性
-        public string FileName
-        {
-            get
+            try
             {
-                return mc.iName;
+                audioFile = new AudioFileReader(fileName);
+                outputDevice = new WaveOutEvent();
+                outputDevice.Init(audioFile);
+                outputDevice.PlaybackStopped += OutputDevice_PlaybackStopped;
             }
-            set
+            catch
             {
+                Dispose();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 播放提示音；新提示音会替换尚未结束的旧提示音。
+        /// </summary>
+        /// <param name="fileName">提示音文件路径</param>
+        public static void Play(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName) || !File.Exists(fileName))
+            {
+                return;
+            }
+
+            lock (SyncRoot)
+            {
+                StopCurrentPlayer();
+                MP3Help player = null;
                 try
                 {
-                    TemStr = "";
-                    TemStr = TemStr.PadLeft(127, Convert.ToChar(" "));
-                    Name = Name.PadLeft(260, Convert.ToChar(" "));
-                    mc.iName = value;
-                    ilong = APIClass.GetShortPathName(mc.iName, Name, Name.Length);
-                    Name = GetCurrPath(Name);
-                    Name = "open " + Convert.ToChar(34) + Name + Convert.ToChar(34) + " alias media";
-                    ilong = APIClass.mciSendString("close all", TemStr, TemStr.Length, 0);
-                    ilong = APIClass.mciSendString(Name, TemStr, TemStr.Length, 0);
-                    ilong = APIClass.mciSendString("set media time format milliseconds", TemStr, TemStr.Length, 0);
-                    mc.state = State.mStop;
+                    player = new MP3Help(fileName);
+                    player.outputDevice.Play();
+                    currentPlayer = player;
                 }
                 catch
                 {
+                    player?.Dispose();
                 }
             }
         }
 
-
-        //播放
-        public void Play()
+        /// <summary>
+        /// 停止并释放当前提示音资源。
+        /// </summary>
+        public static void Stop()
         {
-            //查看是否启动语言模式
-            TemStr = "";
-            TemStr = TemStr.PadLeft(127, Convert.ToChar(" "));
-            APIClass.mciSendString("play media", TemStr, TemStr.Length, 0);
-            mc.state = State.mPlaying;
-        }
-        //停止
-        public void StopT()
-        {
-            TemStr = "";
-            TemStr = TemStr.PadLeft(128, Convert.ToChar(" "));
-            ilong = APIClass.mciSendString("close media", TemStr, 128, 0);
-            ilong = APIClass.mciSendString("close all", TemStr, 128, 0);
-            mc.state = State.mStop;
+            lock (SyncRoot)
+            {
+                StopCurrentPlayer();
+            }
         }
 
-        private bool disposed = false;
+        private void OutputDevice_PlaybackStopped(object sender, StoppedEventArgs e)
+        {
+            lock (SyncRoot)
+            {
+                if (ReferenceEquals(currentPlayer, this))
+                {
+                    currentPlayer = null;
+                }
+                Dispose();
+            }
+        }
+
+        private static void StopCurrentPlayer()
+        {
+            if (currentPlayer == null)
+            {
+                return;
+            }
+
+            MP3Help player = currentPlayer;
+            currentPlayer = null;
+            player.Dispose();
+        }
+
         public void Dispose()
         {
-            if (!disposed)
+            if (disposed)
             {
-                StopT();
-                disposed = true;
+                return;
             }
-            GC.SuppressFinalize(this);
-        }
+            disposed = true;
 
-        ~MP3Help()
-        {
-            Dispose();
-        }
-        public void Puase()
-        {
-            TemStr = "";
-            TemStr = TemStr.PadLeft(128, Convert.ToChar(" "));
-            ilong = APIClass.mciSendString("pause media", TemStr, TemStr.Length, 0);
-            mc.state = State.mPuase;
-        }
-        private string GetCurrPath(string name)
-        {
-            if (name.Length < 1) return "";
-            name = name.Trim();
-            name = name.Substring(0, name.Length - 1);
-            return name;
-        }
-        //总时间
-        public int Duration
-        {
-            get
+            if (outputDevice != null)
             {
-                durLength = "";
-                durLength = durLength.PadLeft(128, Convert.ToChar(" "));
-                APIClass.mciSendString("status media length", durLength, durLength.Length, 0);
-                durLength = durLength.Trim();
-                if (durLength == "") return 0;
-                return (int)(Convert.ToDouble(durLength) / 1000f);
+                outputDevice.PlaybackStopped -= OutputDevice_PlaybackStopped;
+                outputDevice.Stop();
+                outputDevice.Dispose();
+                outputDevice = null;
             }
+
+            audioFile?.Dispose();
+            audioFile = null;
         }
-        //当前时间
-        public int CurrentPosition
-        {
-            get
-            {
-                durLength = "";
-                durLength = durLength.PadLeft(128, Convert.ToChar(" "));
-                APIClass.mciSendString("status media position", durLength, durLength.Length, 0);
-                mc.iPos = (int)(Convert.ToDouble(durLength) / 1000f);
-                return mc.iPos;
-            }
-        }
-    }
-    public class APIClass
-    {
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        public static extern int GetShortPathName(
-         string lpszLongPath,
-         string shortFile,
-         int cchBuffer
-      );
-        [DllImport("winmm.dll", EntryPoint = "mciSendString", CharSet = CharSet.Auto)]
-        public static extern int mciSendString(
-           string lpstrCommand,
-           string lpstrReturnString,
-           int uReturnLength,
-           int hwndCallback
-          );
     }
 }

@@ -634,10 +634,7 @@ namespace EyeGuard
                             {
                                 if (md.Voice)
                                 {
-                                    using (var mp3 = new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3"))
-                                    {
-                                        mp3.Play();
-                                    }
+                                    BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "BeforeShutdown.mp3"));
                                 }
                                 Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                             }
@@ -648,10 +645,7 @@ namespace EyeGuard
                             {
                                 if (md.Voice)
                                 {
-                                    using (var mp3 = new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3"))
-                                    {
-                                        mp3.Play();
-                                    }
+                                    BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "BeforeShutdown.mp3"));
                                 }
                                 Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                             }
@@ -664,10 +658,7 @@ namespace EyeGuard
                         {
                             if (md.Voice)
                             {
-                                using (var mp3 = new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeShutdown.mp3"))
-                                {
-                                    mp3.Play();
-                                }
+                                BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "BeforeShutdown.mp3"));
                             }
                             Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
                         }
@@ -706,10 +697,7 @@ namespace EyeGuard
                 {
                     if (md.Voice)
                     {
-                        using (var mp3 = new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\BeforeRest.mp3"))
-                        {
-                            mp3.Play();
-                        }
+                        BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "BeforeRest.mp3"));
                     }
                     if (((int)md.TimerMode == 1 && bll.FullScreen()) || (int)md.TimerMode == 2)
                     {
@@ -731,10 +719,7 @@ namespace EyeGuard
                             {
                                 if (md.Voice)
                                 {
-                                    using (var mp3 = new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3"))
-                                    {
-                                        mp3.Play();
-                                    }
+                                    BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "Resting.mp3"));
                                 }
                                 StopPlaying();
                                 // 进入休息周期前立即清零，避免用户快速解锁时错过状态清理。
@@ -749,10 +734,7 @@ namespace EyeGuard
                         case lock_mode.语音模式:
                             if (Count == md.Work * 60 && md.Voice)
                             {
-                                using (var mp3 = new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3"))
-                                {
-                                    mp3.Play();
-                                }
+                                BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "Resting.mp3"));
                             }
                             //语音模式下不会进行锁屏的
                             //既然不锁屏，那就清空本次时间把~
@@ -761,10 +743,7 @@ namespace EyeGuard
                         case lock_mode.锁定Windows:
                             if (Count == md.Work * 60 && md.Voice)
                             {
-                                using (var mp3 = new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Resting.mp3"))
-                                {
-                                    mp3.Play();
-                                }
+                                BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "Resting.mp3"));
                             }
                             Count = 0;
                             StopPlaying();
@@ -822,10 +801,7 @@ namespace EyeGuard
         {
             if (md.Voice)
             {
-                using (var mp3 = new BLL.MP3Help($@"{AppDomain.CurrentDomain.BaseDirectory}Resources\MP3\Firing.mp3"))
-                {
-                    mp3.Play();
-                }
+                BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "Firing.mp3"));
             }
             md = bll.Initialization();
             ApplyWidgetStyle();
@@ -850,6 +826,7 @@ namespace EyeGuard
             SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
             timer?.Stop();
             timer = null;
+            BLL.MP3Help.Stop();
             MyNotifyIcon.Visibility = Visibility.Collapsed;
         }
 
