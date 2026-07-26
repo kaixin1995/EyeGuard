@@ -229,6 +229,8 @@ namespace EyeGuard
         /// 时钟
         /// </summary>
         private DispatcherTimer timer = new DispatcherTimer();
+        // 记录上次检查时间，避免 DispatcherTimer 未在目标秒触发时漏掉定时关机。
+        private DateTime lastShutdownCheck = DateTime.Now;
         public MainWindow()
         {
             InitializeComponent();
@@ -500,6 +502,7 @@ namespace EyeGuard
         {
             try
             {
+                CheckScheduledShutdown();
                 if ((int)md.State == 1)
                 {
                     Count = 0;
@@ -616,81 +619,6 @@ namespace EyeGuard
                 }
 
 
-                //判断是否启用自动关机
-                if (md.Shutdown.Time != -1 && md.Shutdown.Branch != -1)
-                {
-                    DateTime now = DateTime.Now;
-
-                    //关机前的提醒，如果是整点，也就是0，你需要做好这个判断
-
-                    //是否为0分
-                    if (md.Shutdown.Branch == 0)
-                    {
-                        //是否为0时
-                        if (md.Shutdown.Time == 0)
-                        {
-                            if (now.Hour == 23 && now.Minute == 59 && now.Second == 3)
-                            {
-                                if (md.Voice)
-                                {
-                                    BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "BeforeShutdown.mp3"));
-                                }
-                                Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
-                            }
-                        }
-                        else
-                        {
-                            if (now.Hour == (md.Shutdown.Time - 1) && now.Minute == 59 && now.Second == 3)
-                            {
-                                if (md.Voice)
-                                {
-                                    BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "BeforeShutdown.mp3"));
-                                }
-                                Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //到达关机时间
-                        if (now.Hour == md.Shutdown.Time && now.Minute == (md.Shutdown.Branch - 1) && now.Second == 3)
-                        {
-                            if (md.Voice)
-                            {
-                                BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "BeforeShutdown.mp3"));
-                            }
-                            Tips.Show("当前时间为：" + DateTime.Now.ToLongTimeString().ToString() + "  距离关机还有1分钟，请您注意保存好数据信息~");
-                        }
-                    }
-
-                    //到达关机时间
-                    if (now.Hour == md.Shutdown.Time && now.Minute == md.Shutdown.Branch && now.Second == 1)
-                    {
-                        timer.Stop();
-                        switch ((int)md.Shutdown.ShutdownMode)
-                        {
-                            case 0://关机
-                                Process.Start("shutdown", " -s -t 0");
-                                break;
-                            case 1://休眠
-                                SetSuspendState(true, true, true);
-                                break;
-                            case 2://注销
-                                ExitWindowsEx(0, 0);
-                                break;
-                            case 3://睡眠
-                                SetSuspendState(false, true, true);
-                                break;
-                            case 4://锁定
-                                LockWorkStation();
-                                break;
-                            case 5://重启
-                                Process.Start("shutdown", "/r /t 0");
-                                break;
-                        }
-                    }
-                }
-
                 //休息前的提醒 游戏模式下不进行提醒
                 if ((md.Work - 1) * 60 == Count)
                 {
@@ -757,6 +685,51 @@ namespace EyeGuard
             {
                 System.Diagnostics.Debug.WriteLine($"Timer异常: {ex.Message}\n{ex.StackTrace}");
             }
+        }
+
+        private void CheckScheduledShutdown()
+        {
+            DateTime now = DateTime.Now;
+            if (md.Shutdown.Time >= 0 && md.Shutdown.Branch >= 0)
+            {
+                DateTime scheduledTime = now.Date.AddHours(md.Shutdown.Time).AddMinutes(md.Shutdown.Branch);
+                DateTime warningTime = scheduledTime.AddMinutes(-1);
+                if (lastShutdownCheck < warningTime && now >= warningTime)
+                {
+                    if (md.Voice)
+                    {
+                        BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "BeforeShutdown.mp3"));
+                    }
+                    Tips.Show("当前时间为：" + now.ToLongTimeString() + " 距离关机还有1分钟，请您注意保存好数据信息~");
+                }
+
+                if (lastShutdownCheck < scheduledTime && now >= scheduledTime)
+                {
+                    timer.Stop();
+                    switch ((int)md.Shutdown.ShutdownMode)
+                    {
+                        case 0:
+                            Process.Start("shutdown", " -s -t 0");
+                            break;
+                        case 1:
+                            SetSuspendState(true, true, true);
+                            break;
+                        case 2:
+                            ExitWindowsEx(0, 0);
+                            break;
+                        case 3:
+                            SetSuspendState(false, true, true);
+                            break;
+                        case 4:
+                            LockWorkStation();
+                            break;
+                        case 5:
+                            Process.Start("shutdown", "/r /t 0");
+                            break;
+                    }
+                }
+            }
+            lastShutdownCheck = now;
         }
 
         /// <summary>
