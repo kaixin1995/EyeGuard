@@ -311,10 +311,7 @@ namespace EyeGuard
             //锁屏后执行
             dateBegin = DateTime.Now;
             md.State = (state)1;
-            if (timer.IsEnabled)
-            {
-                timer.Stop();
-            }
+            // 保持主计时器运行，以便 Windows 锁屏期间继续检查定时关机。
         }
         #endregion
 
