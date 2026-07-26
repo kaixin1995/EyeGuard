@@ -619,8 +619,7 @@ namespace EyeGuard
                 //判断是否启用自动关机
                 if (md.Shutdown.Time != -1 && md.Shutdown.Branch != -1)
                 {
-                    //分割时间
-                    string[] time = DateTime.Now.ToLongTimeString().ToString().Split(new string[] { ":" }, StringSplitOptions.None);
+                    DateTime now = DateTime.Now;
 
                     //关机前的提醒，如果是整点，也就是0，你需要做好这个判断
 
@@ -630,7 +629,7 @@ namespace EyeGuard
                         //是否为0时
                         if (md.Shutdown.Time == 0)
                         {
-                            if (Convert.ToInt32(time[0]) == 23 && Convert.ToInt32(time[1]) == 59 && Convert.ToInt32(time[2]) == 3)
+                            if (now.Hour == 23 && now.Minute == 59 && now.Second == 3)
                             {
                                 if (md.Voice)
                                 {
@@ -641,7 +640,7 @@ namespace EyeGuard
                         }
                         else
                         {
-                            if (Convert.ToInt32(time[0]) == (md.Shutdown.Time - 1) && Convert.ToInt32(time[1]) == 59 && Convert.ToInt32(time[2]) == 3)
+                            if (now.Hour == (md.Shutdown.Time - 1) && now.Minute == 59 && now.Second == 3)
                             {
                                 if (md.Voice)
                                 {
@@ -654,7 +653,7 @@ namespace EyeGuard
                     else
                     {
                         //到达关机时间
-                        if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == (md.Shutdown.Branch - 1) && Convert.ToInt32(time[2]) == 3)
+                        if (now.Hour == md.Shutdown.Time && now.Minute == (md.Shutdown.Branch - 1) && now.Second == 3)
                         {
                             if (md.Voice)
                             {
@@ -665,7 +664,7 @@ namespace EyeGuard
                     }
 
                     //到达关机时间
-                    if (Convert.ToInt32(time[0]) == md.Shutdown.Time && Convert.ToInt32(time[1]) == md.Shutdown.Branch && Convert.ToInt32(time[2]) == 1)
+                    if (now.Hour == md.Shutdown.Time && now.Minute == md.Shutdown.Branch && now.Second == 1)
                     {
                         timer.Stop();
                         switch ((int)md.Shutdown.ShutdownMode)
