@@ -178,11 +178,10 @@ namespace EyeGuard
             desktopHandle = GetDesktopWindow();
             shellHandle = GetShellWindow();
             RECT appBounds;
-            Rectangle screenBounds;
             IntPtr hWnd;
             //取得前台窗口 
             hWnd = GetForegroundWindow();
-            if (hWnd != null && !hWnd.Equals(IntPtr.Zero))
+            if (hWnd != IntPtr.Zero)
             {
                 //判断是否桌面或shell        
                 if (!(hWnd.Equals(desktopHandle) || hWnd.Equals(shellHandle)))
