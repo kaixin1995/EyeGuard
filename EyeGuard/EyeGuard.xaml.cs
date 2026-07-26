@@ -659,7 +659,7 @@ namespace EyeGuard
                             }
                             break;
                         case lock_mode.语音模式:
-                            if (Count == md.Work * 60 && md.Voice)
+                            if (md.Voice)
                             {
                                 BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "Resting.mp3"));
                             }
@@ -668,7 +668,7 @@ namespace EyeGuard
                             Count = 0;
                             break;
                         case lock_mode.锁定Windows:
-                            if (Count == md.Work * 60 && md.Voice)
+                            if (md.Voice)
                             {
                                 BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "Resting.mp3"));
                             }
