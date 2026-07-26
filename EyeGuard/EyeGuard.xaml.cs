@@ -122,12 +122,13 @@ namespace EyeGuard
             #region WPF方法的锁屏界面会出现锁屏界面无法置顶的偶尔性BUG
             if (LockScreen.Function == false)
             {
-                md.State = (state)1;
                 LockScreen ls = new LockScreen(this);
                 ls.md = md;
                 ls.Left = 0;
                 ls.Top = 0;
                 ls.Show();
+                // 锁屏窗口成功显示后再切换状态，避免创建失败时停止工作计时。
+                md.State = (state)1;
             }
             #endregion
         }
@@ -637,13 +638,13 @@ namespace EyeGuard
                                     BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "Resting.mp3"));
                                 }
                                 StopPlaying();
-                                // 进入休息周期前立即清零，避免用户快速解锁时错过状态清理。
-                                Count = 0;
-                                md.State = (state)1;
                                 LockScreen ls = new LockScreen(md);
                                 ls.Left = 0;
                                 ls.Top = 0;
                                 ls.Show();
+                                // 锁屏窗口成功显示后再提交休息状态和计时清零。
+                                Count = 0;
+                                md.State = (state)1;
                             }
                             break;
                         case lock_mode.语音模式:
