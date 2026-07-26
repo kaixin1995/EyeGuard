@@ -394,8 +394,8 @@ namespace EyeGuard
         /// <summary>
         /// 锁定
         /// </summary>
-        [DllImport("user32")]
-        public static extern void LockWorkStation();
+        [DllImport("user32", SetLastError = true)]
+        public static extern bool LockWorkStation();
         #endregion
 
         /// <summary>
@@ -693,31 +693,56 @@ namespace EyeGuard
 
                 if (lastShutdownCheck < scheduledTime && now >= scheduledTime)
                 {
-                    timer.Stop();
-                    switch ((int)md.Shutdown.ShutdownMode)
-                    {
-                        case 0:
-                            Process.Start("shutdown", " -s -t 0");
-                            break;
-                        case 1:
-                            SetSuspendState(true, true, true);
-                            break;
-                        case 2:
-                            ExitWindowsEx(0, 0);
-                            break;
-                        case 3:
-                            SetSuspendState(false, true, true);
-                            break;
-                        case 4:
-                            LockWorkStation();
-                            break;
-                        case 5:
-                            Process.Start("shutdown", "/r /t 0");
-                            break;
-                    }
+                    ExecuteScheduledShutdown();
                 }
             }
             lastShutdownCheck = now;
+        }
+
+        private void ExecuteScheduledShutdown()
+        {
+            try
+            {
+                switch ((int)md.Shutdown.ShutdownMode)
+                {
+                    case 0:
+                        Process.Start("shutdown", " -s -t 0")?.Dispose();
+                        break;
+                    case 1:
+                        if (!SetSuspendState(true, true, true))
+                        {
+                            throw new InvalidOperationException("休眠操作执行失败。");
+                        }
+                        break;
+                    case 2:
+                        if (!ExitWindowsEx(0, 0))
+                        {
+                            throw new InvalidOperationException("注销操作执行失败。");
+                        }
+                        break;
+                    case 3:
+                        if (!SetSuspendState(false, true, true))
+                        {
+                            throw new InvalidOperationException("睡眠操作执行失败。");
+                        }
+                        break;
+                    case 4:
+                        if (!LockWorkStation())
+                        {
+                            throw new InvalidOperationException("锁定操作执行失败。");
+                        }
+                        break;
+                    case 5:
+                        Process.Start("shutdown", "/r /t 0")?.Dispose();
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                // 系统操作失败时保留主计时器，避免工作计时永久停止。
+                System.Diagnostics.Debug.WriteLine($"定时关机执行异常: {ex.Message}\n{ex.StackTrace}");
+                Tips.Show("定时操作执行失败，请检查系统权限。");
+            }
         }
 
         /// <summary>
