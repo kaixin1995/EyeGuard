@@ -232,6 +232,8 @@ namespace EyeGuard
         private DispatcherTimer timer = new DispatcherTimer();
         // 记录上次检查时间，避免 DispatcherTimer 未在目标秒触发时漏掉定时关机。
         private DateTime lastShutdownCheck = DateTime.Now;
+        private DateTime? nextShutdownRetryTime;
+        private DateTime? retryScheduledTime;
         public MainWindow()
         {
             InitializeComponent();
@@ -692,22 +694,47 @@ namespace EyeGuard
                     Tips.Show("当前时间为：" + now.ToLongTimeString() + " 距离关机还有1分钟，请您注意保存好数据信息~");
                 }
 
-                if (lastShutdownCheck < scheduledTime && now >= scheduledTime)
+                bool reachedScheduledTime = lastShutdownCheck < scheduledTime && now >= scheduledTime;
+                bool reachedRetryTime = retryScheduledTime == scheduledTime
+                    && nextShutdownRetryTime.HasValue
+                    && now >= nextShutdownRetryTime.Value;
+                if (reachedScheduledTime || reachedRetryTime)
                 {
-                    ExecuteScheduledShutdown();
+                    if (ExecuteScheduledShutdown())
+                    {
+                        nextShutdownRetryTime = null;
+                        retryScheduledTime = null;
+                    }
+                    else
+                    {
+                        // 临时失败后一分钟重试，直到操作成功或用户修改定时配置。
+                        nextShutdownRetryTime = now.AddMinutes(1);
+                        retryScheduledTime = scheduledTime;
+                    }
                 }
+            }
+            else
+            {
+                nextShutdownRetryTime = null;
+                retryScheduledTime = null;
             }
             lastShutdownCheck = now;
         }
 
-        private void ExecuteScheduledShutdown()
+        private bool ExecuteScheduledShutdown()
         {
             try
             {
                 switch ((int)md.Shutdown.ShutdownMode)
                 {
                     case 0:
-                        Process.Start("shutdown", " -s -t 0")?.Dispose();
+                        using (Process process = Process.Start("shutdown", " -s -t 0"))
+                        {
+                            if (process == null)
+                            {
+                                throw new InvalidOperationException("关机命令启动失败。");
+                            }
+                        }
                         break;
                     case 1:
                         if (!SetSuspendState(true, true, true))
@@ -734,15 +761,23 @@ namespace EyeGuard
                         }
                         break;
                     case 5:
-                        Process.Start("shutdown", "/r /t 0")?.Dispose();
+                        using (Process process = Process.Start("shutdown", "/r /t 0"))
+                        {
+                            if (process == null)
+                            {
+                                throw new InvalidOperationException("重启命令启动失败。");
+                            }
+                        }
                         break;
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 // 系统操作失败时保留主计时器，避免工作计时永久停止。
                 System.Diagnostics.Debug.WriteLine($"定时关机执行异常: {ex.Message}\n{ex.StackTrace}");
-                Tips.Show("定时操作执行失败，请检查系统权限。");
+                Tips.Show("定时操作执行失败，将在1分钟后重试。");
+                return false;
             }
         }
 
