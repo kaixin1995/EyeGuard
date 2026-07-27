@@ -872,6 +872,10 @@ namespace EyeGuard
             timer?.Stop();
             timer = null;
             BLL.MP3Help.Stop();
+            if (!Hook.ClearCurrentHook())
+            {
+                System.Diagnostics.Debug.WriteLine("应用退出时解除键盘 Hook 失败。");
+            }
             MyNotifyIcon.Visibility = Visibility.Collapsed;
         }
 

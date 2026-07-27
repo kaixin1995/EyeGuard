@@ -67,6 +67,11 @@ namespace EyeGuard
         //取消钩子事件 
         public bool Hook_Clear()
         {
+            return ClearCurrentHook();
+        }
+
+        public static bool ClearCurrentHook()
+        {
             if (hHook == IntPtr.Zero)
             {
                 KeyBoardHookProcedure = null;
