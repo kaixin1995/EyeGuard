@@ -17,28 +17,7 @@ namespace EyeGuard.UI
         {
             sourceModel = Md;
             // 使用副本承接界面修改，保存成功前不影响正在运行的配置。
-            md = new Model
-            {
-                Work = Md.Work,
-                AlreadyWorked = Md.AlreadyWorked,
-                IsIntelligent = Md.IsIntelligent,
-                Voice = Md.Voice,
-                ImgPath = Md.ImgPath,
-                Unlock = Md.Unlock,
-                Display = Md.Display,
-                BreakPoints = Md.BreakPoints,
-                State = Md.State,
-                TimerMode = Md.TimerMode,
-                LockMode = Md.LockMode,
-                InitialPosition = Md.InitialPosition,
-                WidgetStyle = Md.WidgetStyle,
-                Shutdown = new TurnOffTime
-                {
-                    Time = Md.Shutdown.Time,
-                    Branch = Md.Shutdown.Branch,
-                    ShutdownMode = Md.Shutdown.ShutdownMode
-                }
-            };
+            md = CreateSnapshot(Md);
             if (Function == true)
             {
                 this.Close();
@@ -98,6 +77,32 @@ namespace EyeGuard.UI
             VoiceNotice.IsChecked = md.Voice;
             IsIntelligent.IsChecked = _isIntelligent;
 
+        }
+
+        private static Model CreateSnapshot(Model source)
+        {
+            return new Model
+            {
+                Work = source.Work,
+                AlreadyWorked = source.AlreadyWorked,
+                IsIntelligent = source.IsIntelligent,
+                Voice = source.Voice,
+                ImgPath = source.ImgPath,
+                Unlock = source.Unlock,
+                Display = source.Display,
+                BreakPoints = source.BreakPoints,
+                State = source.State,
+                TimerMode = source.TimerMode,
+                LockMode = source.LockMode,
+                InitialPosition = source.InitialPosition,
+                WidgetStyle = source.WidgetStyle,
+                Shutdown = new TurnOffTime
+                {
+                    Time = source.Shutdown.Time,
+                    Branch = source.Shutdown.Branch,
+                    ShutdownMode = source.Shutdown.ShutdownMode
+                }
+            };
         }
 
         /// <summary>
@@ -183,54 +188,56 @@ namespace EyeGuard.UI
         private void Preservation_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            //这里是定时休息的数据保存
-            if (button.Name != "btn_ShutDownToSave")
+            bool saveShutdownSettings = button.Name == "btn_ShutDownToSave";
+            // 保存时基于最新运行配置创建候选值，避免窗口旧快照覆盖其他入口的修改。
+            Model candidate = CreateSnapshot(sourceModel);
+            if (!saveShutdownSettings)
             {
-                md.Work = Convert.ToInt32(work.Value);
-                md.BreakPoints = Convert.ToInt32(rest.Value);
-                md.TimerMode = (Model.timer_mode)Time.SelectedIndex;
-                md.LockMode = (Model.lock_mode)Lock.SelectedIndex;
-                md.Unlock = (bool)Unlock.IsChecked ? 1 : 0;
-                md.Voice = (bool)VoiceNotice.IsChecked;
-                md.IsIntelligent = (bool)IsIntelligent.IsChecked ? 1 : 0;
+                candidate.Work = Convert.ToInt32(work.Value);
+                candidate.BreakPoints = Convert.ToInt32(rest.Value);
+                candidate.TimerMode = (Model.timer_mode)Time.SelectedIndex;
+                candidate.LockMode = (Model.lock_mode)Lock.SelectedIndex;
+                candidate.Unlock = (bool)Unlock.IsChecked ? 1 : 0;
+                candidate.Voice = (bool)VoiceNotice.IsChecked;
+                candidate.IsIntelligent = (bool)IsIntelligent.IsChecked ? 1 : 0;
             }
             else
             {
-                //这里是定时关机的数据保存
-                md.Shutdown.Time = Convert.ToInt32(ShutdownTime.Text);
-                md.Shutdown.Branch = Convert.ToInt32(ShutdownPoints.Text);
-                int i = ShutdownMode.SelectedIndex;
-                md.Shutdown.ShutdownMode = (TurnOffTime.shutdown_mode)ShutdownMode.SelectedIndex;
+                candidate.Shutdown.Time = Convert.ToInt32(ShutdownTime.Text);
+                candidate.Shutdown.Branch = Convert.ToInt32(ShutdownPoints.Text);
+                candidate.Shutdown.ShutdownMode = (TurnOffTime.shutdown_mode)ShutdownMode.SelectedIndex;
             }
 
-
-
-
-            //提醒
             Bll bll = new Bll();
-            if (!bll.SetData(md))
+            if (!bll.SetData(candidate))
             {
                 MessageBox.Show("保存失败，请检查配置文件是否可写。", "提示");
                 return;
             }
 
-            ApplySavedSettings();
+            ApplySavedSettings(candidate, saveShutdownSettings);
+            md = CreateSnapshot(sourceModel);
             Tips.Show("已经成功保存~");
             this.Close();
         }
 
-        private void ApplySavedSettings()
+        private void ApplySavedSettings(Model savedModel, bool saveShutdownSettings)
         {
-            sourceModel.Work = md.Work;
-            sourceModel.BreakPoints = md.BreakPoints;
-            sourceModel.TimerMode = md.TimerMode;
-            sourceModel.LockMode = md.LockMode;
-            sourceModel.Unlock = md.Unlock;
-            sourceModel.Voice = md.Voice;
-            sourceModel.IsIntelligent = md.IsIntelligent;
-            sourceModel.Shutdown.Time = md.Shutdown.Time;
-            sourceModel.Shutdown.Branch = md.Shutdown.Branch;
-            sourceModel.Shutdown.ShutdownMode = md.Shutdown.ShutdownMode;
+            if (saveShutdownSettings)
+            {
+                sourceModel.Shutdown.Time = savedModel.Shutdown.Time;
+                sourceModel.Shutdown.Branch = savedModel.Shutdown.Branch;
+                sourceModel.Shutdown.ShutdownMode = savedModel.Shutdown.ShutdownMode;
+                return;
+            }
+
+            sourceModel.Work = savedModel.Work;
+            sourceModel.BreakPoints = savedModel.BreakPoints;
+            sourceModel.TimerMode = savedModel.TimerMode;
+            sourceModel.LockMode = savedModel.LockMode;
+            sourceModel.Unlock = savedModel.Unlock;
+            sourceModel.Voice = savedModel.Voice;
+            sourceModel.IsIntelligent = savedModel.IsIntelligent;
         }
 
 

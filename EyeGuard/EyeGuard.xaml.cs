@@ -180,24 +180,28 @@ namespace EyeGuard
                 }
             }
 
-            if (state == "hide")
+            int oldDisplay = md.Display;
+            int newDisplay = state == "hide" ? 0 : 1;
+            md.Display = newDisplay;
+            if (!Dal.SetData(md))
+            {
+                md.Display = oldDisplay;
+                Tips.Show("桌面插件设置保存失败，请检查配置文件是否可写。");
+                return;
+            }
+
+            // 配置保存成功后再更新界面，避免运行状态与磁盘配置不一致。
+            if (newDisplay == 0)
             {
                 this.Visibility = Visibility.Hidden;
-                //解决最小化到任务栏可以强行关闭程序的问题。
-                this.ShowInTaskbar = false;//使Form不在任务栏上显示
-                md.Display = 0;
-                Dal.SetData(md);
+                this.ShowInTaskbar = false;
                 Tips.Show("桌面插件已经隐藏~");
-
             }
             else
             {
                 this.Visibility = Visibility.Visible;
-                //解决最小化到任务栏可以强行关闭程序的问题。
-                this.ShowInTaskbar = false;//使Form不在任务栏上显示
+                this.ShowInTaskbar = false;
                 this.Activate();
-                md.Display = 1;
-                Dal.SetData(md);
                 Tips.Show("桌面插件已经恢复显示~");
             }
         }
@@ -420,8 +424,14 @@ namespace EyeGuard
                 style = mi.Tag.ToString();
             }
 
+            Model.widget_style oldStyle = md.WidgetStyle;
             md.WidgetStyle = (Model.widget_style)Convert.ToInt32(style);
-            Dal.SetData(md);
+            if (!Dal.SetData(md))
+            {
+                md.WidgetStyle = oldStyle;
+                Tips.Show("桌面插件风格保存失败，请检查配置文件是否可写。");
+                return;
+            }
             ApplyWidgetStyle();
             
             // 如果设置页面已打开,应用主题
