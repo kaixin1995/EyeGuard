@@ -207,9 +207,8 @@ namespace EyeGuard
         /// </summary>
         private void exit_Click(object sender, EventArgs e)
         {
-            this.Close();
-            //退出
-            //System.Environment.Exit(0);
+            // 明确退出时关闭全部窗口，避免辅助窗口使进程残留且失去托盘入口。
+            Application.Current.Shutdown();
         }
 
 
@@ -276,8 +275,9 @@ namespace EyeGuard
                     break;
                 //锁屏
                 case SessionSwitchReason.SessionLock:
-                    BeginSessionLock();
+                    // 先关闭应用锁屏，再提交系统锁屏状态，避免 Closed 事件将状态覆盖回工作。
                     LockScreen.GetLockScreen?.Close();
+                    BeginSessionLock();
                     break;
                 //注销
                 case SessionSwitchReason.SessionLogoff:
