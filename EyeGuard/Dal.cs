@@ -77,7 +77,7 @@ namespace EyeGuard
                 ["WidgetStyle"] = (int)md.WidgetStyle
             };
 
-            if (!Serialize(updatedData))
+            if (!Serialize(updatedData, md.ImgPath))
             {
                 return false;
             }
@@ -176,10 +176,10 @@ namespace EyeGuard
         /// </summary>
         public static bool Serialize()
         {
-            return Serialize(Data);
+            return Serialize(Data, md.ImgPath);
         }
 
-        private static bool Serialize(Dictionary<string, int> data)
+        private static bool Serialize(Dictionary<string, int> data, string imgPath)
         {
             // 一次性保存全部配置，避免部分配置写入成功后仍被当作保存完成。
             Dictionary<string, string> config = new Dictionary<string, string>();
@@ -187,6 +187,9 @@ namespace EyeGuard
             {
                 config.Add(item.Key, item.Value.ToString());
             }
+            config["ImgPath"] = string.IsNullOrWhiteSpace(imgPath)
+                ? "Resources/wallpaper.jpg"
+                : imgPath;
 
             return ConfigHelper.SetConfig(config);
         }
