@@ -18,14 +18,18 @@ namespace EyeGuard.UI
         /// <param name="value"></param>
         public static void Show(string value)
         {
-            if (Tips.Function == false)
+            if (currentTips != null)
             {
-                Tips tp = new Tips(value);
-                tp.ShowActivated = false;
-                tp.Focusable = false;
-                tp.ShowInTaskbar = false;
-                tp.Show();
+                // 已有提示时更新内容并重新计时，避免后续重要消息被丢弃。
+                currentTips.UpdateContent(value);
+                return;
             }
+
+            Tips tp = new Tips(value);
+            tp.ShowActivated = false;
+            tp.Focusable = false;
+            tp.ShowInTaskbar = false;
+            tp.Show();
         }
         private Tips(string Value)
         {
@@ -37,6 +41,7 @@ namespace EyeGuard.UI
             InitializeComponent();
 
             Function = true;
+            currentTips = this;
 
             // 赋值提示的文字
             TipsLable.Text = Value;
@@ -55,7 +60,11 @@ namespace EyeGuard.UI
         private void Tips_Closed(object sender, EventArgs e)
         {
             Function = false;
-            
+            if (ReferenceEquals(currentTips, this))
+            {
+                currentTips = null;
+            }
+
             if (timer != null)
             {
                 timer.Stop();
@@ -75,26 +84,23 @@ namespace EyeGuard.UI
         /// 是否已经打开，保证一个实例
         /// </summary>
         private static bool Function = false;
+        private static Tips currentTips;
 
+
+        private void UpdateContent(string value)
+        {
+            TipsLable.Text = value;
+            PositionWindow();
+            timer?.Stop();
+            timer?.Start();
+        }
 
         /// <summary>
         /// 初始位置
         /// </summary>
         public void Position()
         {
-            //这里根据字符的长度来设置窗体的长度
-            this.Width = (Bll.GetStringLength(TipsLable.Text.ToString()) / 2) * 42;
-            //TipsLable.Margin=new Thickness(15,13,8,13);
-
-
-
-            //屏幕宽高
-            double ScreenWidth = SystemParameters.PrimaryScreenWidth;
-            double ScreenHeight = SystemParameters.PrimaryScreenHeight;
-            this.Top = ScreenHeight - this.Height - 100;
-            this.Left = (ScreenWidth / 2) - (this.Width / 2);
-            this.Topmost = true;
-
+            PositionWindow();
 
             //时钟
             timer = new DispatcherTimer();
@@ -102,6 +108,17 @@ namespace EyeGuard.UI
             timer.Interval = new TimeSpan(0, 0, 8);
             timer.Tick += timer1_Tick;
             timer.Start();
+        }
+
+        private void PositionWindow()
+        {
+            //这里根据字符的长度来设置窗体的长度
+            Width = Math.Max(240, (Bll.GetStringLength(TipsLable.Text) / 2) * 42);
+            double screenWidth = SystemParameters.PrimaryScreenWidth;
+            double screenHeight = SystemParameters.PrimaryScreenHeight;
+            Top = screenHeight - Height - 100;
+            Left = (screenWidth / 2) - (Width / 2);
+            Topmost = true;
         }
 
         /// <summary>
