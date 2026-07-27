@@ -200,7 +200,6 @@ namespace EyeGuard.UI
             timer.Interval = new TimeSpan(0, 0, 1);
             timer.Tick += timer1_Tick;
             timer.Start();
-            GetLockScreen = this;
             isSecondary = false;
         }
 
@@ -329,8 +328,6 @@ namespace EyeGuard.UI
         /// </summary>
         public void Position()
         {
-            Function = true;
-
             this.Width = System.Windows.SystemParameters.PrimaryScreenWidth;
             this.Height = System.Windows.SystemParameters.PrimaryScreenHeight;
             this.img.Stretch = Stretch.Fill;
@@ -465,6 +462,10 @@ namespace EyeGuard.UI
                     this.Focus();
                     hasFocused = true;
                 }
+
+                // 主锁屏初始化完成后再发布静态状态，失败时允许后续重新创建。
+                GetLockScreen = this;
+                Function = true;
             }
             else
             {
