@@ -502,11 +502,21 @@ namespace EyeGuard
                 if (Pause)
                     return;
 
+                bool isFullScreen = false;
+                try
+                {
+                    isFullScreen = bll.FullScreen();
+                }
+                catch (Exception ex)
+                {
+                    // 全屏检测失败不应阻止工作计时和自动休息。
+                    System.Diagnostics.Debug.WriteLine($"全屏检测异常: {ex.Message}");
+                }
 
                 if (md.Display != 0)
                 {
                     //非全屏显示，全屏下隐藏
-                    if (!bll.FullScreen())
+                    if (!isFullScreen)
                     {
                         this.Visibility = Visibility.Visible;
                     }
@@ -540,7 +550,7 @@ namespace EyeGuard
                                 SmartTiming(() =>
                                 {
                                     //非全屏
-                                    if (!bll.FullScreen())
+                                    if (!isFullScreen)
                                     {
                                         Count++;
                                     }
@@ -559,7 +569,7 @@ namespace EyeGuard
                             else
                             {
                                 //非全屏
-                                if (!bll.FullScreen())
+                                if (!isFullScreen)
                                 {
                                     Count++;
                                 }
@@ -615,7 +625,7 @@ namespace EyeGuard
                     {
                         BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "BeforeRest.mp3"));
                     }
-                    if (((int)md.TimerMode == 1 && bll.FullScreen()) || (int)md.TimerMode == 2)
+                    if (((int)md.TimerMode == 1 && isFullScreen) || (int)md.TimerMode == 2)
                     {
                         return;
                     }
