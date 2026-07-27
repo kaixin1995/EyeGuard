@@ -230,7 +230,9 @@ namespace EyeGuard
         // 记录上次检查时间，避免 DispatcherTimer 未在目标秒触发时漏掉定时关机。
         private DateTime lastShutdownCheck = DateTime.Now;
         private DateTime? nextShutdownRetryTime;
-        private DateTime? retryScheduledTime;
+        private int? retryShutdownHour;
+        private int? retryShutdownMinute;
+        private TurnOffTime.shutdown_mode? retryShutdownMode;
         private int shutdownRetryCount;
         private const int MaxShutdownAttempts = 3;
         public MainWindow()
@@ -712,9 +714,18 @@ namespace EyeGuard
                     Tips.Show("当前时间为：" + now.ToLongTimeString() + " 距离关机还有1分钟，请您注意保存好数据信息~");
                 }
 
+                bool retryConfigurationMatches = retryShutdownHour == md.Shutdown.Time
+                    && retryShutdownMinute == md.Shutdown.Branch
+                    && retryShutdownMode == md.Shutdown.ShutdownMode;
+                if (nextShutdownRetryTime.HasValue && !retryConfigurationMatches)
+                {
+                    // 定时配置改变后取消旧任务重试，避免失败次数污染新任务。
+                    ClearShutdownRetry();
+                }
+
                 bool reachedScheduledTime = lastShutdownCheck < scheduledTime && now >= scheduledTime;
-                bool reachedRetryTime = retryScheduledTime == scheduledTime
-                    && nextShutdownRetryTime.HasValue
+                bool reachedRetryTime = nextShutdownRetryTime.HasValue
+                    && retryConfigurationMatches
                     && now >= nextShutdownRetryTime.Value;
                 if (reachedScheduledTime || reachedRetryTime)
                 {
@@ -725,9 +736,11 @@ namespace EyeGuard
                     }
                     else if (shutdownRetryCount < MaxShutdownAttempts)
                     {
-                        // 临时失败后一分钟重试，最多执行三次。
+                        // 使用绝对时间跨日重试，并保存任务配置防止新旧任务相互污染。
                         nextShutdownRetryTime = now.AddMinutes(1);
-                        retryScheduledTime = scheduledTime;
+                        retryShutdownHour = md.Shutdown.Time;
+                        retryShutdownMinute = md.Shutdown.Branch;
+                        retryShutdownMode = md.Shutdown.ShutdownMode;
                     }
                     else
                     {
@@ -746,7 +759,9 @@ namespace EyeGuard
         private void ClearShutdownRetry()
         {
             nextShutdownRetryTime = null;
-            retryScheduledTime = null;
+            retryShutdownHour = null;
+            retryShutdownMinute = null;
+            retryShutdownMode = null;
             shutdownRetryCount = 0;
         }
 
@@ -757,13 +772,7 @@ namespace EyeGuard
                 switch ((int)md.Shutdown.ShutdownMode)
                 {
                     case 0:
-                        using (Process process = Process.Start("shutdown", " -s -t 0"))
-                        {
-                            if (process == null)
-                            {
-                                throw new InvalidOperationException("关机命令启动失败。");
-                            }
-                        }
+                        ExecuteShutdownCommand("-s -t 0", "关机");
                         break;
                     case 1:
                         if (!SetSuspendState(true, true, true))
@@ -790,13 +799,7 @@ namespace EyeGuard
                         }
                         break;
                     case 5:
-                        using (Process process = Process.Start("shutdown", "/r /t 0"))
-                        {
-                            if (process == null)
-                            {
-                                throw new InvalidOperationException("重启命令启动失败。");
-                            }
-                        }
+                        ExecuteShutdownCommand("/r /t 0", "重启");
                         break;
                 }
                 return true;
@@ -810,6 +813,27 @@ namespace EyeGuard
                     Tips.Show($"定时操作执行失败，将在1分钟后重试（{shutdownRetryCount}/{MaxShutdownAttempts}）。");
                 }
                 return false;
+            }
+        }
+
+        private static void ExecuteShutdownCommand(string arguments, string operationName)
+        {
+            using (Process process = Process.Start("shutdown", arguments))
+            {
+                if (process == null)
+                {
+                    throw new InvalidOperationException($"{operationName}命令启动失败。");
+                }
+
+                // shutdown.exe 应快速返回；超时或非零退出码均按执行失败处理。
+                if (!process.WaitForExit(5000))
+                {
+                    throw new TimeoutException($"{operationName}命令执行超时。");
+                }
+                if (process.ExitCode != 0)
+                {
+                    throw new InvalidOperationException($"{operationName}命令执行失败，退出码：{process.ExitCode}。");
+                }
             }
         }
 
