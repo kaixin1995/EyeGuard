@@ -443,9 +443,9 @@ namespace EyeGuard.UI
 
             if (!isSecondary)
             {
-                // 每次锁屏显示前重新检测屏幕，确保插拔显示器后使用当前拓扑。
-                RefreshScreens();
+                // 先监听显示器变化，再进行首次刷新，避免初始化期间漏掉拓扑变更。
                 SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+                RefreshScreens();
 
                 // 置顶时钟只在主屏启用，避免副屏重复置顶引发闪烁
                 TopTimer = new DispatcherTimer();
