@@ -835,12 +835,8 @@ namespace EyeGuard
                     throw new InvalidOperationException($"{operationName}命令启动失败。");
                 }
 
-                // 进程未及时退出时不重复提交相同系统命令，避免产生多个关机或重启进程。
-                if (!process.WaitForExit(5000))
-                {
-                    System.Diagnostics.Debug.WriteLine($"{operationName}命令仍在执行，已停止等待。");
-                    return;
-                }
+                // 等待命令返回明确结果，避免超时后误判成功或重复提交系统操作。
+                process.WaitForExit();
                 if (process.ExitCode != 0)
                 {
                     throw new InvalidOperationException($"{operationName}命令执行失败，退出码：{process.ExitCode}。");
