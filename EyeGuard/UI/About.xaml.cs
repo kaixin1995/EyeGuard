@@ -54,11 +54,13 @@ namespace EyeGuard.UI
             string url = "https://github.com/kaixin1995/EyeGuard";
             try
             {
-                Process.Start(new ProcessStartInfo
+                using (Process process = Process.Start(new ProcessStartInfo
                 {
                     FileName = url,
                     UseShellExecute = true
-                });
+                }))
+                {
+                }
             }
             catch
             {
