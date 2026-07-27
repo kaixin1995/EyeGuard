@@ -115,7 +115,22 @@ namespace EyeGuard.UI
         /// </summary>
         private void OpenUrl_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/kaixin1995/EyeGuard");
+            const string url = "https://github.com/kaixin1995/EyeGuard";
+            try
+            {
+                using (System.Diagnostics.Process process = System.Diagnostics.Process.Start(
+                    new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = url,
+                        UseShellExecute = true
+                    }))
+                {
+                }
+            }
+            catch
+            {
+                MessageBox.Show($"打开页面失败，您可以手动访问：{url}", "提示");
+            }
         }
 
 
