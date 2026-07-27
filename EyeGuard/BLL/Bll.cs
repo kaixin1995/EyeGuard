@@ -174,31 +174,31 @@ namespace EyeGuard
         /// <returns>返回true则是全屏</returns>
         public bool FullScreen()
         {
-            //取得桌面和Shell窗口句柄 
             desktopHandle = GetDesktopWindow();
             shellHandle = GetShellWindow();
-            RECT appBounds;
-            IntPtr hWnd;
-            //取得前台窗口 
-            hWnd = GetForegroundWindow();
-            if (hWnd != IntPtr.Zero)
+            IntPtr hWnd = GetForegroundWindow();
+            if (hWnd == IntPtr.Zero || hWnd == desktopHandle || hWnd == shellHandle)
             {
-                //判断是否桌面或shell        
-                if (!(hWnd.Equals(desktopHandle) || hWnd.Equals(shellHandle)))
-                {
-                    //取得窗口大小 
-                    GetWindowRect(hWnd, out appBounds);
-                    //判断是否全屏
-                    if ((appBounds.Bottom - appBounds.Top) == System.Windows.SystemParameters.PrimaryScreenHeight && (appBounds.Right - appBounds.Left) == System.Windows.SystemParameters.PrimaryScreenWidth)
-                    {
-                        return true;
-
-                    }
-
-                }
+                return false;
             }
-            return false;
 
+            if (GetWindowRect(hWnd, out RECT appBounds) == 0)
+            {
+                return false;
+            }
+
+            Screen screen = Screen.FromHandle(hWnd);
+            if (screen == null)
+            {
+                return false;
+            }
+
+            // 使用前台窗口所在屏幕的物理边界，避免 DPI 缩放和副屏导致误判。
+            const int tolerance = 2;
+            return Math.Abs(appBounds.Left - screen.Bounds.Left) <= tolerance
+                && Math.Abs(appBounds.Top - screen.Bounds.Top) <= tolerance
+                && Math.Abs(appBounds.Right - screen.Bounds.Right) <= tolerance
+                && Math.Abs(appBounds.Bottom - screen.Bounds.Bottom) <= tolerance;
         }
         #endregion
 
