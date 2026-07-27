@@ -45,7 +45,6 @@ namespace EyeGuard.UI
             PromptText.Text = "点击右下角小锁即可解锁";
             Position();
             mainWindow.Focus();
-            GetLockScreen = this;
             isSecondary = false;
         }
 
@@ -411,6 +410,20 @@ namespace EyeGuard.UI
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                InitializeLockScreen();
+            }
+            catch
+            {
+                // 初始化失败时关闭窗口，复用 Closed 中的统一资源清理。
+                Close();
+                throw;
+            }
+        }
+
+        private void InitializeLockScreen()
+        {
             switch (md.LockMode)
             {
                 case lock_mode.透明模式:
@@ -443,38 +456,29 @@ namespace EyeGuard.UI
 
             if (!isSecondary)
             {
-                try
+                // 先监听显示器变化，再进行首次刷新，避免初始化期间漏掉拓扑变更。
+                SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+                RefreshScreens();
+
+                // 置顶时钟只在主屏启用，避免副屏重复置顶引发闪烁
+                TopTimer = new DispatcherTimer();
+                TopTimer.Interval = new TimeSpan(0, 0, 1);
+                TopTimer.Tick += TopTimer_Tick;
+                TopTimer.Start();
+
+                // 仅在主屏开启键盘屏蔽
+                h.Hook_Start();
+                // 只在主屏首次加载时获取一次焦点，避免主副屏反复抢焦点
+                if (!hasFocused)
                 {
-                    // 先监听显示器变化，再进行首次刷新，避免初始化期间漏掉拓扑变更。
-                    SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-                    RefreshScreens();
-
-                    // 置顶时钟只在主屏启用，避免副屏重复置顶引发闪烁
-                    TopTimer = new DispatcherTimer();
-                    TopTimer.Interval = new TimeSpan(0, 0, 1);
-                    TopTimer.Tick += TopTimer_Tick;
-                    TopTimer.Start();
-
-                    // 仅在主屏开启键盘屏蔽
-                    h.Hook_Start();
-                    // 只在主屏首次加载时获取一次焦点，避免主副屏反复抢焦点
-                    if (!hasFocused)
-                    {
-                        this.Activate();
-                        this.Focus();
-                        hasFocused = true;
-                    }
-
-                    // 主锁屏初始化完成后再发布静态状态，失败时允许后续重新创建。
-                    GetLockScreen = this;
-                    Function = true;
+                    this.Activate();
+                    this.Focus();
+                    hasFocused = true;
                 }
-                catch
-                {
-                    // 初始化失败时关闭窗口，复用 Closed 中的统一资源清理。
-                    Close();
-                    throw;
-                }
+
+                // 主锁屏初始化完成后再发布静态状态，失败时允许后续重新创建。
+                GetLockScreen = this;
+                Function = true;
             }
             else
             {
