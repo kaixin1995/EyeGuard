@@ -835,10 +835,11 @@ namespace EyeGuard
                     throw new InvalidOperationException($"{operationName}命令启动失败。");
                 }
 
-                // shutdown.exe 应快速返回；超时或非零退出码均按执行失败处理。
+                // 进程未及时退出时不重复提交相同系统命令，避免产生多个关机或重启进程。
                 if (!process.WaitForExit(5000))
                 {
-                    throw new TimeoutException($"{operationName}命令执行超时。");
+                    System.Diagnostics.Debug.WriteLine($"{operationName}命令仍在执行，已停止等待。");
+                    return;
                 }
                 if (process.ExitCode != 0)
                 {
