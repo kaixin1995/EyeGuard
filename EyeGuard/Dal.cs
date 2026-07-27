@@ -107,7 +107,7 @@ namespace EyeGuard
             int Voice = GetIntWithDefault("Voice", 0, "语音提示", 0, 1);
             int WidgetStyle = GetIntWithDefault("WidgetStyle", 0, "桌面插件风格", 0, 3);
 
-            string ImgPath = ConfigHelper.GetConfig("ImgPath", "Resources/wallpaper.jpg");
+            string ImgPath = ConfigHelper.GetConfig("ImgPath");
             if (string.IsNullOrWhiteSpace(ImgPath))
             {
                 ImgPath = "Resources/wallpaper.jpg";
@@ -145,7 +145,7 @@ namespace EyeGuard
             int minimum,
             int maximum)
         {
-            string rawValue = ConfigHelper.GetConfig(key, defaultValue.ToString());
+            string rawValue = ConfigHelper.GetConfig(key);
             if (string.IsNullOrWhiteSpace(rawValue))
             {
                 bool saved = ConfigHelper.SetConfig(key, defaultValue.ToString());
