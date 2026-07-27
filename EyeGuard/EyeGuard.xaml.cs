@@ -645,11 +645,12 @@ namespace EyeGuard
                         case lock_mode.时间锁屏:
                             if (LockScreen.GetLockScreen == null)
                             {
+                                // 先暂停已有媒体，再播放本程序提示音，避免将提示音误判为外部媒体。
+                                StopPlaying();
                                 if (md.Voice)
                                 {
                                     BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "Resting.mp3"));
                                 }
-                                StopPlaying();
                                 LockScreen ls = new LockScreen(md);
                                 ls.Left = 0;
                                 ls.Top = 0;
@@ -669,13 +670,20 @@ namespace EyeGuard
                             Count = 0;
                             break;
                         case lock_mode.锁定Windows:
-                            if (md.Voice)
-                            {
-                                BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "Resting.mp3"));
-                            }
-                            Count = 0;
                             StopPlaying();
-                            LockWorkStation();
+                            // Windows 成功锁定后再清零，失败时保留到期计时以便下次重试。
+                            if (LockWorkStation())
+                            {
+                                Count = 0;
+                                if (md.Voice)
+                                {
+                                    BLL.MP3Help.Play(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "MP3", "Resting.mp3"));
+                                }
+                            }
+                            else
+                            {
+                                System.Diagnostics.Debug.WriteLine("Windows 锁定失败，将在下次计时检查时重试。");
+                            }
                             break;
                         default:
                             break;
