@@ -126,7 +126,7 @@ namespace EyeGuard
                 ls.Top = 0;
                 ls.Show();
                 // 锁屏窗口成功显示后再切换状态，避免创建失败时停止工作计时。
-                md.State = (state)1;
+                md.State = (work_state)1;
             }
             #endregion
         }
@@ -292,7 +292,7 @@ namespace EyeGuard
         {
             //获得焦点
             this.Focus();
-            md.State = (state)0;
+            md.State = (work_state)0;
             RestoreLocation();
             // Windows 解锁后始终开启新的工作周期。
             if (dateBegin != null)
@@ -313,7 +313,7 @@ namespace EyeGuard
         {
             //锁屏后执行
             dateBegin = DateTime.Now;
-            md.State = (state)1;
+            md.State = (work_state)1;
             // 保持主计时器运行，以便 Windows 锁屏期间继续检查定时关机。
         }
         #endregion
@@ -656,7 +656,7 @@ namespace EyeGuard
                                 ls.Show();
                                 // 锁屏窗口成功显示后再提交休息状态和计时清零。
                                 Count = 0;
-                                md.State = (state)1;
+                                md.State = (work_state)1;
                             }
                             break;
                         case lock_mode.语音模式:

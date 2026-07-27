@@ -216,7 +216,7 @@ namespace EyeGuard.UI
             
             if (!isSecondary && md != null)
             {
-                md.State = (state)0;
+                md.State = (work_state)0;
             }
 
             // 仅主屏安装了 Hook，副屏关闭时不能影响主屏 Hook。

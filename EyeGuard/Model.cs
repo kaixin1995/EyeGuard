@@ -75,12 +75,12 @@
         /// <summary>
         /// 状态枚举
         /// </summary>
-        public enum state { 工作 = 0, 休息 = 1 }
+        public enum work_state { 工作 = 0, 休息 = 1 }
 
         /// <summary>
         /// 当前工作状态
         /// </summary>
-        public state State { get; set; }
+        public work_state State { get; set; }
 
 
         /// <summary>
