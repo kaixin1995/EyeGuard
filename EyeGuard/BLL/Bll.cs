@@ -278,17 +278,8 @@ namespace EyeGuard
         {
             try
             {
-                //上次的MasterPeakValue值
-                float _oldMasterPeakValue = GetMasterPeakValue();
-                if (_oldMasterPeakValue <= 0)
-                {
-                    return false;
-                }
-                if (_oldMasterPeakValue != GetMasterPeakValue())
-                {
-                    return true;
-                }
-                return false;
+                // 当前峰值大于零即可认为存在音频，避免稳定音量时两次采样相同而误判。
+                return GetMasterPeakValue() > 0;
             }
             catch
             {
