@@ -232,6 +232,8 @@ namespace EyeGuard
         private DateTime lastShutdownCheck = DateTime.Now;
         private DateTime? nextShutdownRetryTime;
         private DateTime? retryScheduledTime;
+        private int shutdownRetryCount;
+        private const int MaxShutdownAttempts = 3;
         public MainWindow()
         {
             InitializeComponent();
@@ -708,25 +710,36 @@ namespace EyeGuard
                     && now >= nextShutdownRetryTime.Value;
                 if (reachedScheduledTime || reachedRetryTime)
                 {
+                    shutdownRetryCount++;
                     if (ExecuteScheduledShutdown())
                     {
-                        nextShutdownRetryTime = null;
-                        retryScheduledTime = null;
+                        ClearShutdownRetry();
+                    }
+                    else if (shutdownRetryCount < MaxShutdownAttempts)
+                    {
+                        // 临时失败后一分钟重试，最多执行三次。
+                        nextShutdownRetryTime = now.AddMinutes(1);
+                        retryScheduledTime = scheduledTime;
                     }
                     else
                     {
-                        // 临时失败后一分钟重试，直到操作成功或用户修改定时配置。
-                        nextShutdownRetryTime = now.AddMinutes(1);
-                        retryScheduledTime = scheduledTime;
+                        ClearShutdownRetry();
+                        Tips.Show("定时操作连续失败3次，已停止本次重试。");
                     }
                 }
             }
             else
             {
-                nextShutdownRetryTime = null;
-                retryScheduledTime = null;
+                ClearShutdownRetry();
             }
             lastShutdownCheck = now;
+        }
+
+        private void ClearShutdownRetry()
+        {
+            nextShutdownRetryTime = null;
+            retryScheduledTime = null;
+            shutdownRetryCount = 0;
         }
 
         private bool ExecuteScheduledShutdown()
@@ -784,7 +797,10 @@ namespace EyeGuard
             {
                 // 系统操作失败时保留主计时器，避免工作计时永久停止。
                 System.Diagnostics.Debug.WriteLine($"定时关机执行异常: {ex.Message}\n{ex.StackTrace}");
-                Tips.Show("定时操作执行失败，将在1分钟后重试。");
+                if (shutdownRetryCount < MaxShutdownAttempts)
+                {
+                    Tips.Show($"定时操作执行失败，将在1分钟后重试（{shutdownRetryCount}/{MaxShutdownAttempts}）。");
+                }
                 return false;
             }
         }
