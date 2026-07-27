@@ -15,7 +15,8 @@ namespace EyeGuard
         public const int WH_KEYBOARD_LL = 13;
         //LowLevel键盘截获，如果是WH_KEYBOARD＝2，并不能对系统键盘截取，Acrobat Reader会在你截取之前获得键盘。 
         static HookProc KeyBoardHookProcedure;
-        //键盘Hook结构函数 
+        private static volatile bool isBlockingEnabled;
+        //键盘Hook结构函数
         [StructLayout(LayoutKind.Sequential)]
         public class KeyBoardHookStruct
         {
@@ -47,7 +48,7 @@ namespace EyeGuard
         #region 自定义事件
         public void Hook_Start()
         {
-            // 安装键盘钩子 
+            // 安装键盘钩子
             if (hHook == IntPtr.Zero)
             {
                 KeyBoardHookProcedure = new HookProc(KeyBoardHookProc);
@@ -59,9 +60,13 @@ namespace EyeGuard
                 if (hHook == IntPtr.Zero)
                 {
                     KeyBoardHookProcedure = null;
+                    isBlockingEnabled = false;
                     throw new Exception("SetWindowsHookEx failed.");
                 }
             }
+
+            // 复用上次解除失败而保留的 Hook 时，重新启用锁屏按键拦截。
+            isBlockingEnabled = true;
         }
 
         //取消钩子事件 
@@ -72,6 +77,8 @@ namespace EyeGuard
 
         public static bool ClearCurrentHook()
         {
+            // 即使原生 Hook 暂时解除失败，锁屏关闭后也必须立即停止拦截按键。
+            isBlockingEnabled = false;
             if (hHook == IntPtr.Zero)
             {
                 KeyBoardHookProcedure = null;
@@ -92,10 +99,8 @@ namespace EyeGuard
         //这里可以添加自己想要的信息处理 
         public static IntPtr KeyBoardHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode >= 0)
+            if (nCode >= 0 && isBlockingEnabled)
             {
-
-
                 KeyBoardHookStruct kbh = (KeyBoardHookStruct)Marshal.PtrToStructure(lParam, typeof(KeyBoardHookStruct));
 
                 int v = kbh.vkCode;
