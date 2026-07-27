@@ -111,7 +111,12 @@ namespace EyeGuard
             if (string.IsNullOrWhiteSpace(ImgPath))
             {
                 ImgPath = "Resources/wallpaper.jpg";
-                ConfigHelper.SetConfig("ImgPath", ImgPath);
+                if (!ConfigHelper.SetConfig("ImgPath", ImgPath))
+                {
+                    System.Windows.MessageBox.Show(
+                        "锁屏图片未配置，默认图片仅本次生效，配置文件写入失败",
+                        "配置提示");
+                }
             }
             md.ImgPath = ImgPath;
 
@@ -143,8 +148,11 @@ namespace EyeGuard
             string rawValue = ConfigHelper.GetConfig(key, defaultValue.ToString());
             if (string.IsNullOrWhiteSpace(rawValue))
             {
-                ConfigHelper.SetConfig(key, defaultValue.ToString());
-                System.Windows.MessageBox.Show($"{displayName}未配置，已使用默认值 {defaultValue}", "配置提示");
+                bool saved = ConfigHelper.SetConfig(key, defaultValue.ToString());
+                string message = saved
+                    ? $"{displayName}未配置，已使用默认值 {defaultValue}"
+                    : $"{displayName}未配置，默认值 {defaultValue} 仅本次生效，配置文件写入失败";
+                System.Windows.MessageBox.Show(message, "配置提示");
                 return defaultValue;
             }
 
@@ -152,8 +160,11 @@ namespace EyeGuard
                 || parsed < minimum
                 || parsed > maximum)
             {
-                ConfigHelper.SetConfig(key, defaultValue.ToString());
-                System.Windows.MessageBox.Show($"{displayName}配置错误，已使用默认值 {defaultValue}", "配置提示");
+                bool saved = ConfigHelper.SetConfig(key, defaultValue.ToString());
+                string message = saved
+                    ? $"{displayName}配置错误，已使用默认值 {defaultValue}"
+                    : $"{displayName}配置错误，默认值 {defaultValue} 仅本次生效，配置文件写入失败";
+                System.Windows.MessageBox.Show(message, "配置提示");
                 return defaultValue;
             }
 
