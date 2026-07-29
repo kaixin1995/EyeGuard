@@ -12,6 +12,7 @@
     AllowsTransparency="True"
     Background="Transparent"
     Loaded="Window_Loaded"
+    ResizeMode="NoResize"
     ShowInTaskbar="False"
     Topmost="True"
     WindowStyle="None"
@@ -69,7 +70,7 @@
     <Grid>
         <Border
             Name="hyaline"
-            Margin="2,2,2,2"
+            Margin="0"
             BorderBrush="White"
             BorderThickness="1"
             CornerRadius="0"
