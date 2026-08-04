@@ -71,8 +71,7 @@
         <Border
             Name="hyaline"
             Margin="0"
-            BorderBrush="White"
-            BorderThickness="1"
+            BorderThickness="0"
             CornerRadius="0"
             Opacity="0.5">
             <Border
